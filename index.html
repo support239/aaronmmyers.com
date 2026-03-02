@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmony | Navigating Relationships</title>
+    <style>
+        /* CSS Styling */
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #627d98;
+            --accent-color: #f7b2bd;
+            --bg-color: #f8f9fa;
+            --text-color: #334e68;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 2rem 10%;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hero {
+            padding: 4rem 10%;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #eef2f7 100%);
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: 1rem auto;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .container {
+            padding: 4rem 10%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-section {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 4rem 10%;
+            text-align: center;
+        }
+
+        .highlight-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .solution-box {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .solution-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            width: 280px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Harmony</h1>
+    </header>
+
+    <section class="hero">
+        <h2>Common Relationship Hurdles</h2>
+        <p>Every partnership faces friction. Whether it's communication gaps or differing priorities, understanding the "why" behind the conflict is the first step toward resolution.</p>
+    </section>
+
+    <div class="container">
+        <div class="card">
+            <h2>Communication</h2>
+            <p>Often, we aren't arguing about the dishes; we are arguing about feeling unheard or undervalued.</p>
+        </div>
+        <div class="card">
+            <h2>Expectations</h2>
+            <p>Unspoken rules can lead to silent resentment. Clarity is the antidote to disappointment.</p>
+        </div>
+        <div class="card">
+            <h2>Timing</h2>
+            <p>Life stress often spills into our private lives. Recognizing external pressure helps prevent internal blame.</p>
+        </div>
+    </div>
+
+    <section class="highlight-section">
+        <h2>The Foundation of Lasting Connection</h2>
+        <p>The "easiest" fix isn't about changing who your partner is, but understanding how they function.</p>
+        
+        <div class="solution-box">
+            <div class="solution-item">
+                <h3>Love Languages</h3>
+                <p>Learn how they receive love—whether it's words, touch, or service—so your efforts aren't lost in translation.</p>
+            </div>
+            <div class="solution-item">
+                <h3>Conation</h3>
+                <p>Understand their natural method of acting and striving. When you respect their "instinctive" way of doing things, friction disappears.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Harmony Relationship Insights. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
