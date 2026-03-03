@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmony | Navigating Relationships</title>
+    <title>Harmony | Relationship Solutions & Insights</title>
     <style>
-        /* CSS Styling */
+        /* CSS Variables for a cohesive color palette */
         :root {
             --primary-color: #4a6fa5;
             --secondary-color: #627d98;
@@ -39,120 +39,187 @@
             text-transform: uppercase;
         }
 
+        /* Hero / Problem Section */
         .hero {
             padding: 4rem 10%;
             text-align: center;
             background: linear-gradient(135deg, #ffffff 0%, #eef2f7 100%);
         }
 
+        .hero h2 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
         .hero p {
             max-width: 700px;
-            margin: 1rem auto;
-            font-size: 1.2rem;
+            margin: 0 auto;
+            font-size: 1.1rem;
             color: var(--secondary-color);
         }
 
+        /* Information Cards */
         .container {
             padding: 4rem 10%;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
 
         .card {
             background: var(--white);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
+            border-top: 4px solid var(--accent-color);
         }
 
         .card:hover {
             transform: translateY(-5px);
         }
 
-        .card h2 {
+        .card h3 {
             color: var(--primary-color);
-            border-bottom: 2px solid var(--accent-color);
-            display: inline-block;
-            margin-bottom: 1rem;
+            margin-top: 0;
         }
 
-        .highlight-section {
+        /* The Opt-In Section */
+        .optin-section {
             background-color: var(--primary-color);
             color: var(--white);
-            padding: 4rem 10%;
+            padding: 6rem 10%;
             text-align: center;
         }
 
-        .highlight-section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
+        .optin-section h2 {
+            font-size: 3.5rem;
+            margin: 0;
+            letter-spacing: 5px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
 
-        .solution-box {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
+        .optin-section .sub-headline {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            margin-bottom: 3.5rem;
+            font-style: italic;
+            opacity: 0.9;
         }
 
-        .solution-item {
+        .form-container {
+            max-width: 450px;
+            margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
+            padding: 3rem;
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
             border-radius: 8px;
-            width: 280px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: none;
+            box-sizing: border-box;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover {
+            background-color: #f28d9d;
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
         footer {
             text-align: center;
-            padding: 2rem;
-            font-size: 0.9rem;
-            color: #999;
+            padding: 3rem;
+            font-size: 0.85rem;
+            color: #718096;
+            background-color: var(--bg-color);
         }
-    </style> 
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .optin-section h2 { font-size: 2.5rem; }
+            .container { padding: 2rem 5%; }
+            .optin-section { padding: 4rem 5%; }
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <h1><u>Easiest</u> Fix For You And Your Spouse</h1>
+        <h1>Harmony</h1>
     </header>
 
     <section class="hero">
-        <h2>Why This Is The Best Fix</h2>
-        <p>I've worked with 5,109 couples 1-on-1 to date. I have have a 83.3% success rate. Current divorce rate is 50%. <b> So, if you want the best chances,</b> this is currently the best in the industry.</p>
+        <h2>Navigating Relationship Friction</h2>
+        <p>Most problems aren't caused by a lack of love, but by a breakdown in how that love is expressed and how actions are interpreted.</p>
     </section>
 
     <div class="container">
         <div class="card">
-            <h2>Communication</h2>
-            <p>Learn how your partner interprets your communication.</p>
+            <h3>Love Languages</h3>
+            <p>We often give love the way we want to receive it. By identifying your partner's specific language, you ensure your efforts are felt and appreciated.</p>
         </div>
         <div class="card">
-            <h2>Conation</h2>
-            <p>Learn how your partner tries to solve disputes.</p>
+            <h3>Conation</h3>
+            <p>This is the "doing" part of the mind. Understanding your partner’s natural method of striving helps you stop fighting their instincts and start working with them.</p>
         </div>
         <div class="card">
-            <h2>Me vs Them</h2>
-            <p>Learn how much time your partner needs on them and how much time you need on you. (Each partnership balance is different to make it work.)</p>
+            <h3>Expectation</h3>
+            <p>Friction often lives in the gap between what we expect and what we communicate. Bridging this gap is essential for long-term peace.</p>
         </div>
     </div>
 
-    <section class="highlight-section">
-        <h2>FREE PDF...</h2>
-        <p>To show how your partner communicates, their conation style and how much time they need.</p>
+    <section class="optin-section">
+        <h2>FREE PDF</h2>
+        <p class="sub-headline">If This Doesn't Work, Nothing Else Will.</p>
         
         <div class="form-container">
             <form action="#">
                 <div class="form-group">
-                    <label>Your Name</label>
-                    <input type="text" placeholder="Enter your name" required="">
+                    <label>First Name</label>
+                    <input type="text" placeholder="Enter your name" required>
                 </div>
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="Enter your best email" required="">
+                    <input type="email" placeholder="Where should we send it?" required>
                 </div>
                 <button type="submit" class="submit-btn">Send Me The PDF</button>
             </form>
@@ -160,7 +227,8 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 Harmony Relationship Insights. All rights reserved.</p>
+        &copy; 2026 Harmony Relationship Insights. All rights reserved. <br>
+        Professional Guidance for Modern Couples.
     </footer>
 
 </body>
