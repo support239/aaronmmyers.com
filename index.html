@@ -1,3 +1,6 @@
+Here is the updated HTML template with a clean, 3-column table centered under the "COMMON PROBLEMS TEENS HIDE FROM PARENTS:" section, focusing on general challenges young people commonly experience:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,11 +92,32 @@
 
         .common-problems-title {
             margin-top: 25px;
+            margin-bottom: 15px;
             font-weight: bold;
             font-size: 1.1rem;
             color: var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .problems-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .problems-table td {
+            width: 33.33%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-color);
         }
 
         .testimonials {
@@ -159,7 +183,8 @@
     <div class="container">
         <header>
             <div class="salutation">Dear Bishop,</div>
-            <h1>71% of Parents Say Raising Kids Is More Difficult</h1>
+            <h1>71% of Parents Say Raising Kids Is More Difficult Today</h1>
+
         </header>
 
         <section class="why-section">
@@ -169,21 +194,50 @@
                 <li>Social Media</li>
                 <li>Changing Morals</li>
             </ol>
-            <p>Some teens tell their parents everything. Others only give a one-word-answer. But according to a recent study... <span class="alert-text">TEENS ARE 2× MORE LIKELY TO HIDE THE TRUTH FROM THEIR PARENTS</span> — Research from Johns Hopkins University</p>
+            <p>Some teens tell their parents everything. Others only give a one-word answer. But according to a recent study... <span class="alert-text">TEENS ARE 2× MORE LIKELY TO HIDE THE TRUTH FROM THEIR PARENTS</span> — Research from Johns Hopkins University</p>
             
             <div class="common-problems-title">COMMON PROBLEMS TEENS HIDE FROM PARENTS:</div>
+
+            <table class="problems-table">
+                <tr>
+                    <td>How they're feeling</td>
+                    <td>Gender identity</td>
+                    <td>Drugs</td>
+                    <td>Suicide</td>
+                </tr>
+                <tr>
+                    <td>Anxiety</td>
+                    <td>Intrusive thoughts</td>
+                    <td>Vaping / Smoking</td>
+                    <td>Pornography</td>
+                </tr>
+                <tr>
+                    <td>Depression</td>
+                    <td>Cutting</td>
+                    <td>Gaming</td>
+                </tr>
+            </table>
         </section>
 
         <section>
-            <h2>What Families Are Experiencing</h2>
+            <h2>What 1,000's Of Families Experience...</h2>
             <blockquote class="testimonials">
                 <div class="testimonial-item">
-                    "Communication with our family has improved dramatically using these principles."
+                    "I know this works because I have seen it first hand in my own home. And they are all gospel principles."
                     <span class="author">– Derrick P.</span>
                 </div>
                 <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
                 <div class="testimonial-item">
-                    "It is amazing how quickly these techniques help de-escalate tension and bring clarity to everyday conversations."
+                    "The communication with our son has improved dramatically."
+                    <span class="author">– Ben S.</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+                <div class="testimonial-item">
+                    "You have gotten our son to read the scriptures and pray on a regular basis. We couldn't have asked for anything more! Whitney S."
+                    <span class="author">– Whitney S.</span>
+                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+                <div class="testimonial-item">
+                    "It is amazing how quickly this de-escalates the tension in the room."
                     <span class="author">– Ronald B.</span>
                 </div>
             </blockquote>
@@ -209,3 +263,5 @@
 
 </body>
 </html>
+
+```
