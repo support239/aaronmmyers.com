@@ -9,6 +9,7 @@
             --primary-color: #1a365d;
             --secondary-color: #2b6cb0;
             --accent-color: #d69e2e;
+            --highlight-red: #e53e3e;
             --bg-color: #f7fafc;
             --text-color: #2d3748;
             --card-bg: #ffffff;
@@ -62,20 +63,42 @@
             margin-bottom: 20px;
         }
 
-        .factors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+        .why-section {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 30px;
         }
 
-        .factor-card {
-            background-color: #edf2f7;
-            padding: 15px;
-            text-align: center;
-            border-radius: 6px;
-            font-weight: 600;
+        .why-section h2 {
             color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .why-list {
+            margin: 15px 0;
+            padding-left: 20px;
+            font-weight: 600;
+        }
+
+        .stat-callout {
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .alert-text {
+            color: var(--highlight-red);
+            font-weight: 800;
+        }
+
+        .common-problems-title {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .testimonials {
@@ -103,4 +126,92 @@
         }
 
         .features-list {
-            list
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #edf2f7;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .contact-box {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        .contact-box h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="salutation">Dear Bishop,</div>
+            <h1>71% of Parents Say Raising Kids Is More Difficult Today [cite: 1]</h1>
+            <p class="subtitle">Discover core principles to strengthen family relationships and foster open communication.</p>
+        </header>
+
+        <section class="why-section">
+            <h2>WHY IS THIS? [cite: 1]</h2>
+            <ol class="why-list">
+                <li>Technology [cite: 2]</li>
+                <li>Social Media [cite: 2]</li>
+                <li>Changing Morals [cite: 2]</li>
+            </ol>
+            <p>Some teens tell their parents everything. Others only give a one-word answer. [cite: 2] But according to a recent study... <span class="alert-text">TEENS ARE 2× MORE LIKELY TO HIDE THE TRUTH FROM THEIR PARENTS</span> — Research from Johns Hopkins University [cite: 3]</p>
+            
+            <div class="common-problems-title">COMMON PROBLEMS TEENS HIDE FROM PARENTS: [cite: 3]</div>
+        </section>
+
+        <section>
+            <h2>What Families Are Experiencing</h2>
+            <blockquote class="testimonials">
+                <div class="testimonial-item">
+                    "Communication with our family has improved dramatically using these principles." [cite: 7]
+                    <span class="author">– Derrick P. [cite: 7]</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+                <div class="testimonial-item">
+                    "It is amazing how quickly these techniques help de-escalate tension and bring clarity to everyday conversations." [cite: 9]
+                    <span class="author">– Ronald B. [cite: 10]</span>
+                </div>
+            </blockquote>
+        </section>
+
+        <section>
+            <h2>What You Will Learn</h2>
+            <p>Our workshop combines practical psychological insights and foundational principles to help parents connect with their children on a deeper level:</p>
+            <ul class="features-list">
+                <li>Understand the subtle reasons behind communication barriers. [cite: 12]</li>
+                <li>Learn key principles to support positive youth decision-making. [cite: 10, 13]</li>
+                <li>Discover effective strategies to foster proactive service and community engagement. [cite: 15]</li>
+                <li>Gain practical techniques for knowing what to say, how to say it, and when to say it. [cite: 22]</li>
+            </ul>
+        </section>
+
+        <div class="contact-box">
+            <h3>Schedule a Workshop for Your Group</h3>
+            <p>We look forward to connecting with you and supporting the families in your community.</p>
+            <p><strong>Contact:</strong> Aaron Myers | 801-783-3776 [cite: 23]</p>
+        </div>
+    </div>
+
+</body>
+</html>
