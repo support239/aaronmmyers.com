@@ -218,6 +218,28 @@
         .contact-box h3 {
             margin-top: 0;
         }
+
+        .sms-button {
+            display: inline-block;
+            background-color: #2b6cb0; /* Accent blue color */
+            color: #ffffff;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .sms-button:hover {
+            background-color: #2c5282;
+        }
+
+        .sms-button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -305,9 +327,12 @@
         </section>
 
         <div class="contact-box">
-            <!-- <h3>Schedule a Workshop for Your Group</h3> -->
+            
             <p>Look forward to chatting with you...</p>
-            <p><strong>Contact:</strong> Brother Aaron Myers | 801-783-3776</p>
+            
+            <a href="sms:+18017833776?body=Hi%20Aaron,%20I%20would%20like%20to%20learn%20more%20about%20scheduling%20a%20workshop." class="sms-button">
+                💬 Text Brother Aaron Myers (801-783-3776)
+            </a>
         </div>
     </div>
 
