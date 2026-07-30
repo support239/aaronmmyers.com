@@ -240,6 +240,70 @@
         .sms-button:active {
             transform: scale(0.98);
         }
+
+        /* Opt-in Form Section Styling */
+        .optin-section {
+            background-color: #edf2f7;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .optin-section h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+        }
+
+        .optin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+            margin: 20px auto 0 auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+            color: var(--primary-color);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"] {
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .submit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #1a365d;
+        }
     </style>
 </head>
 <body>
@@ -343,6 +407,23 @@
                 💬 Text Brother Aaron Myers (801-783-3776)
             </a>
         </div>
+
+        <section class="optin-section">
+            <h3>If you’d like to hear more stories about families, their struggles and how we helped them:</h3>
+            
+            <form class="optin-form" action="#" method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="submit-btn">Subscribe to Breakthrough Emails</button>
+            </form>
+        </section>
+
     </div>
 
 </body>
