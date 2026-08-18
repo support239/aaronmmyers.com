@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Local Roku Remote</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; background: #111; color: #fff; }
+    button { padding: 12px 20px; margin: 5px; font-size: 16px; border-radius: 8px; border: none; background: #662d91; color: white; cursor: pointer; }
+    button:hover { background: #8238ba; }
+    input { padding: 8px; font-size: 16px; text-align: center; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+
+  <h2>Web Roku Remote</h2>
+  <label for="rokuIp">Roku IP Address:</label><br>
+  <input type="text" id="rokuIp" placeholder="e.g. 192.168.1.50"><br><br>
+
+  <div>
+    <button onclick="sendKey('Home')">Home</button>
+    <button onclick="sendKey('Back')">Back</button>
+  </div>
+  <br>
+  <div>
+    <button onclick="sendKey('Up')">▲ Up</button><br>
+    <button onclick="sendKey('Left')">◄ Left</button>
+    <button onclick="sendKey('Select')">OK</button>
+    <button onclick="sendKey('Right')">Right ►</button><br>
+    <button onclick="sendKey('Down')">▼ Down</button>
+  </div>
+  <br>
+  <div>
+    <button onclick="sendKey('Play')">Play/Pause</button>
+    <button onclick="sendKey('VolumeUp')">Vol +</button>
+    <button onclick="sendKey('VolumeDown')">Vol -</button>
+  </div>
+
+  <script>
+    function sendKey(key) {
+      const ip = document.getElementById('rokuIp').value;
+      if (!ip) {
+        alert('Please enter your Roku IP address first.');
+        return;
+      }
+      // Sends HTTP POST request to the Roku ECP endpoint
+      fetch(`http://${ip}:8060/keypress/${key}`, {
+        method: 'POST',
+        mode: 'no-cors' // Bypasses browser CORS restrictions for local networks
+      });
+    }
+  </script>
+</body>
+</html>
