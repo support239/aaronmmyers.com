@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Child's Love Language Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .instructions {
+            background-color: #eef6fc;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .option {
+            display: block;
+            margin: 8px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0f4f8;
+        }
+        .option input {
+            margin-right: 10px;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #27ae60;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #219150;
+        }
+        #results {
+            display: none;
+            background: #fff;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .score-row:last-child {
+            border-bottom: none;
+        }
+        .rank {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            width: 30px;
+        }
+        .category-name {
+            flex-grow: 1;
+            font-size: 1.1em;
+        }
+        .score-count {
+            font-weight: bold;
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        .error-msg {
+            color: #c0392b;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Child's Love Language Profile</h1>
+    <div class="instructions">
+        For each pair of statements, choose the one that reflects what makes your child feel most loved.
+    </div>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+        <div id="error" class="error-msg"></div>
+        <button type="button" class="submit-btn" onclick="calculateResults()">Submit Answers</button>
+    </form>
+
+    <div id="results">
+        <h2>Your Child's Love Language Results</h2>
+        <div id="scoresList"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { num: 1, options: [{ letter: "A", text: "They like to receive notes of affirmation from you." }, { letter: "E", text: "They like it when you hug them." }] },
+            { num: 2, options: [{ letter: "B", text: "They like to spend one‐on‐one time with you." }, { letter: "D", text: "They feel loved when you give them practical help." }] },
+            { num: 3, options: [{ letter: "C", text: "They like it when you give them gifts." }, { letter: "B", text: "They like taking long walks with you." }] },
+            { num: 4, options: [{ letter: "D", text: "They feel loved when you do things to help them." }, { letter: "E", text: "They feel loved when you hug or touch them." }] },
+            { num: 5, options: [{ letter: "E", text: "They feel loved when you hold them in your arms." }, { letter: "C", text: "They feel loved when they receive a gift from you." }] },
+            { num: 6, options: [{ letter: "B", text: "They like to go places with you." }, { letter: "E", text: "They like to hold hands with you." }] },
+            { num: 7, options: [{ letter: "A", text: "They feel loved when you acknowledge them." }, { letter: "C", text: "Visible symbols of love (gifts) are very important to them." }] },
+            { num: 8, options: [{ letter: "E", text: "They like to sit close to you." }, { letter: "A", text: "They like it when you tell them that they are attractive." }] },
+            { num: 9, options: [{ letter: "B", text: "They like to spend time with you." }, { letter: "C", text: "They like to receive little gifts from you." }] },
+            { num: 10, options: [{ letter: "D", text: "They know you love them when you help them." }, { letter: "A", text: "Your words of acceptance are important to them." }] },
+            { num: 11, options: [{ letter: "B", text: "They like to be together when you do things." }, { letter: "A", text: "They like the kind words you say to them." }] },
+            { num: 12, options: [{ letter: "E", text: "They feel whole when you hug." }, { letter: "D", text: "What you do affects them more than what you say." }] },
+            { num: 13, options: [{ letter: "A", text: "They value your praise and try to avoid your criticism." }, { letter: "C", text: "Several inexpensive gifts mean more to them than one large expensive gift." }] },
+            { num: 14, options: [{ letter: "E", text: "They feel closer to you when you touch them." }, { letter: "B", text: "They feel close when you are talking or doing something together." }] },
+            { num: 15, options: [{ letter: "A", text: "They like you to compliment their achievements." }, { letter: "D", text: "They know you love them when you do things for them that you don’t enjoy doing." }] },
+            { num: 16, options: [{ letter: "E", text: "They like for you to touch them when you walk by." }, { letter: "B", text: "They like when you listen to them sympathetically." }] },
+            { num: 17, options: [{ letter: "C", text: "They really enjoy receiving gifts from you." }, { letter: "D", text: "They feel loved when you help them with their home projects." }] },
+            { num: 18, options: [{ letter: "A", text: "They like when you compliment their appearance." }, { letter: "B", text: "They feel loved when you take the time to understand their feelings." }] },
+            { num: 19, options: [{ letter: "E", text: "They feel secure when you are touching them." }, { letter: "D", text: "Your acts of service make them feel loved." }] },
+            { num: 20, options: [{ letter: "D", text: "They appreciate the many things you do for them." }, { letter: "C", text: "They like receiving gifts that you make." }] },
+            { num: 21, options: [{ letter: "B", text: "They really enjoy the feeling they get when you give them your undivided attention." }, { letter: "D", text: "They really enjoy the feeling they get when you do some act of service for them." }] },
+            { num: 22, options: [{ letter: "C", text: "They feel loved when you celebrate their birthday with a gift." }, { letter: "A", text: "They feel loved when you celebrate their birthday with meaningful words (written or spoken)." }] },
+            { num: 23, options: [{ letter: "D", text: "They feel loved when you help them out with their chores." }, { letter: "C", text: "They know you are thinking of them when you give them a gift." }] },
+            { num: 24, options: [{ letter: "C", text: "They appreciate it when you remember special days with a gift." }, { letter: "B", text: "They appreciate it when you listen patiently and don’t interrupt them." }] },
+            { num: 25, options: [{ letter: "B", text: "They enjoy extended trips with you." }, { letter: "D", text: "They like to know that you are concerned enough to help them with their daily tasks." }] },
+            { num: 26, options: [{ letter: "E", text: "Kissing them unexpectedly makes them feel loved." }, { letter: "C", text: "Giving them a gift for no occasion makes them feel loved." }] },
+            { num: 27, options: [{ letter: "A", text: "They like to be told that you appreciate them." }, { letter: "B", text: "They like for you to look at them when you are talking." }] },
+            { num: 28, options: [{ letter: "C", text: "Your gifts are always special to them." }, { letter: "E", text: "They feel loved when you kiss them." }] },
+            { num: 29, options: [{ letter: "A", text: "They feel loved when you tell them how much you appreciate them." }, { letter: "D", text: "They feel loved when you enthusiastically do a task they have requested." }] },
+            { num: 30, options: [{ letter: "E", text: "They need to be hugged by you every day." }, { letter: "A", text: "They need your words of affirmation daily." }] }
+        ];
+
+        const languageNames = {
+            "A": "Words of Affirmation",
+            "B": "Quality Time",
+            "C": "Receiving Gifts",
+            "D": "Acts of Service",
+            "E": "Physical Touch"
+        };
+
+        function renderQuestions() {
+            const container = document.getElementById("questionsContainer");
+            questions.forEach(q => {
+                const card = document.createElement("div");
+                card.className = "question-card";
+                
+                let optionsHtml = `<div class="question-number">Question ${q.num}</div>`;
+                q.options.forEach(opt => {
+                    optionsHtml += `
+                        <label class="option">
+                            <input type="radio" name="q${q.num}" value="${opt.letter}">
+                            <strong>${opt.letter}.</strong> ${opt.text}
+                        </label>
+                    `;
+                });
+                card.innerHTML = optionsHtml;
+                container.appendChild(card);
+            });
+        }
+
+        function calculateResults() {
+            const scores = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+            let unanswered = 0;
+
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.num}"]:checked`);
+                if (selected) {
+                    scores[selected.value]++;
+                } else {
+                    unanswered++;
+                }
+            });
+
+            const errorDiv = document.getElementById("error");
+            if (unanswered > 0) {
+                errorDiv.textContent = `Please answer all questions. You have ${unanswered} unanswered question(s).`;
+                return;
+            }
+            errorDiv.textContent = "";
+
+            const sortedScores = Object.keys(scores)
+                .map(key => ({ category: languageNames[key], count: scores[key] }))
+                .sort((a, b) => b.count - a.count);
+
+            const scoresList = document.getElementById("scoresList");
+            scoresList.innerHTML = "";
+            
+            sortedScores.forEach((item, index) => {
+                const row = document.createElement("div");
+                row.className = "score-row";
+                row.innerHTML = `
+                    <span class="rank">#${index + 1}</span>
+                    <span class="category-name">${item.category}</span>
+                    <span class="score-count">${item.count} pts</span>
+                `;
+                scoresList.appendChild(row);
+            });
+
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.style.display = "block";
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        renderQuestions();
+    </script>
+</body>
+</html>
