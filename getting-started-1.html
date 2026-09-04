@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Course Portal - First Exercise</title>
+  <style>
+    /* CSS Reset */
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body { 
+      display: flex; 
+      flex-direction: row; 
+      overflow: hidden; 
+    }
+
+    /* Sidebar / Navigation */
+    #sidebar { 
+      width: 300px; 
+      background-color: #ffffff; 
+      border-right: 1px solid #e9ecef; 
+      display: flex; 
+      flex-direction: column; 
+      flex-shrink: 0; 
+      z-index: 10;
+    }
+
+    .sidebar-header { 
+      padding: 20px; 
+      border-bottom: 1px solid #e9ecef; 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      color: #1a252f; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-list { 
+      list-style: none; 
+      overflow-y: auto; 
+      flex-grow: 1; 
+      -webkit-overflow-scrolling: touch; 
+    }
+    
+    .module-title { 
+      padding: 16px 20px; 
+      background-color: #f1f3f5; 
+      font-weight: 600; 
+      cursor: pointer; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border-bottom: 1px solid #e9ecef; 
+      user-select: none;
+    }
+    .module-title:hover { background-color: #e9ecef; }
+    
+    .submodules { list-style: none; display: none; background-color: #ffffff; }
+    .submodules.open { display: block; }
+    
+    .nav-item { 
+      padding: 14px 20px 14px 30px; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      cursor: pointer; 
+      border-bottom: 1px solid #f8f9fa; 
+      font-size: 0.95rem; 
+    }
+    .nav-item:hover { background-color: #f8f9fa; }
+    .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
+    .nav-item input[type="checkbox"] { pointer-events: none; }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #1a252f;
+    }
+
+    /* Main Content */
+    #main-content { 
+      flex-grow: 1; 
+      padding: 40px 20px; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    .container { max-width: 900px; width: 100%; }
+    h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
+    p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
+
+    /* Video Wrapper */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background-color: #000;
+      margin-bottom: 25px;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: -11%; 
+      left: 0;
+      width: 100%;
+      height: 122%;
+      border: 0;
+    }
+
+    /* Mobile Thumbnail Cover */
+    .video-cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      background-image: url('https://img.youtube.com/vi/QlrNMaPbc2U/hqdefault.jpg');
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      transition: opacity 0.3s ease;
+    }
+
+    .play-btn {
+      width: 68px;
+      height: 48px;
+      background-color: rgba(255, 0, 0, 0.9);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .play-btn::before {
+      content: "";
+      border-style: solid;
+      border-width: 10px 0 10px 18px;
+      border-color: transparent transparent transparent #ffffff;
+      margin-left: 3px;
+    }
+
+    .video-cover:hover .play-btn {
+      background-color: #ff0000;
+      transform: scale(1.08);
+    }
+
+    /* Goals Form Card */
+    .goals-card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      margin-bottom: 25px;
+    }
+
+    .goals-card h2 {
+      font-size: 1.2rem;
+      color: #1a252f;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .form-group input {
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #228be6;
+    }
+
+    .btn-save-goals {
+      background-color: #228be6;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    .btn-save-goals:hover { background-color: #1c7ed6; }
+
+    /* Completion Card */
+    .completion-card { 
+      background: #ffffff; 
+      padding: 20px; 
+      border-radius: 8px; 
+      border: 1px solid #e9ecef; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+    }
+
+    .checkbox-label { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      cursor: pointer; 
+      user-select: none; 
+    }
+
+    .checkbox-label input { 
+      width: 22px; 
+      height: 22px; 
+      cursor: pointer; 
+      accent-color: #228be6; 
+    }
+
+    .btn-next { 
+      background-color: #228be6; 
+      color: #ffffff; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 6px; 
+      font-weight: 600; 
+      font-size: 0.95rem;
+      cursor: pointer; 
+      transition: background-color 0.2s; 
+      white-space: nowrap;
+    }
+    .btn-next:hover { background-color: #1c7ed6; }
+
+    /* Login Modal Overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .login-box h2 { margin-bottom: 20px; font-size: 1.4rem; color: #1a252f; }
+
+    /* Transparent Loading Spinner Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      z-index: 900;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 45px;
+      height: 45px;
+      border: 5px solid #e9ecef;
+      border-top: 5px solid #228be6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile Breakpoint */
+    @media (max-width: 768px) {
+      body { flex-direction: column; overflow: auto; }
+      #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
+      .mobile-nav-toggle { display: block; }
+      .nav-list { display: none; max-height: 350px; }
+      .nav-list.mobile-open { display: block; }
+      #main-content { padding: 20px 15px; overflow-y: visible; }
+      h1 { font-size: 1.4rem; }
+      p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
+
+      .video-wrapper iframe { top: -12%; height: 124%; }
+      .completion-card { flex-direction: column; align-items: stretch; text-align: center; }
+      .checkbox-label { justify-content: center; margin-bottom: 10px; }
+      .btn-next { width: 100%; padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Spinner Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
+  </div>
+
+  <!-- Login Modal Overlay -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>Portal Login</h2>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password">
+      </div>
+      <button class="btn-save-goals" onclick="performLogin()" style="margin-top: 10px;">Sign In</button>
+      <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+  </div>
+
+  <!-- Left Navigation -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <span>Course Content</span>
+      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">☰</button>
+    </div>
+    <ul class="nav-list" id="main-nav-list">
+      <li>
+        <div class="module-title" onclick="toggleModule('mod1')">
+          <span>Getting Started</span>
+          <span id="mod1-icon">▼</span>
+        </div>
+        <ul id="mod1" class="submodules open">
+          <li class="nav-item active" onclick="loadLesson('mod1-item1')">
+            <input type="checkbox" id="chk-mod1-item1">
+            <span>Module 1: First Exercise</span>
+          </li>
+          <li class="nav-item" onclick="loadLesson('mod1-item2')">
+            <input type="checkbox" id="chk-mod1-item2">
+            <span>Module 2: Course Overview</span>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <div class="module-title" onclick="toggleModule('mod2')">
+          <span>Core Concepts</span>
+          <span id="mod2-icon">▶</span>
+        </div>
+        <ul id="mod2" class="submodules">
+          <li class="nav-item" onclick="loadLesson('mod2-item1')">
+            <input type="checkbox" id="chk-mod2-item1">
+            <span>Module 1: Fundamentals</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <div class="container">
+      <h1>Getting Started: Module 1</h1>
+      <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
+
+      <!-- Video Wrapper -->
+      <div class="video-wrapper">
+        <div class="video-cover" id="videoCover" onclick="playVideo()">
+          <div class="play-btn"></div>
+        </div>
+        <iframe 
+          id="ytPlayer"
+          src="https://www.youtube-nocookie.com/embed/QlrNMaPbc2U?rel=0&modestbranding=1&enablejsapi=1" 
+          title="Course Introduction" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- User Goals Input Section -->
+      <div class="goals-card">
+        <h2>Your Exercise Goals</h2>
+        <div class="form-group">
+          <label for="minGoal">Minimum Goal</label>
+          <input type="text" id="minGoal" placeholder="e.g. $1,000 / mo">
+        </div>
+        <div class="form-group">
+          <label for="midGoal">Mid-Range Goal</label>
+          <input type="text" id="midGoal" placeholder="e.g. $5,000 / mo">
+        </div>
+        <div class="form-group">
+          <label for="maxGoal">Maximum Goal</label>
+          <input type="text" id="maxGoal" placeholder="e.g. $10,000 / mo">
+        </div>
+        <button class="btn-save-goals" onclick="saveUserGoals()">Save Goals to Profile</button>
+      </div>
+
+      <!-- Completion Controls -->
+      <div class="completion-card">
+        <label class="checkbox-label">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item1')">
+          <span>I have completed this module</span>
+        </label>
+        <button class="btn-next" onclick="nextLesson()">Next Module →</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    const CURRENT_LESSON_ID = 'mod1-item1';
+
+    // Cookie Utilities
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+    }
+
+    function getCookie(name) {
+      let nameEQ = name + "=";
+      let ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Show/Hide Loading Overlay
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // Auth & Init Check
+    async function checkAuthAndInit() {
+      const user = getCookie("portal_user");
+      if (!user) {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      } else {
+        document.getElementById('loginOverlay').style.display = 'none';
+        await fetchGoals(user);
+      }
+      loadProgress();
+    }
+
+    async function performLogin() {
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      const errorEl = document.getElementById('loginError');
+
+      if (!user || !pass) return;
+
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "login", username: user, password: pass })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          setCookie("portal_user", user, 7);
+          document.getElementById('loginOverlay').style.display = 'none';
+          await fetchGoals(user);
+        } else {
+          errorEl.textContent = data.message || "Invalid credentials";
+          errorEl.style.display = "block";
+        }
+      } catch (err) {
+        errorEl.textContent = "Error connecting to database server.";
+        errorEl.style.display = "block";
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function fetchGoals(username) {
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getGoals", username: username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('minGoal').value = data.minGoal || '';
+          document.getElementById('midGoal').value = data.midGoal || '';
+          document.getElementById('maxGoal').value = data.maxGoal || '';
+        }
+      } catch (err) {
+        console.error("Failed to load goals", err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function saveUserGoals() {
+      const user = getCookie("portal_user");
+      if (!user) return alert("Please log in first.");
+
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "saveGoals",
+            username: user,
+            minGoal: document.getElementById('minGoal').value,
+            midGoal: document.getElementById('midGoal').value,
+            maxGoal: document.getElementById('maxGoal').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Goals successfully saved to your profile!");
+        } else {
+          alert("Error saving goals: " + data.message);
+        }
+      } catch (err) {
+        alert("Failed to reach database server.");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function playVideo() {
+      const cover = document.getElementById('videoCover');
+      const iframe = document.getElementById('ytPlayer');
+      cover.style.opacity = '0';
+      setTimeout(() => { cover.style.display = 'none'; }, 300);
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('main-nav-list').classList.toggle('mobile-open');
+    }
+
+    function toggleModule(id) {
+      const submodule = document.getElementById(id);
+      const icon = document.getElementById(id + '-icon');
+      const isOpen = submodule.classList.contains('open');
+      submodule.classList.toggle('open');
+      icon.textContent = isOpen ? '▶' : '▼';
+    }
+
+    function toggleCompletion(lessonId) {
+      const isChecked = document.getElementById('main-complete-check').checked;
+      const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+      if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+      try { localStorage.setItem('complete_' + lessonId, isChecked); } catch (e) {}
+    }
+
+    function loadProgress() {
+      let isCompleted = false;
+      try { isCompleted = localStorage.getItem('complete_' + CURRENT_LESSON_ID) === 'true'; } catch (e) {}
+      
+      document.getElementById('main-complete-check').checked = isCompleted;
+      const currentSidebarCheckbox = document.getElementById('chk-' + CURRENT_LESSON_ID);
+      if (currentSidebarCheckbox) currentSidebarCheckbox.checked = isCompleted;
+
+      ['mod1-item1', 'mod1-item2', 'mod2-item1'].forEach(id => {
+        try {
+          if (localStorage.getItem('complete_' + id) === 'true') {
+            const el = document.getElementById('chk-' + id);
+            if (el) el.checked = true;
+          }
+        } catch (e) {}
+      });
+    }
+
+    function nextLesson() { alert("Moving to the next module!"); }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkAuthAndInit);
+    } else {
+      checkAuthAndInit();
+    }
+  </script>
+</body>
+</html>
