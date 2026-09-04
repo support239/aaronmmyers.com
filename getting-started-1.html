@@ -200,7 +200,7 @@
     }
     .btn-next:hover { background-color: #1c7ed6; }
 
-    /* Mobile Breakpoint Modifications */
+    /* Mobile Breakpoint Modifications & Aggressive Zoom */
     @media (max-width: 768px) {
       body { 
         flex-direction: column; 
@@ -234,16 +234,23 @@
       h1 { font-size: 1.4rem; }
       p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
 
-      /* Aggressive Cropping for Mobile Displays */
+      /* Aggressive Zoom to pushing YouTube overlays outside the viewport frame */
       .video-wrapper {
-        padding-top: 60%; 
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        overflow: hidden;
+        border-radius: 8px;
+        background-color: #000;
       }
 
       .video-wrapper iframe {
-        top: -28%; 
-        left: -5%;
-        width: 110%;
-        height: 155%; 
+        position: absolute;
+        width: 140% !important;
+        height: 140% !important;
+        top: -20% !important;
+        left: -20% !important;
+        border: 0;
       }
 
       .completion-card { 
