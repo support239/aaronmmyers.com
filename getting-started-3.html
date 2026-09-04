@@ -27,7 +27,7 @@
     p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
     .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #000; margin-bottom: 25px; }
     .video-wrapper iframe { position: absolute; top: -11%; left: 0; width: 100%; height: 122%; border: 0; }
-    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/NO6lo-jeUyw/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
+    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/Mi8uD5c-xxU/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
     .play-btn { width: 68px; height: 48px; background-color: rgba(255, 0, 0, 0.9); border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s, background-color 0.2s; }
     .play-btn::before { content: ""; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent #ffffff; margin-left: 3px; }
     .video-cover:hover .play-btn { background-color: #ff0000; transform: scale(1.08); }
@@ -52,23 +52,34 @@
     .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
     
     .login-overlay { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: rgba(0,0,0,0.8); z-index: 1000; 
-      display: flex; justify-content: center; align-items: center; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 1000; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
     }
     .login-box { 
-      background: #fff; padding: 36px 32px; border-radius: 12px; 
-      width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+      background: #fff; 
+      padding: 36px 32px; 
+      border-radius: 12px; 
+      width: 100%; 
+      max-width: 440px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
     }
     .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
     .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
-    .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .login-box input[type="text"], 
+    .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
     .login-box .btn { width: 100%; padding: 12px; background-color: #228be6; font-size: 1rem; font-weight: 600; border-radius: 6px; margin-top: 6px; }
 
-    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); z-index: 2000; display: none; flex-direction: column; justify-content: center; align-items: center; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
     @media (max-width: 768px) {
       body { flex-direction: column; overflow: auto; }
       #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
@@ -83,17 +94,15 @@
 
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
-    <p style="margin-top: 15px; font-weight: 600; color: #495057;" id="loadingText">Syncing with database...</p>
+    <p style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
   </div>
 
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h2>Portal Login</h2>
-      <form onsubmit="event.preventDefault(); performLogin();">
-        <div style="margin-bottom:15px;"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username"></div>
-        <div style="margin-bottom:15px;"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password"></div>
-        <button type="submit" class="btn">Sign In</button>
-      </form>
+      <div style="margin-bottom:15px;"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username"></div>
+      <div style="margin-bottom:15px;"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password"></div>
+      <button class="btn" onclick="performLogin()">Sign In</button>
       <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
     </div>
   </div>
@@ -148,7 +157,7 @@
         <div class="video-cover" id="videoCover" onclick="playVideo()">
           <div class="play-btn"></div>
         </div>
-        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/Mi8uD5c-xxU?rel=0&modestbranding=1&enablejsapi=1" title="Values Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> 
+        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/Mi8uD5c-xxU?rel=0&modestbranding=1&enablejsapi=1" title="Values Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
 
       <div class="card">
@@ -220,10 +229,7 @@
 
     function setCookie(n,v,d){let e="";if(d){let t=new Date();t.setTime(t.getTime()+(d*864e5));e="; expires="+t.toUTCString()}document.cookie=n+"="+(v||"")+e+"; path=/; domain=aaronmmyers.com; SameSite=Lax"}
     function getCookie(n){let e=n+"=",c=document.cookie.split(';');for(let i=0;i<c.length;i++){let t=c[i];while(t.charAt(0)===' ')t=t.substring(1);if(t.indexOf(e)===0)return t.substring(e.length)}return null}
-    function showLoading(s, message = "Syncing with database..."){
-      document.getElementById('loadingText').innerText = message;
-      document.getElementById('loadingOverlay').style.display = s ? 'flex' : 'none';
-    }
+    function showLoading(s){document.getElementById('loadingOverlay').style.display=s?'flex':'none'}
 
     async function checkAuthAndInit() {
       const user = getCookie("portal_user");
@@ -239,13 +245,15 @@
     }
 
     async function performLogin() {
+      showLoading(true);
+
       const user = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
       const errorEl = document.getElementById('loginError');
-      if (!user || !pass) return;
-
-      errorEl.style.display = "none";
-      showLoading(true, "Logging in...");
+      if (!user || !pass) {
+        showLoading(false);
+        return;
+      }
 
       try {
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "login", username: user, password: pass }) });
@@ -273,7 +281,7 @@
       const user = getCookie("portal_user");
       if (!user) return;
 
-      showLoading(true, "Loading user data...");
+      showLoading(true);
       try {
         const resProgress = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getData", username: user }) });
         const dataProgress = await resProgress.json();
@@ -371,7 +379,7 @@
       const user = getCookie("portal_user");
       if (!user) return alert("Please log in first.");
 
-      showLoading(true, "Saving assessment...");
+      showLoading(true);
       const payload = {
         email: user,
         monthYear: document.getElementById('monthPicker').value,
@@ -408,7 +416,7 @@
       const sidebarCheckbox = document.getElementById('chk-' + lessonId);
       if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
 
-      showLoading(true, "Updating progress...");
+      showLoading(true);
       try {
         await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveProgress", username: user, lessonId: lessonId, completed: isChecked }) });
       } catch (err) { console.error(err); }
