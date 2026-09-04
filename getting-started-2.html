@@ -99,21 +99,25 @@
             <input type="checkbox" id="chk-mod1-item1">
             <span>Module 1: First Exercise</span>
           </li>
-          <li class="nav-item active" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
+          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
             <input type="checkbox" id="chk-mod1-item2">
             <span>Module 2: Course Overview</span>
+          </li>
+          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-3.html', ['mod1-item1', 'mod1-item2'])">
+            <input type="checkbox" id="chk-mod1-item3">
+            <span>Module 3: Your Values</span>
           </li>
         </ul>
       </li>
       <li>
         <div class="module-title" onclick="toggleModule('mod2')">
-          <span>Core Concepts</span>
+          <span>Week 1</span>
           <span id="mod2-icon">▶</span>
         </div>
         <ul id="mod2" class="submodules">
-          <li class="nav-item">
+          <li class="nav-item" onclick="alert('Week 1 is not accessible yet.')">
             <input type="checkbox" id="chk-mod2-item1">
-            <span>Module 1: Fundamentals</span>
+            <span>Module 1: Fears</span>
           </li>
         </ul>
       </li>
@@ -286,6 +290,19 @@
     } else {
       checkAuthAndInit();
     }
+
+    function checkAndNavigate(targetUrl, requiredLessonIds) {
+  const allComplete = requiredLessonIds.every(id => {
+    const chk = document.getElementById('chk-' + id);
+    return chk && chk.checked;
+  });
+
+  if (!allComplete) {
+    alert("Please complete the first 2 modules before proceeding to Module 3.");
+    return;
+  }
+  window.location.href = targetUrl;
+}
   </script>
 </body>
 </html>
