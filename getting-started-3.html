@@ -50,63 +50,33 @@
     .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-top: 20px; }
     .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
     .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
+    
     .login-overlay { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background: rgba(0,0,0,0.8); 
-  z-index: 1000; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-}
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 1000; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+    }
+    .login-box { 
+      background: #fff; 
+      padding: 36px 32px; 
+      border-radius: 12px; 
+      width: 100%; 
+      max-width: 440px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+    }
+    .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
+    .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
+    .login-box input[type="text"], 
+    .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .login-box .btn { width: 100%; padding: 12px; background-color: #228be6; font-size: 1rem; font-weight: 600; border-radius: 6px; margin-top: 6px; }
 
-.login-box { 
-  background: #fff; 
-  padding: 36px 32px; 
-  border-radius: 12px; 
-  width: 100%; 
-  max-width: 440px; 
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-}
-
-.login-box h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a252f;
-  margin-bottom: 24px;
-}
-
-.login-box label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 6px;
-}
-
-.login-box input[type="text"], 
-.login-box input[type="password"] {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  margin-bottom: 18px;
-  box-sizing: border-box;
-}
-
-.login-box .btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #228be6;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 6px;
-  margin-top: 6px;
-}
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 900; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -129,9 +99,9 @@
 
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h2 style="margin-bottom: 20px;">Portal Login</h2>
-      <div style="margin-bottom:15px;"><label>Username</label><input type="text" id="loginUser"></div>
-      <div style="margin-bottom:15px;"><label>Password</label><input type="password" id="loginPass"></div>
+      <h2>Portal Login</h2>
+      <div style="margin-bottom:15px;"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username"></div>
+      <div style="margin-bottom:15px;"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password"></div>
       <button class="btn" onclick="performLogin()">Sign In</button>
       <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
     </div>
@@ -245,15 +215,10 @@
     const CURRENT_LESSON_ID = 'mod1-item3';
 
     const colorPalette = ["#FF5733", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F", "#E67E22", "#1ABC9C", "#E91E63", "#34495E", "#8E44AD"];
-    let colorIndex = 3;
-    let masterValues = [
-      { name: "Family", color: "#FF5733" },
-      { name: "Health", color: "#2ECC71" },
-      { name: "Career", color: "#3498DB" },
-      { name: "Finances", color: "#F1C40F" },
-      { name: "Mental Health", color: "#9B59B6" },
-      { name: "Physical Health", color: "#2ECC71" }
-    ];
+    let colorIndex = 0;
+    
+    // Starts empty so no pills display on initial load unless retrieved from the database
+    let masterValues = [];
 
     const modalQuestions = {
       1: "If you put all of your thoughts into categories, on a normal day, what would the top 3 categories be for what you think about?",
@@ -281,40 +246,33 @@
     }
 
     async function performLogin() {
-  const user = document.getElementById('loginUser').value;
-  const pass = document.getElementById('loginPass').value;
-  const errorEl = document.getElementById('loginError');
-  
-  if (!user || !pass) return;
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      const errorEl = document.getElementById('loginError');
+      if (!user || !pass) return;
 
-  // Show the spinning loader overlay while validating credentials
-  showLoading(true);
-
-  try {
-    const res = await fetch(API_URL, { 
-      method: "POST", 
-      body: JSON.stringify({ action: "login", username: user, password: pass }) 
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      setCookie("portal_user", data.username, 7);
-      document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('monthPicker').value = new Date().toISOString().slice(0, 7);
-      renderQuestions();
-      updateColorPicker();
-      await loadUserData();
-    } else {
-      errorEl.textContent = data.message || "Invalid credentials"; 
-      errorEl.style.display = "block";
-      showLoading(false); // Hide loader if login fails so user can re-try
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "login", username: user, password: pass }) });
+        const data = await res.json();
+        if (data.success) {
+          setCookie("portal_user", data.username, 7);
+          document.getElementById('loginOverlay').style.display = 'none';
+          document.getElementById('monthPicker').value = new Date().toISOString().slice(0,7);
+          renderQuestions();
+          updateColorPicker();
+          await loadUserData();
+        } else {
+          errorEl.textContent = data.message || "Invalid credentials"; 
+          errorEl.style.display = "block";
+          showLoading(false);
+        }
+      } catch (err) { 
+        errorEl.textContent = "Error connecting to server."; 
+        errorEl.style.display = "block"; 
+        showLoading(false);
+      }
     }
-  } catch (err) { 
-    errorEl.textContent = "Error connecting to server."; 
-    errorEl.style.display = "block"; 
-    showLoading(false);
-  }
-}
 
     async function loadUserData() {
       const user = getCookie("portal_user");
@@ -356,19 +314,22 @@
           historyDiv.style.display = 'block';
         }
 
-        if (dataAssess.found) populateAssessmentData(dataAssess);
+        if (dataAssess.found) {
+          populateAssessmentData(dataAssess);
+        }
 
       } catch (err) { console.error(err); }
       finally { showLoading(false); }
     }
 
     function clearAssessmentForm() {
+      masterValues = [];
       for (let q = 1; q <= 5; q++) {
         for (let a = 1; a <= 3; a++) {
           const input = document.getElementById(`q${q}_a${a}`);
           if (input) input.value = '';
           const tagContainer = document.getElementById(`q${q}_a${a}_tags`);
-          if (tagContainer) tagContainer.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('selected'));
+          if (tagContainer) tagContainer.innerHTML = '';
         }
       }
       renderValues();
@@ -376,10 +337,10 @@
 
     function populateAssessmentData(data) {
       if (!data || !data.answers) return;
-      data.answers.forEach((q, qIdx) => {
-        q.forEach((a, aIdx) => {
-          const input = document.getElementById(`q${qIdx + 1}_a${aIdx + 1}`);
-          if (input) input.value = a.text || '';
+      
+      masterValues = [];
+      data.answers.forEach((q) => {
+        q.forEach((a) => {
           if (a.selectedValues) {
             a.selectedValues.forEach(sv => {
               if (!masterValues.some(mv => mv.name.toLowerCase() === sv.name.toLowerCase())) {
@@ -389,10 +350,15 @@
           }
         });
       });
+
       renderValues();
       refreshAllTags();
+
       data.answers.forEach((q, qIdx) => {
         q.forEach((a, aIdx) => {
+          const input = document.getElementById(`q${qIdx + 1}_a${aIdx + 1}`);
+          if (input) input.value = a.text || '';
+
           const tagContainer = document.getElementById(`q${qIdx + 1}_a${aIdx + 1}_tags`);
           if (tagContainer && a.selectedValues) {
             const savedNames = a.selectedValues.map(sv => sv.name.toLowerCase());
@@ -402,6 +368,7 @@
           }
         });
       });
+
       renderValues();
     }
 
@@ -490,6 +457,7 @@
       const color = document.getElementById('newValueColor').value;
       if (!name) return;
       if (masterValues.some(v => v.name.toLowerCase() === name.toLowerCase())) return alert('Value category already exists!');
+      
       masterValues.push({ name, color });
       nameInput.value = '';
       colorIndex++;
@@ -518,6 +486,7 @@
 
     function updateCounts() { renderValues(); }
     function updateColorPicker() { document.getElementById('newValueColor').value = colorPalette[colorIndex % colorPalette.length]; }
+    
     function renderValues() {
       const container = document.getElementById('valuesList');
       container.innerHTML = '';
