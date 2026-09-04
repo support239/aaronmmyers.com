@@ -263,35 +263,40 @@
     }
 
     async function performLogin() {
-      const user = document.getElementById('loginUser').value;
-      const pass = document.getElementById('loginPass').value;
-      const errorEl = document.getElementById('loginError');
+  const user = document.getElementById('loginUser').value;
+  const pass = document.getElementById('loginPass').value;
+  const errorEl = document.getElementById('loginError');
+  
+  if (!user || !pass) return;
 
-      if (!user || !pass) return;
+  // Show the spinning loader overlay while validating credentials
+  showLoading(true);
 
-      showLoading(true);
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "login", username: user, password: pass })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-          setCookie("portal_user", data.username, 7);
-          document.getElementById('loginOverlay').style.display = 'none';
-          await fetchUserData(data.username);
-        } else {
-          errorEl.textContent = data.message || "Invalid credentials";
-          errorEl.style.display = "block";
-        }
-      } catch (err) {
-        errorEl.textContent = "Error connecting to database server.";
-        errorEl.style.display = "block";
-      } finally {
-        showLoading(false);
-      }
+  try {
+    const res = await fetch(API_URL, { 
+      method: "POST", 
+      body: JSON.stringify({ action: "login", username: user, password: pass }) 
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      setCookie("portal_user", data.username, 7);
+      document.getElementById('loginOverlay').style.display = 'none';
+      document.getElementById('monthPicker').value = new Date().toISOString().slice(0, 7);
+      renderQuestions();
+      updateColorPicker();
+      await loadUserData();
+    } else {
+      errorEl.textContent = data.message || "Invalid credentials"; 
+      errorEl.style.display = "block";
+      showLoading(false); // Hide loader if login fails so user can re-try
     }
+  } catch (err) { 
+    errorEl.textContent = "Error connecting to server."; 
+    errorEl.style.display = "block"; 
+    showLoading(false);
+  }
+}
 
     async function fetchUserData(username) {
       showLoading(true);
