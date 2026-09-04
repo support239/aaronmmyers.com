@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Course Portal - Getting Started</title>
   <style>
-    /* CSS Reset & Cross-Browser Box-Sizing */
+    /* CSS Reset */
     *, *::before, *::after { 
       box-sizing: border-box; 
       margin: 0; 
@@ -13,7 +13,6 @@
       -webkit-tap-highlight-color: transparent; 
     }
 
-    /* Full-height viewport layout */
     html, body {
       height: 100%;
       width: 100%;
@@ -21,7 +20,6 @@
       color: #333;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     body { 
@@ -30,7 +28,7 @@
       overflow: hidden; 
     }
 
-    /* Sidebar / Navigation Styles */
+    /* Sidebar / Navigation */
     #sidebar { 
       width: 300px; 
       background-color: #ffffff; 
@@ -59,7 +57,6 @@
       -webkit-overflow-scrolling: touch; 
     }
     
-    /* Accordion Headers */
     .module-title { 
       padding: 16px 20px; 
       background-color: #f1f3f5; 
@@ -70,18 +67,12 @@
       align-items: center; 
       border-bottom: 1px solid #e9ecef; 
       user-select: none;
-      -webkit-user-select: none;
     }
     .module-title:hover { background-color: #e9ecef; }
     
-    .submodules { 
-      list-style: none; 
-      display: none; 
-      background-color: #ffffff; 
-    }
+    .submodules { list-style: none; display: none; background-color: #ffffff; }
     .submodules.open { display: block; }
     
-    /* Navigation Items */
     .nav-item { 
       padding: 14px 20px 14px 30px; 
       display: flex; 
@@ -95,7 +86,6 @@
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
     .nav-item input[type="checkbox"] { pointer-events: none; }
 
-    /* Mobile Menu Toggle Button */
     .mobile-nav-toggle {
       display: none;
       background: none;
@@ -105,7 +95,7 @@
       color: #1a252f;
     }
 
-    /* Main Content Styles */
+    /* Main Content */
     #main-content { 
       flex-grow: 1; 
       padding: 40px 20px; 
@@ -116,25 +106,11 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    .container { 
-      max-width: 900px; 
-      width: 100%; 
-    }
+    .container { max-width: 900px; width: 100%; }
+    h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
+    p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
 
-    h1 { 
-      margin-bottom: 10px; 
-      color: #1a252f; 
-      font-size: 1.75rem; 
-      line-height: 1.2;
-    }
-
-    p.subtitle { 
-      color: #6c757d; 
-      margin-bottom: 25px; 
-      font-size: 1rem;
-    }
-
-    /* Base Desktop Video Wrapper */
+    /* Video Wrapper */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -153,6 +129,52 @@
       width: 100%;
       height: 122%;
       border: 0;
+    }
+
+    /* Clean Mobile Cover Overlay */
+    .video-cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      /* Automatically fetches your YouTube video thumbnail */
+      background-image: url('https://img.youtube.com/vi/NO6lo-jeUyw/hqdefault.jpg');
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Custom Centered Play Button */
+    .play-btn {
+      width: 68px;
+      height: 48px;
+      background-color: rgba(255, 0, 0, 0.9);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .play-btn::before {
+      content: "";
+      border-style: solid;
+      border-width: 10px 0 10px 18px;
+      border-color: transparent transparent transparent #ffffff;
+      margin-left: 3px;
+    }
+
+    .video-cover:hover .play-btn {
+      background-color: #ff0000;
+      transform: scale(1.08);
     }
 
     /* Completion Card */
@@ -176,7 +198,6 @@
       font-weight: 600; 
       cursor: pointer; 
       user-select: none; 
-      -webkit-user-select: none;
     }
 
     .checkbox-label input { 
@@ -200,80 +221,31 @@
     }
     .btn-next:hover { background-color: #1c7ed6; }
 
-    /* Mobile Breakpoint Modifications & Aggressive Zoom */
+    /* Mobile Responsive Rules */
     @media (max-width: 768px) {
-      body { 
-        flex-direction: column; 
-        overflow: auto; 
-      }
-
-      #sidebar { 
-        width: 100%; 
-        border-right: none; 
-        border-bottom: 1px solid #e9ecef; 
-      }
-
-      .mobile-nav-toggle { 
-        display: block; 
-      }
-
-      .nav-list { 
-        display: none; 
-        max-height: 350px;
-      }
-
-      .nav-list.mobile-open { 
-        display: block; 
-      }
-
-      #main-content { 
-        padding: 20px 15px; 
-        overflow-y: visible;
-      }
-
+      body { flex-direction: column; overflow: auto; }
+      #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
+      .mobile-nav-toggle { display: block; }
+      .nav-list { display: none; max-height: 350px; }
+      .nav-list.mobile-open { display: block; }
+      #main-content { padding: 20px 15px; overflow-y: visible; }
       h1 { font-size: 1.4rem; }
       p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
 
-      /* Aggressive Zoom to pushing YouTube overlays outside the viewport frame */
-      .video-wrapper {
-        position: relative;
-        width: 100%;
-        padding-top: 56.25%;
-        overflow: hidden;
-        border-radius: 8px;
-        background-color: #000;
-      }
-
       .video-wrapper iframe {
-        position: absolute;
-        width: 140% !important;
-        height: 140% !important;
-        top: -20% !important;
-        left: -20% !important;
-        border: 0;
+        top: -12%;
+        height: 124%;
       }
 
-      .completion-card { 
-        flex-direction: column; 
-        align-items: stretch; 
-        text-align: center; 
-      }
-
-      .checkbox-label { 
-        justify-content: center; 
-        margin-bottom: 10px; 
-      }
-
-      .btn-next { 
-        width: 100%; 
-        padding: 14px; 
-      }
+      .completion-card { flex-direction: column; align-items: stretch; text-align: center; }
+      .checkbox-label { justify-content: center; margin-bottom: 10px; }
+      .btn-next { width: 100%; padding: 14px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Left / Mobile Top Navigation -->
+  <!-- Left Navigation -->
   <nav id="sidebar">
     <div class="sidebar-header">
       <span>Course Content</span>
@@ -311,16 +283,20 @@
     </ul>
   </nav>
 
-  <!-- Main Content Area -->
+  <!-- Main Content -->
   <main id="main-content">
     <div class="container">
       <h1>Getting Started: Module 1</h1>
       <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
 
-      <!-- Video Wrapper -->
+      <!-- Video Wrapper with Custom Preview Cover -->
       <div class="video-wrapper">
+        <div class="video-cover" id="videoCover" onclick="playVideo()">
+          <div class="play-btn"></div>
+        </div>
         <iframe 
-          src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1" 
+          id="ytPlayer"
+          src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1&enablejsapi=1" 
           title="Course Introduction" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
@@ -339,45 +315,47 @@
   </main>
 
   <script>
+    // Removes preview cover and starts video on tap
+    function playVideo() {
+      const cover = document.getElementById('videoCover');
+      const iframe = document.getElementById('ytPlayer');
+      
+      cover.style.opacity = '0';
+      setTimeout(() => { cover.style.display = 'none'; }, 300);
+
+      // Trigger YouTube Autoplay via JS API
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    }
+
     function toggleMobileMenu() {
-      const navList = document.getElementById('main-nav-list');
-      navList.classList.toggle('mobile-open');
+      document.getElementById('main-nav-list').classList.toggle('mobile-open');
     }
 
     function toggleModule(id) {
       const submodule = document.getElementById(id);
       const icon = document.getElementById(id + '-icon');
       const isOpen = submodule.classList.contains('open');
-      
       submodule.classList.toggle('open');
       icon.textContent = isOpen ? '▶' : '▼';
     }
 
     function toggleCompletion(lessonId) {
       const isChecked = document.getElementById('main-complete-check').checked;
-      
       const sidebarCheckbox = document.getElementById('chk-' + lessonId);
       if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
-      
       try {
         localStorage.setItem('complete_' + lessonId, isChecked);
-      } catch (e) {
-        console.warn('LocalStorage is disabled or unavailable in this environment.');
-      }
+      } catch (e) {}
     }
 
     function loadProgress() {
       const currentLesson = 'mod1-item1';
       let isCompleted = false;
-
       try {
         isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
-      } catch (e) {
-        console.warn('LocalStorage error:', e);
-      }
+      } catch (e) {}
       
       document.getElementById('main-complete-check').checked = isCompleted;
-      
       const currentSidebarCheckbox = document.getElementById('chk-' + currentLesson);
       if (currentSidebarCheckbox) currentSidebarCheckbox.checked = isCompleted;
 
