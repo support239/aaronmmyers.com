@@ -38,7 +38,7 @@
     .btn { background: var(--accent); color: white; border: none; padding: 12px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
     .btn-secondary { background: #e5e5ea; color: #1c1c1e; margin-top: 8px; }
     input[type="text"], input[type="month"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 0.95rem; }
-    .tag-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .tag-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 5px; }
     .tag-btn { border: 2px solid transparent; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, border-color 0.2s; }
     .tag-btn.selected { opacity: 1; border-color: #000; }
     .q-group { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
@@ -217,7 +217,7 @@
     const colorPalette = ["#FF5733", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F", "#E67E22", "#1ABC9C", "#E91E63", "#34495E", "#8E44AD"];
     let colorIndex = 0;
     
-    // Starts empty so no pills display on initial load unless retrieved from the database
+    // Explicitly empty array so no default pills exist on load
     let masterValues = [];
 
     const modalQuestions = {
@@ -436,6 +436,7 @@
 
     function renderTags(containerId) {
       const container = document.getElementById(containerId);
+      if (!container) return;
       const existingSelected = Array.from(container.querySelectorAll('.tag-btn.selected')).map(btn => btn.innerText);
       container.innerHTML = '';
       masterValues.forEach(val => {
@@ -489,6 +490,7 @@
     
     function renderValues() {
       const container = document.getElementById('valuesList');
+      if (!container) return;
       container.innerHTML = '';
       const sortedValues = masterValues.map(val => ({ ...val, count: calculateValueCount(val.name) })).sort((a, b) => b.count - a.count);
       sortedValues.forEach((val) => {
