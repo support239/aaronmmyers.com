@@ -2,36 +2,143 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Course Portal - Getting Started</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { display: flex; height: 100vh; background-color: #f8f9fa; color: #333; }
+    /* CSS Reset & Cross-Browser Box-Sizing */
+    *, *::before, *::after { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      -webkit-tap-highlight-color: transparent; 
+    }
 
-    /* Sidebar Styles */
-    #sidebar { width: 300px; background-color: #ffffff; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; flex-shrink: 0; }
-    .sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; font-weight: bold; font-size: 1.1rem; color: #1a252f; }
-    .nav-list { list-style: none; overflow-y: auto; flex-grow: 1; }
+    /* Full-height viewport layout for desktop & mobile */
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body { 
+      display: flex; 
+      flex-direction: row; 
+      overflow: hidden; 
+    }
+
+    /* ==========================================================================
+       Sidebar / Navigation Styles
+       ========================================================================== */
+    #sidebar { 
+      width: 300px; 
+      background-color: #ffffff; 
+      border-right: 1px solid #e9ecef; 
+      display: flex; 
+      flex-direction: column; 
+      flex-shrink: 0; 
+      z-index: 10;
+    }
+
+    .sidebar-header { 
+      padding: 20px; 
+      border-bottom: 1px solid #e9ecef; 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      color: #1a252f; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-list { 
+      list-style: none; 
+      overflow-y: auto; 
+      flex-grow: 1; 
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
     
-    /* Module Accordion */
-    .module-title { padding: 15px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; }
+    /* Accordion Headers */
+    .module-title { 
+      padding: 16px 20px; 
+      background-color: #f1f3f5; 
+      font-weight: 600; 
+      cursor: pointer; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border-bottom: 1px solid #e9ecef; 
+      user-select: none;
+      -webkit-user-select: none;
+    }
     .module-title:hover { background-color: #e9ecef; }
-    .submodules { list-style: none; display: none; background-color: #ffffff; }
+    
+    .submodules { 
+      list-style: none; 
+      display: none; 
+      background-color: #ffffff; 
+    }
     .submodules.open { display: block; }
     
-    /* Nav Items */
-    .nav-item { padding: 12px 20px 12px 30px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
+    /* Navigation Items */
+    .nav-item { 
+      padding: 14px 20px 14px 30px; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      cursor: pointer; 
+      border-bottom: 1px solid #f8f9fa; 
+      font-size: 0.95rem; 
+    }
     .nav-item:hover { background-color: #f8f9fa; }
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
     .nav-item input[type="checkbox"] { pointer-events: none; }
 
-    /* Main Content */
-    #main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-    .container { max-width: 900px; width: 100%; }
-    h1 { margin-bottom: 10px; color: #1a252f; }
-    p.subtitle { color: #6c757d; margin-bottom: 25px; }
+    /* Mobile Menu Toggle Button (Hidden on Desktop) */
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #1a252f;
+    }
 
-    /* Clean Aspect-Ratio Container */
+    /* ==========================================================================
+       Main Content Styles
+       ========================================================================== */
+    #main-content { 
+      flex-grow: 1; 
+      padding: 40px 20px; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .container { 
+      max-width: 900px; 
+      width: 100%; 
+    }
+
+    h1 { 
+      margin-bottom: 10px; 
+      color: #1a252f; 
+      font-size: 1.75rem; 
+      line-height: 1.2;
+    }
+
+    p.subtitle { 
+      color: #6c757d; 
+      margin-bottom: 25px; 
+      font-size: 1rem;
+    }
+
+    /* Video Wrapper with CSS Scale & Crop trick for YouTube elements */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -43,7 +150,6 @@
       margin-bottom: 25px;
     }
 
-    /* CSS Scale & Crop trick to hide top profile bar & bottom "More videos" overlay */
     .video-wrapper iframe {
       position: absolute;
       top: -11%; 
@@ -53,19 +159,115 @@
       border: 0;
     }
 
-    /* Completion Box */
-    .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-    .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
-    .checkbox-label input { width: 20px; height: 20px; cursor: pointer; }
-    .btn-next { background-color: #228be6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    /* Completion Card */
+    .completion-card { 
+      background: #ffffff; 
+      padding: 20px; 
+      border-radius: 8px; 
+      border: 1px solid #e9ecef; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+    }
+
+    .checkbox-label { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      cursor: pointer; 
+      user-select: none; 
+      -webkit-user-select: none;
+    }
+
+    /* Customized Large Touch-Friendly Checkbox */
+    .checkbox-label input { 
+      width: 22px; 
+      height: 22px; 
+      cursor: pointer; 
+      accent-color: #228be6; /* Modern native coloring for Chrome/Safari/Firefox */
+    }
+
+    .btn-next { 
+      background-color: #228be6; 
+      color: #ffffff; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 6px; 
+      font-weight: 600; 
+      font-size: 0.95rem;
+      cursor: pointer; 
+      transition: background-color 0.2s ease-in-out; 
+      white-space: nowrap;
+    }
     .btn-next:hover { background-color: #1c7ed6; }
+
+    /* ==========================================================================
+       Responsive Mobile Breakpoints
+       ========================================================================== */
+    @media (max-width: 768px) {
+      body { 
+        flex-direction: column; 
+        overflow: auto; 
+      }
+
+      #sidebar { 
+        width: 100%; 
+        border-right: none; 
+        border-bottom: 1px solid #e9ecef; 
+      }
+
+      .mobile-nav-toggle { 
+        display: block; 
+      }
+
+      /* Collapsible navigation list on mobile screens */
+      .nav-list { 
+        display: none; 
+        max-height: 350px;
+      }
+
+      .nav-list.mobile-open { 
+        display: block; 
+      }
+
+      #main-content { 
+        padding: 20px 15px; 
+        overflow-y: visible;
+      }
+
+      h1 { font-size: 1.4rem; }
+      p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
+
+      .completion-card { 
+        flex-direction: column; 
+        align-items: stretch; 
+        text-align: center; 
+      }
+
+      .checkbox-label { 
+        justify-content: center; 
+        margin-bottom: 10px; 
+      }
+
+      .btn-next { 
+        width: 100%; 
+        padding: 14px; 
+      }
+    }
   </style>
 </head>
 <body>
 
   <nav id="sidebar">
-    <div class="sidebar-header">Course Content</div>
-    <ul class="nav-list">
+    <div class="sidebar-header">
+      <span>Course Content</span>
+      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">☰</button>
+    </div>
+    <ul class="nav-list" id="main-nav-list">
       <li>
         <div class="module-title" onclick="toggleModule('mod1')">
           <span>Getting Started</span>
@@ -122,6 +324,12 @@
   </main>
 
   <script>
+    // Toggle mobile menu drawer visibility
+    function toggleMobileMenu() {
+      const navList = document.getElementById('main-nav-list');
+      navList.classList.toggle('mobile-open');
+    }
+
     // Toggle module accordion visibility
     function toggleModule(id) {
       const submodule = document.getElementById(id);
@@ -137,25 +345,41 @@
       const isChecked = document.getElementById('main-complete-check').checked;
       
       // Update sidebar checkbox
-      document.getElementById('chk-' + lessonId).checked = isChecked;
+      const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+      if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
       
-      // Persist state in browser storage
-      localStorage.setItem('complete_' + lessonId, isChecked);
+      // Persist state safely across browser sessions
+      try {
+        localStorage.setItem('complete_' + lessonId, isChecked);
+      } catch (e) {
+        console.warn('LocalStorage is disabled or unavailable in this environment.');
+      }
     }
 
-    // Load saved progress on page load
+    // Load saved progress on page load with cross-browser error handling
     function loadProgress() {
       const currentLesson = 'mod1-item1';
-      const isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
+      let isCompleted = false;
+
+      try {
+        isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
       
       document.getElementById('main-complete-check').checked = isCompleted;
-      document.getElementById('chk-' + currentLesson).checked = isCompleted;
+      
+      const currentSidebarCheckbox = document.getElementById('chk-' + currentLesson);
+      if (currentSidebarCheckbox) currentSidebarCheckbox.checked = isCompleted;
 
       // Restore checked states for other modules if saved
       ['mod1-item2', 'mod2-item1'].forEach(id => {
-        if (localStorage.getItem('complete_' + id) === 'true') {
-          document.getElementById('chk-' + id).checked = true;
-        }
+        try {
+          if (localStorage.getItem('complete_' + id) === 'true') {
+            const el = document.getElementById('chk-' + id);
+            if (el) el.checked = true;
+          }
+        } catch (e) {}
       });
     }
 
@@ -163,8 +387,12 @@
       alert("Moving to the next module!");
     }
 
-    // Initialize progress tracking
-    window.onload = loadProgress;
+    // Safe cross-browser initialization
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadProgress);
+    } else {
+      loadProgress();
+    }
   </script>
 </body>
 </html>
