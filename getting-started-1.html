@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
   <title>Course Portal - Getting Started</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -15,7 +14,7 @@
     .nav-list { list-style: none; overflow-y: auto; flex-grow: 1; }
     
     /* Module Accordion */
-    .module-title { padding: 15px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; }
+    .module-title { padding: 15px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-space-between; align-items: center; border-bottom: 1px solid #e9ecef; }
     .module-title:hover { background-color: #e9ecef; }
     .submodules { list-style: none; display: none; background-color: #ffffff; }
     .submodules.open { display: block; }
@@ -24,7 +23,7 @@
     .nav-item { padding: 12px 20px 12px 30px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
     .nav-item:hover { background-color: #f8f9fa; }
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
-    .nav-item input[type="checkbox"] { pointer-events: none; } /* Checked via main interface state */
+    .nav-item input[type="checkbox"] { pointer-events: none; }
 
     /* Main Content */
     #main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
@@ -86,7 +85,12 @@
       <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
 
       <div class="video-container">
-        <iframe src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw" title="Course Introduction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe 
+          src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1" 
+          title="Course Introduction" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
       </div>
 
       <div class="completion-card">
@@ -123,13 +127,13 @@
 
     // Load saved progress on page load
     function loadProgress() {
-      const currentLesson = 'mod1-item1'; // Hardcoded for this page
+      const currentLesson = 'mod1-item1';
       const isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
       
       document.getElementById('main-complete-check').checked = isCompleted;
       document.getElementById('chk-' + currentLesson).checked = isCompleted;
 
-      // Restore checked states for other modules if they exist in localStorage
+      // Restore checked states for other modules if saved
       ['mod1-item2', 'mod2-item1'].forEach(id => {
         if (localStorage.getItem('complete_' + id) === 'true') {
           document.getElementById('chk-' + id).checked = true;
@@ -139,7 +143,6 @@
 
     function nextLesson() {
       alert("Moving to the next module!");
-      // Handle page transition or dynamic content loading here
     }
 
     // Initialize progress tracking
