@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Course Portal - Your Values</title>
+  <style>
+    :root { --bg: #f8f9fa; --card: #ffffff; --text: #333; --border: #e5e5ea; --accent: #228be6; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; width: 100%; background-color: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: row; overflow: hidden; }
+    #sidebar { width: 300px; background-color: #ffffff; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; font-weight: 700; font-size: 1.1rem; color: #1a252f; display: flex; justify-content: space-between; align-items: center; }
+    .nav-list { list-style: none; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
+    .module-title { padding: 16px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; user-select: none; }
+    .module-title:hover { background-color: #e9ecef; }
+    .submodules { list-style: none; display: none; background-color: #ffffff; }
+    .submodules.open { display: block; }
+    .nav-item { padding: 14px 20px 14px 30px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
+    .nav-item:hover { background-color: #f8f9fa; }
+    .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
+    .nav-item input[type="checkbox"] { pointer-events: none; }
+    .mobile-nav-toggle { display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #1a252f; }
+    #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; }
+    .container { max-width: 900px; width: 100%; }
+    h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
+    p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
+    .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #000; margin-bottom: 25px; }
+    .video-wrapper iframe { position: absolute; top: -11%; left: 0; width: 100%; height: 122%; border: 0; }
+    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/NO6lo-jeUyw/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
+    .play-btn { width: 68px; height: 48px; background-color: rgba(255, 0, 0, 0.9); border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s, background-color 0.2s; }
+    .play-btn::before { content: ""; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent #ffffff; margin-left: 3px; }
+    .video-cover:hover .play-btn { background-color: #ff0000; transform: scale(1.08); }
+    .card { background: #ffffff; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .value-pill { display: inline-flex; align-items: center; padding: 6px 10px 6px 12px; border-radius: 16px; color: #fff; font-weight: 600; font-size: 0.85rem; margin: 4px; gap: 6px; }
+    .value-pill .count { background: rgba(0,0,0,0.25); border-radius: 10px; padding: 2px 6px; font-size: 0.75rem; }
+    .value-pill .delete-btn { background: rgba(0,0,0,0.25); border: none; color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; padding: 0; }
+    .btn { background: var(--accent); color: white; border: none; padding: 12px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; }
+    .btn-secondary { background: #e5e5ea; color: #1c1c1e; margin-top: 8px; }
+    input[type="text"], input[type="month"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 0.95rem; }
+    .tag-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .tag-btn { border: 2px solid transparent; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; cursor: pointer; opacity: 0.4; transition: opacity 0.2s, border-color 0.2s; }
+    .tag-btn.selected { opacity: 1; border-color: #000; }
+    .q-group { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+    .history-badge { font-size: 0.85rem; color: #666; background: #f2f2f7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; }
+    .info-icon { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1.5px solid var(--accent); color: var(--accent); border-radius: 50%; font-size: 12px; font-weight: bold; cursor: pointer; margin-left: 8px; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-card { background: #fff; padding: 20px; border-radius: 8px; width: 85%; max-width: 340px; position: relative; }
+    .modal-close { position: absolute; top: 8px; right: 10px; cursor: pointer; font-size: 1.2rem; }
+    .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-top: 20px; }
+    .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
+    .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: #fff; padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 900; display: none; flex-direction: column; justify-content: center; align-items: center; }
+    .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @media (max-width: 768px) {
+      body { flex-direction: column; overflow: auto; }
+      #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
+      .mobile-nav-toggle { display: block; }
+      .nav-list { display: none; max-height: 350px; }
+      .nav-list.mobile-open { display: block; }
+      #main-content { padding: 20px 15px; overflow-y: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
+  </div>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2 style="margin-bottom: 20px;">Portal Login</h2>
+      <div style="margin-bottom:15px;"><label>Username</label><input type="text" id="loginUser"></div>
+      <div style="margin-bottom:15px;"><label>Password</label><input type="password" id="loginPass"></div>
+      <button class="btn" onclick="performLogin()">Sign In</button>
+      <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+  </div>
+
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <span>Course Content</span>
+      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
+    </div>
+    <ul class="nav-list" id="main-nav-list">
+      <li>
+        <div class="module-title" onclick="toggleModule('mod1')">
+          <span>Getting Started</span>
+          <span id="mod1-icon">▼</span>
+        </div>
+        <ul id="mod1" class="submodules open">
+          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
+            <input type="checkbox" id="chk-mod1-item1">
+            <span>Module 1: First Exercise</span>
+          </li>
+          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
+            <input type="checkbox" id="chk-mod1-item2">
+            <span>Module 2: Course Overview</span>
+          </li>
+          <li class="nav-item active" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-3.html', ['mod1-item1', 'mod1-item2'])">
+            <input type="checkbox" id="chk-mod1-item3">
+            <span>Module 3: Your Values</span>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <div class="module-title" onclick="toggleModule('mod2')">
+          <span>Week 1</span>
+          <span id="mod2-icon">▶</span>
+        </div>
+        <ul id="mod2" class="submodules">
+          <li class="nav-item" onclick="alert('Week 1 is not accessible yet.')">
+            <input type="checkbox" id="chk-mod2-item1">
+            <span>Module 1: Fears</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <main id="main-content">
+    <div class="container">
+      <h1>Getting Started: Module 3 - Your Values</h1>
+      <p class="subtitle">Watch this video first to guide you through your values assessment.</p>
+
+      <div class="video-wrapper">
+        <div class="video-cover" id="videoCover" onclick="playVideo()">
+          <div class="play-btn"></div>
+        </div>
+        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1&enablejsapi=1" title="Values Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="card">
+        <label for="monthPicker"><strong>Select Assessment Month:</strong></label>
+        <input type="month" id="monthPicker" onchange="loadUserData()" style="margin-top:6px;">
+        <div id="historyDisplay" class="history-badge" style="display: none;"></div>
+      </div>
+
+      <div class="card">
+        <form id="appForm">
+          <div class="q-group"><h3>1. Top 3 things you think about <span class="info-icon" onclick="showModal(1)">i</span></h3><div id="q1-answers"></div></div>
+          <div class="q-group"><h3>2. Top 3 things you talk about <span class="info-icon" onclick="showModal(2)">i</span></h3><div id="q2-answers"></div></div>
+          <div class="q-group"><h3>3. Top 3 things you do <span class="info-icon" onclick="showModal(3)">i</span></h3><div id="q3-answers"></div></div>
+          <div class="q-group"><h3>4. Top 3 things you keep around you <span class="info-icon" onclick="showModal(4)">i</span></h3><div id="q4-answers"></div></div>
+          <div class="q-group"><h3>5. Top 3 things you spend money on <span class="info-icon" onclick="showModal(5)">i</span></h3><div id="q5-answers"></div></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Your Values & Summary</h3>
+        <div id="valuesList"></div>
+        <hr style="border:0; border-top:1px solid var(--border); margin: 12px 0;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="newValueName" placeholder="New Value Name" style="margin-bottom: 0;">
+          <input type="color" id="newValueColor" value="#9B59B6" style="height:40px; width: 44px; border:none; background:none; cursor:pointer;">
+        </div>
+        <button class="btn btn-secondary" onclick="addNewValue()">+ Add Value</button>
+      </div>
+
+      <div class="card">
+        <button type="button" id="saveBtn" class="btn" onclick="submitAssessment()">
+          <span id="btnText">Save Assessment</span>
+        </button>
+      </div>
+
+      <div class="completion-card">
+        <label class="checkbox-label">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item3')">
+          <span>I have completed this module</span>
+        </label>
+        <button class="btn" style="width:auto;" onclick="alert('Congratulations! You completed Getting Started.')">Finish Section 🎉</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <span class="modal-close" onclick="closeModal()">✕</span>
+      <p id="modalText" style="margin: 0; font-size: 0.95rem; line-height: 1.4;"></p>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
+    const CURRENT_LESSON_ID = 'mod1-item3';
+
+    const colorPalette = ["#FF5733", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F", "#E67E22", "#1ABC9C", "#E91E63", "#34495E", "#8E44AD"];
+    let colorIndex = 3;
+    let masterValues = [
+      { name: "Family", color: "#FF5733" },
+      { name: "Health", color: "#2ECC71" },
+      { name: "Career", color: "#3498DB" },
+      { name: "Finances", color: "#F1C40F" },
+      { name: "Mental Health", color: "#9B59B6" },
+      { name: "Physical Health", color: "#2ECC71" }
+    ];
+
+    const modalQuestions = {
+      1: "If you put all of your thoughts into categories, on a normal day, what would the top 3 categories be for what you think about?",
+      2: "Think about your conversations. If you categorized them, what are the top 3 topics you spend the most time talking about?",
+      3: "Consider your daily actions. If you looked at your time, what are the top 3 categories of things you actually do?",
+      4: "Look around your environment. What are the top 3 categories of items or things you choose to keep around you?",
+      5: "Review your expenses. If you grouped your spending, what are the top 3 categories you spend the most money on?"
+    };
+
+    function setCookie(n,v,d){let e="";if(d){let t=new Date();t.setTime(t.getTime()+(d*864e5));e="; expires="+t.toUTCString()}document.cookie=n+"="+(v||"")+e+"; path=/; domain=aaronmmyers.com; SameSite=Lax"}
+    function getCookie(n){let e=n+"=",c=document.cookie.split(';');for(let i=0;i<c.length;i++){let t=c[i];while(t.charAt(0)===' ')t=t.substring(1);if(t.indexOf(e)===0)return t.substring(e.length)}return null}
+    function showLoading(s){document.getElementById('loadingOverlay').style.display=s?'flex':'none'}
+
+    async function checkAuthAndInit() {
+      const user = getCookie("portal_user");
+      if (!user) {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      } else {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('monthPicker').value = new Date().toISOString().slice(0,7);
+        renderQuestions();
+        updateColorPicker();
+        await loadUserData();
+      }
+    }
+
+    async function performLogin() {
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      const errorEl = document.getElementById('loginError');
+      if (!user || !pass) return;
+
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "login", username: user, password: pass }) });
+        const data = await res.json();
+        if (data.success) {
+          setCookie("portal_user", data.username, 7);
+          document.getElementById('loginOverlay').style.display = 'none';
+          document.getElementById('monthPicker').value = new Date().toISOString().slice(0,7);
+          renderQuestions();
+          updateColorPicker();
+          await loadUserData();
+        } else {
+          errorEl.textContent = data.message || "Invalid credentials"; errorEl.style.display = "block";
+        }
+      } catch (err) { errorEl.textContent = "Error connecting to server."; errorEl.style.display = "block"; }
+      finally { showLoading(false); }
+    }
+
+    async function loadUserData() {
+      const user = getCookie("portal_user");
+      if (!user) return;
+
+      showLoading(true);
+      try {
+        const resProgress = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getData", username: user }) });
+        const dataProgress = await resProgress.json();
+        if (dataProgress.success && dataProgress.progress) {
+          Object.keys(dataProgress.progress).forEach(lessonId => {
+            const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+            if (sidebarCheckbox) sidebarCheckbox.checked = dataProgress.progress[lessonId];
+            if (lessonId === CURRENT_LESSON_ID) document.getElementById('main-complete-check').checked = dataProgress.progress[lessonId];
+          });
+        }
+
+        const chk1 = document.getElementById('chk-mod1-item1');
+        const chk2 = document.getElementById('chk-mod1-item2');
+        if ((!chk1 || !chk1.checked) || (!chk2 || !chk2.checked)) {
+          alert("Please complete Module 1 and Module 2 first.");
+          window.location.href = "https://aaronmmyers.com/getting-started-1.html";
+          return;
+        }
+
+        const targetMonth = document.getElementById('monthPicker').value;
+        const resAssess = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getAssessment", username: user, targetMonth: targetMonth }) });
+        const dataAssess = await resAssess.json();
+
+        clearAssessmentForm();
+        const historyDiv = document.getElementById('historyDisplay');
+
+        if (dataAssess.previousDates && dataAssess.previousDates.length > 0) {
+          const dateList = dataAssess.previousDates.map(d => `${d.monthYear} (${d.date})`).join(', ');
+          historyDiv.innerHTML = `<strong>Previous Assessment Dates:</strong> ${dateList}`;
+          historyDiv.style.display = 'block';
+        } else {
+          historyDiv.innerHTML = `<em>No previous assessments found.</em>`;
+          historyDiv.style.display = 'block';
+        }
+
+        if (dataAssess.found) populateAssessmentData(dataAssess);
+
+      } catch (err) { console.error(err); }
+      finally { showLoading(false); }
+    }
+
+    function clearAssessmentForm() {
+      for (let q = 1; q <= 5; q++) {
+        for (let a = 1; a <= 3; a++) {
+          const input = document.getElementById(`q${q}_a${a}`);
+          if (input) input.value = '';
+          const tagContainer = document.getElementById(`q${q}_a${a}_tags`);
+          if (tagContainer) tagContainer.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('selected'));
+        }
+      }
+      renderValues();
+    }
+
+    function populateAssessmentData(data) {
+      if (!data || !data.answers) return;
+      data.answers.forEach((q, qIdx) => {
+        q.forEach((a, aIdx) => {
+          const input = document.getElementById(`q${qIdx + 1}_a${aIdx + 1}`);
+          if (input) input.value = a.text || '';
+          if (a.selectedValues) {
+            a.selectedValues.forEach(sv => {
+              if (!masterValues.some(mv => mv.name.toLowerCase() === sv.name.toLowerCase())) {
+                masterValues.push({ name: sv.name, color: sv.color || '#9B59B6' });
+              }
+            });
+          }
+        });
+      });
+      renderValues();
+      refreshAllTags();
+      data.answers.forEach((q, qIdx) => {
+        q.forEach((a, aIdx) => {
+          const tagContainer = document.getElementById(`q${qIdx + 1}_a${aIdx + 1}_tags`);
+          if (tagContainer && a.selectedValues) {
+            const savedNames = a.selectedValues.map(sv => sv.name.toLowerCase());
+            tagContainer.querySelectorAll('.tag-btn').forEach(btn => {
+              if (savedNames.includes(btn.innerText.toLowerCase())) btn.classList.add('selected');
+            });
+          }
+        });
+      });
+      renderValues();
+    }
+
+    async function submitAssessment() {
+      const user = getCookie("portal_user");
+      if (!user) return alert("Please log in first.");
+
+      showLoading(true);
+      const payload = {
+        email: user,
+        monthYear: document.getElementById('monthPicker').value,
+        date: new Date().toISOString().slice(0,10),
+        answers: []
+      };
+
+      for (let q = 1; q <= 5; q++) {
+        const qAnswers = [];
+        for (let a = 1; a <= 3; a++) {
+          const text = document.getElementById(`q${q}_a${a}`).value;
+          const tagBtns = document.querySelectorAll(`#q${q}_a${a}_tags .tag-btn.selected`);
+          const selectedValues = Array.from(tagBtns).map(btn => ({ name: btn.innerText, color: btn.style.backgroundColor }));
+          qAnswers.push({ text, selectedValues });
+        }
+        payload.answers.push(qAnswers);
+      }
+
+      try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveAssessment", payload: payload }) });
+        const data = await res.json();
+        if (data.success) {
+          alert("Assessment saved successfully!");
+          await loadUserData();
+        }
+      } catch (err) { alert("Failed to save assessment."); }
+      finally { showLoading(false); }
+    }
+
+    async function toggleCompletion(lessonId) {
+      const user = getCookie("portal_user");
+      if (!user) return;
+      const isChecked = document.getElementById('main-complete-check').checked;
+      const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+      if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+
+      showLoading(true);
+      try {
+        await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveProgress", username: user, lessonId: lessonId, completed: isChecked }) });
+      } catch (err) { console.error(err); }
+      finally { showLoading(false); }
+    }
+
+    function renderQuestions() {
+      for (let q = 1; q <= 5; q++) {
+        const container = document.getElementById(`q${q}-answers`);
+        container.innerHTML = '';
+        for (let a = 1; a <= 3; a++) {
+          const div = document.createElement('div');
+          div.style.marginBottom = '10px';
+          div.innerHTML = `<input type="text" id="q${q}_a${a}" placeholder="Answer ${a}" oninput="updateCounts()"><div class="tag-container" id="q${q}_a${a}_tags"></div>`;
+          container.appendChild(div);
+          renderTags(`q${q}_a${a}_tags`);
+        }
+      }
+    }
+
+    function renderTags(containerId) {
+      const container = document.getElementById(containerId);
+      const existingSelected = Array.from(container.querySelectorAll('.tag-btn.selected')).map(btn => btn.innerText);
+      container.innerHTML = '';
+      masterValues.forEach(val => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tag-btn';
+        if (existingSelected.includes(val.name)) btn.classList.add('selected');
+        btn.style.backgroundColor = val.color;
+        btn.style.color = '#fff';
+        btn.innerText = val.name;
+        btn.onclick = function() { btn.classList.toggle('selected'); updateCounts(); };
+        container.appendChild(btn);
+      });
+    }
+
+    function addNewValue() {
+      const nameInput = document.getElementById('newValueName');
+      const name = nameInput.value.trim();
+      const color = document.getElementById('newValueColor').value;
+      if (!name) return;
+      if (masterValues.some(v => v.name.toLowerCase() === name.toLowerCase())) return alert('Value category already exists!');
+      masterValues.push({ name, color });
+      nameInput.value = '';
+      colorIndex++;
+      updateColorPicker();
+      renderValues();
+      refreshAllTags();
+    }
+
+    function deleteValueByName(valueName) {
+      masterValues = masterValues.filter(v => v.name !== valueName);
+      renderValues();
+      refreshAllTags();
+    }
+
+    function refreshAllTags() {
+      for (let q = 1; q <= 5; q++) {
+        for (let a = 1; a <= 3; a++) renderTags(`q${q}_a${a}_tags`);
+      }
+    }
+
+    function calculateValueCount(valueName) {
+      let count = 0;
+      document.querySelectorAll('.tag-btn.selected').forEach(tag => { if (tag.innerText === valueName) count++; });
+      return count;
+    }
+
+    function updateCounts() { renderValues(); }
+    function updateColorPicker() { document.getElementById('newValueColor').value = colorPalette[colorIndex % colorPalette.length]; }
+    function renderValues() {
+      const container = document.getElementById('valuesList');
+      container.innerHTML = '';
+      const sortedValues = masterValues.map(val => ({ ...val, count: calculateValueCount(val.name) })).sort((a, b) => b.count - a.count);
+      sortedValues.forEach((val) => {
+        const pill = document.createElement('div');
+        pill.className = 'value-pill';
+        pill.style.backgroundColor = val.color;
+        pill.innerHTML = `${val.name} <span class="count">${val.count}</span><button type="button" class="delete-btn" onclick="deleteValueByName('${val.name.replace(/'/g, "\\'")}')">✕</button>`;
+        container.appendChild(pill);
+      });
+    }
+
+    function showModal(qNum) { document.getElementById('modalText').innerHTML = modalQuestions[qNum] + "<br><br><strong>Tagging your answers:</strong><br>Click the corresponding value tag under your answer."; document.getElementById('modalOverlay').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+    function navigateTo(url) { window.location.href = url; }
+    function checkAndNavigate(url, reqs) {
+      const ok = reqs.every(id => { const c = document.getElementById('chk-' + id); return c && c.checked; });
+      if (!ok) return alert("Please complete the first 2 modules before proceeding.");
+      window.location.href = url;
+    }
+    function playVideo() {
+      const cover = document.getElementById('videoCover');
+      const iframe = document.getElementById('ytPlayer');
+      cover.style.opacity = '0';
+      setTimeout(() => { cover.style.display = 'none'; }, 300);
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    }
+    function toggleMobileMenu() { document.getElementById('main-nav-list').classList.toggle('mobile-open'); }
+    function toggleModule(id) {
+      const submodule = document.getElementById(id);
+      const icon = document.getElementById(id + '-icon');
+      const isOpen = submodule.classList.contains('open');
+      submodule.classList.toggle('open');
+      icon.textContent = isOpen ? '▶' : '▼';
+    }
+
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', checkAuthAndInit); }
+    else { checkAuthAndInit(); }
+  </script>
+</body>
+</html>
