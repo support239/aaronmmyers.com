@@ -13,7 +13,7 @@
       -webkit-tap-highlight-color: transparent; 
     }
 
-    /* Full-height viewport layout for desktop & mobile */
+    /* Full-height viewport layout */
     html, body {
       height: 100%;
       width: 100%;
@@ -30,9 +30,7 @@
       overflow: hidden; 
     }
 
-    /* ==========================================================================
-       Sidebar / Navigation Styles
-       ========================================================================== */
+    /* Sidebar / Navigation Styles */
     #sidebar { 
       width: 300px; 
       background-color: #ffffff; 
@@ -58,7 +56,7 @@
       list-style: none; 
       overflow-y: auto; 
       flex-grow: 1; 
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      -webkit-overflow-scrolling: touch; 
     }
     
     /* Accordion Headers */
@@ -97,7 +95,7 @@
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
     .nav-item input[type="checkbox"] { pointer-events: none; }
 
-    /* Mobile Menu Toggle Button (Hidden on Desktop) */
+    /* Mobile Menu Toggle Button */
     .mobile-nav-toggle {
       display: none;
       background: none;
@@ -107,9 +105,7 @@
       color: #1a252f;
     }
 
-    /* ==========================================================================
-       Main Content Styles
-       ========================================================================== */
+    /* Main Content Styles */
     #main-content { 
       flex-grow: 1; 
       padding: 40px 20px; 
@@ -138,7 +134,7 @@
       font-size: 1rem;
     }
 
-    /* Video Wrapper with CSS Scale & Crop trick for YouTube elements */
+    /* Base Desktop Video Wrapper */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -183,12 +179,11 @@
       -webkit-user-select: none;
     }
 
-    /* Customized Large Touch-Friendly Checkbox */
     .checkbox-label input { 
       width: 22px; 
       height: 22px; 
       cursor: pointer; 
-      accent-color: #228be6; /* Modern native coloring for Chrome/Safari/Firefox */
+      accent-color: #228be6; 
     }
 
     .btn-next { 
@@ -205,9 +200,7 @@
     }
     .btn-next:hover { background-color: #1c7ed6; }
 
-    /* ==========================================================================
-       Responsive Mobile Breakpoints
-       ========================================================================== */
+    /* Mobile Breakpoint Modifications */
     @media (max-width: 768px) {
       body { 
         flex-direction: column; 
@@ -224,7 +217,6 @@
         display: block; 
       }
 
-      /* Collapsible navigation list on mobile screens */
       .nav-list { 
         display: none; 
         max-height: 350px;
@@ -241,6 +233,18 @@
 
       h1 { font-size: 1.4rem; }
       p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
+
+      /* Aggressive Cropping for Mobile Displays */
+      .video-wrapper {
+        padding-top: 60%; 
+      }
+
+      .video-wrapper iframe {
+        top: -28%; 
+        left: -5%;
+        width: 110%;
+        height: 155%; 
+      }
 
       .completion-card { 
         flex-direction: column; 
@@ -262,6 +266,7 @@
 </head>
 <body>
 
+  <!-- Left / Mobile Top Navigation -->
   <nav id="sidebar">
     <div class="sidebar-header">
       <span>Course Content</span>
@@ -299,11 +304,13 @@
     </ul>
   </nav>
 
+  <!-- Main Content Area -->
   <main id="main-content">
     <div class="container">
       <h1>Getting Started: Module 1</h1>
       <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
 
+      <!-- Video Wrapper -->
       <div class="video-wrapper">
         <iframe 
           src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1" 
@@ -313,6 +320,7 @@
         </iframe>
       </div>
 
+      <!-- Completion Controls -->
       <div class="completion-card">
         <label class="checkbox-label">
           <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item1')">
@@ -324,13 +332,11 @@
   </main>
 
   <script>
-    // Toggle mobile menu drawer visibility
     function toggleMobileMenu() {
       const navList = document.getElementById('main-nav-list');
       navList.classList.toggle('mobile-open');
     }
 
-    // Toggle module accordion visibility
     function toggleModule(id) {
       const submodule = document.getElementById(id);
       const icon = document.getElementById(id + '-icon');
@@ -340,15 +346,12 @@
       icon.textContent = isOpen ? '▶' : '▼';
     }
 
-    // Save and update completion state
     function toggleCompletion(lessonId) {
       const isChecked = document.getElementById('main-complete-check').checked;
       
-      // Update sidebar checkbox
       const sidebarCheckbox = document.getElementById('chk-' + lessonId);
       if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
       
-      // Persist state safely across browser sessions
       try {
         localStorage.setItem('complete_' + lessonId, isChecked);
       } catch (e) {
@@ -356,7 +359,6 @@
       }
     }
 
-    // Load saved progress on page load with cross-browser error handling
     function loadProgress() {
       const currentLesson = 'mod1-item1';
       let isCompleted = false;
@@ -372,7 +374,6 @@
       const currentSidebarCheckbox = document.getElementById('chk-' + currentLesson);
       if (currentSidebarCheckbox) currentSidebarCheckbox.checked = isCompleted;
 
-      // Restore checked states for other modules if saved
       ['mod1-item2', 'mod2-item1'].forEach(id => {
         try {
           if (localStorage.getItem('complete_' + id) === 'true') {
@@ -387,7 +388,6 @@
       alert("Moving to the next module!");
     }
 
-    // Safe cross-browser initialization
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', loadProgress);
     } else {
