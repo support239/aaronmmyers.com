@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Course Portal - Getting Started</title>
+  <title>Course Portal - Course Overview</title>
   <style>
     /* CSS Reset */
     *, *::before, *::after { 
@@ -139,7 +139,6 @@
       width: 100%;
       height: 100%;
       background-color: #000;
-      /* Automatically fetches your YouTube video thumbnail */
       background-image: url('https://img.youtube.com/vi/NO6lo-jeUyw/hqdefault.jpg');
       background-size: cover;
       background-position: center;
@@ -258,11 +257,11 @@
           <span id="mod1-icon">▼</span>
         </div>
         <ul id="mod1" class="submodules open">
-          <li class="nav-item active" onclick="loadLesson('mod1-item1')">
+          <li class="nav-item" onclick="loadLesson('mod1-item1')">
             <input type="checkbox" id="chk-mod1-item1">
             <span>Module 1: First Exercise</span>
           </li>
-          <li class="nav-item" onclick="loadLesson('mod1-item2')">
+          <li class="nav-item active" onclick="loadLesson('mod1-item2')">
             <input type="checkbox" id="chk-mod1-item2">
             <span>Module 2: Course Overview</span>
           </li>
@@ -286,7 +285,7 @@
   <!-- Main Content -->
   <main id="main-content">
     <div class="container">
-      <h1>Getting Started: Module 1</h1>
+      <h1>Getting Started: Module 2</h1>
       <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
 
       <!-- Video Wrapper with Custom Preview Cover -->
@@ -306,7 +305,7 @@
       <!-- Completion Controls -->
       <div class="completion-card">
         <label class="checkbox-label">
-          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item1')">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item2')">
           <span>I have completed this module</span>
         </label>
         <button class="btn-next" onclick="nextLesson()">Next Module →</button>
@@ -315,6 +314,8 @@
   </main>
 
   <script>
+    const CURRENT_LESSON_ID = 'mod1-item2';
+
     // Removes preview cover and starts video on tap
     function playVideo() {
       const cover = document.getElementById('videoCover');
@@ -349,17 +350,17 @@
     }
 
     function loadProgress() {
-      const currentLesson = 'mod1-item1';
       let isCompleted = false;
       try {
-        isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
+        isCompleted = localStorage.getItem('complete_' + CURRENT_LESSON_ID) === 'true';
       } catch (e) {}
       
       document.getElementById('main-complete-check').checked = isCompleted;
-      const currentSidebarCheckbox = document.getElementById('chk-' + currentLesson);
+      const currentSidebarCheckbox = document.getElementById('chk-' + CURRENT_LESSON_ID);
       if (currentSidebarCheckbox) currentSidebarCheckbox.checked = isCompleted;
 
-      ['mod1-item2', 'mod2-item1'].forEach(id => {
+      // Restore saved progress across all navigation checkboxes
+      ['mod1-item1', 'mod1-item2', 'mod2-item1'].forEach(id => {
         try {
           if (localStorage.getItem('complete_' + id) === 'true') {
             const el = document.getElementById('chk-' + id);
