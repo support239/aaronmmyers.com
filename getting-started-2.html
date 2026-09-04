@@ -36,67 +36,31 @@
     .btn-next { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s ease-in-out; white-space: nowrap; }
     .btn-next:hover { background-color: #1c7ed6; }
     .login-overlay { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background: rgba(0,0,0,0.8); 
-  z-index: 1000; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-}
-
-.login-box { 
-  background: #fff; 
-  padding: 36px 32px; 
-  border-radius: 12px; 
-  width: 100%; 
-  max-width: 440px; 
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-}
-
-.login-box h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a252f;
-  margin-bottom: 24px;
-}
-
-.login-box label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 6px;
-}
-
-.login-box input[type="text"], 
-.login-box input[type="password"] {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  margin-bottom: 18px;
-  box-sizing: border-box;
-}
-
-.login-box .btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #228be6;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 6px;
-  margin-top: 6px;
-}
-    .login-box h2 { margin-bottom: 20px; font-size: 1.4rem; color: #1a252f; }
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 1000; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+    }
+    .login-box { 
+      background: #fff; 
+      padding: 36px 32px; 
+      border-radius: 12px; 
+      width: 100%; 
+      max-width: 440px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+    }
+    .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
+    .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
+    .login-box input[type="text"], 
+    .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
     .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; }
-    .form-group input { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 900; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     @media (max-width: 768px) {
@@ -154,7 +118,7 @@
             <input type="checkbox" id="chk-mod1-item1">
             <span>Module 1: First Exercise</span>
           </li>
-          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
+          <li class="nav-item active" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
             <input type="checkbox" id="chk-mod1-item2">
             <span>Module 2: Course Overview</span>
           </li>
@@ -170,7 +134,7 @@
           <span id="mod2-icon">▶</span>
         </div>
         <ul id="mod2" class="submodules">
-          <li class="nav-item" onclick="alert('Week 1 is not accessible yet.')">
+          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-1.html', ['mod1-item1', 'mod1-item2', 'mod1-item3'])">
             <input type="checkbox" id="chk-mod2-item1">
             <span>Module 1: Fears</span>
           </li>
@@ -241,43 +205,36 @@
     }
 
     async function performLogin() {
-  // Show the spinning loader overlay immediately upon clicking
-  showLoading(true);
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      const errorEl = document.getElementById('loginError');
+      
+      if (!user || !pass) return;
 
-  const user = document.getElementById('loginUser').value;
-  const pass = document.getElementById('loginPass').value;
-  const errorEl = document.getElementById('loginError');
-  
-  if (!user || !pass) {
-    showLoading(false);
-    return;
-  }
+      showLoading(true);
 
-  try {
-    const res = await fetch(API_URL, { 
-      method: "POST", 
-      body: JSON.stringify({ action: "login", username: user, password: pass }) 
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      setCookie("portal_user", data.username, 7);
-      document.getElementById('loginOverlay').style.display = 'none';
-      document.getElementById('monthPicker').value = new Date().toISOString().slice(0, 7);
-      renderQuestions();
-      updateColorPicker();
-      await loadUserData();
-    } else {
-      errorEl.textContent = data.message || "Invalid credentials"; 
-      errorEl.style.display = "block";
-      showLoading(false); // Hide loader if login fails so user can re-try
+      try {
+        const res = await fetch(API_URL, { 
+          method: "POST", 
+          body: JSON.stringify({ action: "login", username: user, password: pass }) 
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          setCookie("portal_user", data.username, 7);
+          document.getElementById('loginOverlay').style.display = 'none';
+          await fetchUserData(data.username);
+        } else {
+          errorEl.textContent = data.message || "Invalid credentials"; 
+          errorEl.style.display = "block";
+          showLoading(false);
+        }
+      } catch (err) { 
+        errorEl.textContent = "Error connecting to server."; 
+        errorEl.style.display = "block"; 
+        showLoading(false);
+      }
     }
-  } catch (err) { 
-    errorEl.textContent = "Error connecting to server."; 
-    errorEl.style.display = "block"; 
-    showLoading(false);
-  }
-}
 
     async function fetchUserData(username) {
       showLoading(true);
@@ -331,7 +288,7 @@
     }
 
     function navigateTo(url) { window.location.href = url; }
-    function nextLesson() { alert("You have completed Getting Started!"); }
+    function nextLesson() { checkAndNavigate("https://aaronmmyers.com/getting-started-3.html", ['mod1-item1', 'mod1-item2']); }
     function playVideo() {
       const cover = document.getElementById('videoCover');
       const iframe = document.getElementById('ytPlayer');
@@ -355,17 +312,17 @@
     }
 
     function checkAndNavigate(targetUrl, requiredLessonIds) {
-  const allComplete = requiredLessonIds.every(id => {
-    const chk = document.getElementById('chk-' + id);
-    return chk && chk.checked;
-  });
+      const allComplete = requiredLessonIds.every(id => {
+        const chk = document.getElementById('chk-' + id);
+        return chk && chk.checked;
+      });
 
-  if (!allComplete) {
-    alert("Please complete the first 2 modules before proceeding to Module 3.");
-    return;
-  }
-  window.location.href = targetUrl;
-}
+      if (!allComplete) {
+        alert("Please complete the previous modules before proceeding.");
+        return;
+      }
+      window.location.href = targetUrl;
+    }
   </script>
 </body>
 </html>

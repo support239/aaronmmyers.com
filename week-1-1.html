@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Course Portal - First Exercise</title>
+  <title>Course Portal - Week 1: Fears</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; width: 100%; background-color: #f8f9fa; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -20,28 +20,20 @@
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
     .nav-item input[type="checkbox"] { pointer-events: none; }
     .mobile-nav-toggle { display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #1a252f; }
-    #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; position: relative; }
+    #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; }
     .container { max-width: 900px; width: 100%; }
     h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
     p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
     .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #000; margin-bottom: 25px; }
     .video-wrapper iframe { position: absolute; top: -11%; left: 0; width: 100%; height: 122%; border: 0; }
-    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/QlrNMaPbc2U/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
+    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/NO6lo-jeUyw/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
     .play-btn { width: 68px; height: 48px; background-color: rgba(255, 0, 0, 0.9); border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s, background-color 0.2s; }
     .play-btn::before { content: ""; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent #ffffff; margin-left: 3px; }
     .video-cover:hover .play-btn { background-color: #ff0000; transform: scale(1.08); }
-    .goals-card { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px; }
-    .goals-card h2 { font-size: 1.2rem; color: #1a252f; margin-bottom: 15px; }
-    .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; }
-    .form-group input { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-    .form-group input:focus { border-color: #228be6; }
-    .btn-save-goals { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; width: 100%; }
-    .btn-save-goals:hover { background-color: #1c7ed6; }
     .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
     .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
     .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
-    .btn-next { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; white-space: nowrap; text-decoration: none; display: inline-block; text-align: center; }
+    .btn-next { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s ease-in-out; white-space: nowrap; }
     .btn-next:hover { background-color: #1c7ed6; }
     .login-overlay { 
       position: fixed; 
@@ -67,6 +59,7 @@
     .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
     .login-box input[type="text"], 
     .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 900; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -104,7 +97,7 @@
         <label>Password</label>
         <input type="password" id="loginPass" placeholder="Enter password">
       </div>
-      <button class="btn-save-goals" onclick="performLogin()" style="margin-top: 10px;">Sign In</button>
+      <button class="btn-next" onclick="performLogin()" style="margin-top: 10px; width: 100%;">Sign In</button>
       <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
     </div>
   </div>
@@ -118,10 +111,10 @@
       <li>
         <div class="module-title" onclick="toggleModule('mod1')">
           <span>Getting Started</span>
-          <span id="mod1-icon">▼</span>
+          <span id="mod1-icon">▶</span>
         </div>
-        <ul id="mod1" class="submodules open">
-          <li class="nav-item active" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
+        <ul id="mod1" class="submodules">
+          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
             <input type="checkbox" id="chk-mod1-item1">
             <span>Module 1: First Exercise</span>
           </li>
@@ -138,10 +131,10 @@
       <li>
         <div class="module-title" onclick="toggleModule('mod2')">
           <span>Week 1</span>
-          <span id="mod2-icon">▶</span>
+          <span id="mod2-icon">▼</span>
         </div>
-        <ul id="mod2" class="submodules">
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-1.html', ['mod1-item1', 'mod1-item2', 'mod1-item3'])">
+        <ul id="mod2" class="submodules open">
+          <li class="nav-item active" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-1.html', ['mod1-item1', 'mod1-item2', 'mod1-item3'])">
             <input type="checkbox" id="chk-mod2-item1">
             <span>Module 1: Fears</span>
           </li>
@@ -152,36 +145,19 @@
 
   <main id="main-content">
     <div class="container">
-      <h1>Getting Started: Module 1</h1>
-      <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
+      <h1>Week 1: Module 1 - Fears</h1>
+      <p class="subtitle">Watch this video to overcome internal resistance and fears.</p>
 
       <div class="video-wrapper">
         <div class="video-cover" id="videoCover" onclick="playVideo()">
           <div class="play-btn"></div>
         </div>
-        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/QlrNMaPbc2U?rel=0&modestbranding=1&enablejsapi=1" title="Course Introduction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-
-      <div class="goals-card">
-        <h2>Your Exercise Goals</h2>
-        <div class="form-group">
-          <label for="minGoal">Minimum Goal</label>
-          <input type="text" id="minGoal" placeholder="e.g. $1,000 / mo">
-        </div>
-        <div class="form-group">
-          <label for="midGoal">Mid-Range Goal</label>
-          <input type="text" id="midGoal" placeholder="e.g. $5,000 / mo">
-        </div>
-        <div class="form-group">
-          <label for="maxGoal">Maximum Goal</label>
-          <input type="text" id="maxGoal" placeholder="e.g. $10,000 / mo">
-        </div>
-        <button class="btn-save-goals" onclick="saveUserGoals()">Save Goals to Profile</button>
+        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw?rel=0&modestbranding=1&enablejsapi=1" title="Week 1 Module 1 Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
 
       <div class="completion-card">
         <label class="checkbox-label">
-          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item1')">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod2-item1')">
           <span>I have completed this module</span>
         </label>
         <button class="btn-next" onclick="nextLesson()">Next Module →</button>
@@ -191,7 +167,7 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
-    const CURRENT_LESSON_ID = 'mod1-item1';
+    const CURRENT_LESSON_ID = 'mod2-item1';
 
     function setCookie(name, value, days) {
       let expires = "";
@@ -268,53 +244,28 @@
           body: JSON.stringify({ action: "getData", username: username })
         });
         const data = await res.json();
-        if (data.success) {
-          document.getElementById('minGoal').value = data.minGoal || '';
-          document.getElementById('midGoal').value = data.midGoal || '';
-          document.getElementById('maxGoal').value = data.maxGoal || '';
-
-          if (data.progress) {
-            Object.keys(data.progress).forEach(lessonId => {
-              const isChecked = data.progress[lessonId];
-              const sidebarCheckbox = document.getElementById('chk-' + lessonId);
-              if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
-              if (lessonId === CURRENT_LESSON_ID) {
-                document.getElementById('main-complete-check').checked = isChecked;
-              }
-            });
-          }
+        if (data.success && data.progress) {
+          Object.keys(data.progress).forEach(lessonId => {
+            const isChecked = data.progress[lessonId];
+            const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+            if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+            if (lessonId === CURRENT_LESSON_ID) {
+              document.getElementById('main-complete-check').checked = isChecked;
+            }
+          });
         }
+
+        const chk1 = document.getElementById('chk-mod1-item1');
+        const chk2 = document.getElementById('chk-mod1-item2');
+        const chk3 = document.getElementById('chk-mod1-item3');
+        if ((!chk1 || !chk1.checked) || (!chk2 || !chk2.checked) || (!chk3 || !chk3.checked)) {
+          alert("Please complete all modules in Getting Started before accessing Week 1.");
+          window.location.href = "https://aaronmmyers.com/getting-started-1.html";
+          return;
+        }
+
       } catch (err) {
         console.error("Failed to load user data", err);
-      } finally {
-        showLoading(false);
-      }
-    }
-
-    async function saveUserGoals() {
-      const user = getCookie("portal_user");
-      if (!user) return alert("Please log in first.");
-
-      showLoading(true);
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "saveGoals",
-            username: user,
-            minGoal: document.getElementById('minGoal').value,
-            midGoal: document.getElementById('midGoal').value,
-            maxGoal: document.getElementById('maxGoal').value
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert("Goals successfully saved to your profile!");
-        } else {
-          alert("Error saving goals: " + data.message);
-        }
-      } catch (err) {
-        alert("Failed to reach database server.");
       } finally {
         showLoading(false);
       }
@@ -347,7 +298,7 @@
     }
 
     function navigateTo(url) { window.location.href = url; }
-    function nextLesson() { window.location.href = "https://aaronmmyers.com/getting-started-2.html"; }
+    function nextLesson() { alert("You have completed Week 1 Module 1!"); }
     function playVideo() {
       const cover = document.getElementById('videoCover');
       const iframe = document.getElementById('ytPlayer');
