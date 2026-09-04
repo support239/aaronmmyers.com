@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+  <title>Course Portal - Getting Started</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { display: flex; height: 100vh; background-color: #f8f9fa; color: #333; }
+
+    /* Sidebar Styles */
+    #sidebar { width: 300px; background-color: #ffffff; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; shrink: 0; }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; font-weight: bold; font-size: 1.1rem; color: #1a252f; }
+    .nav-list { list-style: none; overflow-y: auto; flex-grow: 1; }
+    
+    /* Module Accordion */
+    .module-title { padding: 15px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; }
+    .module-title:hover { background-color: #e9ecef; }
+    .submodules { list-style: none; display: none; background-color: #ffffff; }
+    .submodules.open { display: block; }
+    
+    /* Nav Items */
+    .nav-item { padding: 12px 20px 12px 30px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
+    .nav-item:hover { background-color: #f8f9fa; }
+    .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
+    .nav-item input[type="checkbox"] { pointer-events: none; } /* Checked via main interface state */
+
+    /* Main Content */
+    #main-content { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+    .container { max-width: 900px; width: 100%; }
+    h1 { margin-bottom: 10px; color: #1a252f; }
+    p.subtitle { color: #6c757d; margin-bottom: 25px; }
+
+    /* Video Embed Container (Responsive 16:9) */
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #000; margin-bottom: 25px; }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+    /* Completion Box */
+    .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
+    .checkbox-label input { width: 20px; height: 20px; cursor: pointer; }
+    .btn-next { background-color: #228be6; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-next:hover { background-color: #1c7ed6; }
+  </style>
+</head>
+<body>
+
+  <nav id="sidebar">
+    <div class="sidebar-header">Course Content</div>
+    <ul class="nav-list">
+      <li>
+        <div class="module-title" onclick="toggleModule('mod1')">
+          <span>Getting Started</span>
+          <span id="mod1-icon">▼</span>
+        </div>
+        <ul id="mod1" class="submodules open">
+          <li class="nav-item active" onclick="loadLesson('mod1-item1')">
+            <input type="checkbox" id="chk-mod1-item1">
+            <span>Module 1: First Exercise</span>
+          </li>
+          <li class="nav-item" onclick="loadLesson('mod1-item2')">
+            <input type="checkbox" id="chk-mod1-item2">
+            <span>Module 2: Course Overview</span>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <div class="module-title" onclick="toggleModule('mod2')">
+          <span>Core Concepts</span>
+          <span id="mod2-icon">▶</span>
+        </div>
+        <ul id="mod2" class="submodules">
+          <li class="nav-item" onclick="loadLesson('mod2-item1')">
+            <input type="checkbox" id="chk-mod2-item1">
+            <span>Module 1: Fundamentals</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <main id="main-content">
+    <div class="container">
+      <h1>Getting Started: Module 1</h1>
+      <p class="subtitle">Watch this video first to learn about our initial exercise.</p>
+
+      <div class="video-container">
+        <iframe src="https://www.youtube-nocookie.com/embed/NO6lo-jeUyw" title="Course Introduction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="completion-card">
+        <label class="checkbox-label">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod1-item1')">
+          <span>I have completed this module</span>
+        </label>
+        <button class="btn-next" onclick="nextLesson()">Next Module →</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Toggle module accordion visibility
+    function toggleModule(id) {
+      const submodule = document.getElementById(id);
+      const icon = document.getElementById(id + '-icon');
+      const isOpen = submodule.classList.contains('open');
+      
+      submodule.classList.toggle('open');
+      icon.textContent = isOpen ? '▶' : '▼';
+    }
+
+    // Save and update completion state
+    function toggleCompletion(lessonId) {
+      const isChecked = document.getElementById('main-complete-check').checked;
+      
+      // Update sidebar checkbox
+      document.getElementById('chk-' + lessonId).checked = isChecked;
+      
+      // Persist state in browser storage
+      localStorage.setItem('complete_' + lessonId, isChecked);
+    }
+
+    // Load saved progress on page load
+    function loadProgress() {
+      const currentLesson = 'mod1-item1'; // Hardcoded for this page
+      const isCompleted = localStorage.getItem('complete_' + currentLesson) === 'true';
+      
+      document.getElementById('main-complete-check').checked = isCompleted;
+      document.getElementById('chk-' + currentLesson).checked = isCompleted;
+
+      // Restore checked states for other modules if they exist in localStorage
+      ['mod1-item2', 'mod2-item1'].forEach(id => {
+        if (localStorage.getItem('complete_' + id) === 'true') {
+          document.getElementById('chk-' + id).checked = true;
+        }
+      });
+    }
+
+    function nextLesson() {
+      alert("Moving to the next module!");
+      // Handle page transition or dynamic content loading here
+    }
+
+    // Initialize progress tracking
+    window.onload = loadProgress;
+  </script>
+</body>
+</html>
