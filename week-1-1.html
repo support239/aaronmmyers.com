@@ -317,7 +317,7 @@
         if (dataProgress.success) {
           const minGoalText = dataProgress.minGoal ? dataProgress.minGoal : '[minimum goal]';
           document.getElementById('goalPrompt').innerText = 
-            `What are 20 things (fears, blocks, challenges etc) that would keep you from getting ${minGoalText}?`;
+            `What are 20 things (fears, blocks, challenges etc) that would keep you from getting your minimum goal... ${minGoalText}?`;
 
           if (dataProgress.progress) {
             Object.keys(dataProgress.progress).forEach(lessonId => {
