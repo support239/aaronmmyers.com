@@ -83,29 +83,16 @@
     
     .btn { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; text-decoration: none; display: inline-block; text-align: center; }
     .btn:hover { background-color: #1c7ed6; }
-    .btn-secondary { background-color: #6c757d; }
-    .btn-secondary:hover { background-color: #5a6268; }
 
     /* Login & Loading Overlays */
     .login-overlay { 
-      position: fixed; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%; 
-      background: rgba(0,0,0,0.8); 
-      z-index: 1000; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+      justify-content: center; align-items: center; 
     }
     .login-box { 
-      background: #fff; 
-      padding: 36px 32px; 
-      border-radius: 12px; 
-      width: 100%; 
-      max-width: 440px; 
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+      background: #fff; padding: 36px 32px; border-radius: 12px; 
+      width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
     }
     .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
     .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
@@ -307,31 +294,37 @@
     async function loadUserData(username) {
       showLoading(true);
       try {
-        // 1. Fetch user progress, goals, and fears in one call
-        const resUserData = await fetch(API_URL, {
+        const res = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ action: "getData", username: username })
         });
-        const dataProgress = await resUserData.json();
+        const data = await res.json();
 
-        if (dataProgress.success) {
-          // Set goal prompt
-          const minGoalText = dataProgress.minGoal ? dataProgress.minGoal : '[minimum goal]';
+        if (data.success) {
+          // Goal Prompt
+          const minGoalText = data.minGoal ? data.minGoal : '[minimum goal]';
           document.getElementById('goalPrompt').innerText = 
             `What are 20 things (fears, blocks, challenges etc) that would keep you from getting ${minGoalText}?`;
 
-          // Sync sidebar checkboxes and completion status
-          if (dataProgress.progress) {
-            Object.keys(dataProgress.progress).forEach(lessonId => {
+          // Progress & Checkboxes
+          if (data.progress) {
+            Object.keys(data.progress).forEach(lessonId => {
               const sidebarCheckbox = document.getElementById('chk-' + lessonId);
-              if (sidebarCheckbox) sidebarCheckbox.checked = dataProgress.progress[lessonId];
+              if (sidebarCheckbox) sidebarCheckbox.checked = data.progress[lessonId];
               if (lessonId === CURRENT_LESSON_ID) {
-                document.getElementById('main-complete-check').checked = dataProgress.progress[lessonId];
+                document.getElementById('main-complete-check').checked = data.progress[lessonId];
               }
             });
           }
 
-          // Enforce prerequisite check
+          // Populate Fears
+          let fearsArray = (Array.isArray(data.fears) && data.fears.length === 20) 
+            ? data.fears 
+            : Array(20).fill('');
+
+          renderList(fearsArray);
+
+          // Prerequisite Check
           const chk1 = document.getElementById('chk-mod1-item1');
           const chk2 = document.getElementById('chk-mod1-item2');
           const chk3 = document.getElementById('chk-mod1-item3');
@@ -341,30 +334,9 @@
             window.location.href = "https://aaronmmyers.com/getting-started-1.html";
             return;
           }
+        } else {
+          renderList(Array(20).fill(''));
         }
-
-        // 2. Fetch saved fears directly using explicit getFears action
-        const resFears = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "getFears", username: username })
-        });
-        const dataFears = await resFears.json();
-
-        // Check dataFears.fears OR dataProgress.fears depending on backend response format
-        let loadedFears = null;
-        if (dataFears.success && Array.isArray(dataFears.fears) && dataFears.fears.length > 0) {
-          loadedFears = dataFears.fears;
-        } else if (dataProgress.success && Array.isArray(dataProgress.fears) && dataProgress.fears.length > 0) {
-          loadedFears = dataProgress.fears;
-        }
-
-        // Fallback to 20 empty slots if no saved data is found
-        let finalFears = (loadedFears && loadedFears.length === 20) 
-          ? loadedFears 
-          : Array(20).fill('');
-
-        renderList(finalFears);
-
       } catch (err) {
         console.error("Error loading user data", err);
         renderList(Array(20).fill(''));
