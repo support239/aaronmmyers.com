@@ -64,7 +64,15 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .drag-item.dragging { opacity: 0.5; border: 2px dashed #228be6; }
-    .handle { cursor: grab; color: #adb5bd; font-weight: bold; user-select: none; }
+    .handle { 
+      cursor: grab; 
+      color: #adb5bd; 
+      font-weight: bold; 
+      user-select: none; 
+      padding: 6px 10px; 
+      font-size: 1.2rem;
+      touch-action: none;
+    }
     .rank-number { font-weight: bold; width: 2.2rem; color: #228be6; }
     .drag-item input[type="text"] {
       flex: 1;
@@ -222,7 +230,10 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
     const CURRENT_LESSON_ID = 'mod2-item1';
+    
     let dragSrcEl = null;
+    let touchItem = null;
+    let touchY = 0;
 
     function setCookie(name, value, days) {
       let expires = "";
@@ -301,12 +312,10 @@
         const data = await res.json();
 
         if (data.success) {
-          // 1. Goal Prompt
           const minGoalText = data.minGoal ? data.minGoal : '[minimum goal]';
           document.getElementById('goalPrompt').innerText = 
             `What are 20 things (fears, blocks, challenges etc) that would keep you from getting ... ${minGoalText}?`;
 
-          // 2. Sidebar Progress Checkboxes
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
               const sidebarCheckbox = document.getElementById('chk-' + lessonId);
@@ -317,20 +326,17 @@
             });
           }
 
-          // 3. Populate Fears
           let fearsArray = [];
           if (Array.isArray(data.fears) && data.fears.length > 0) {
             fearsArray = data.fears;
           }
 
-          // Pad array to exactly 20 items
           while (fearsArray.length < 20) {
             fearsArray.push('');
           }
 
           renderList(fearsArray);
 
-          // 4. Prerequisite Check (Run after rendering content)
           const chk1 = document.getElementById('chk-mod1-item1');
           const chk2 = document.getElementById('chk-mod1-item2');
           const chk3 = document.getElementById('chk-mod1-item3');
@@ -370,7 +376,7 @@
           <input type="text" value="${safeText}" placeholder="Enter fear / challenge ${idx + 1}">
         `;
 
-        addDragListeners(li);
+        addDragAndTouchListeners(li);
         listEl.appendChild(li);
       });
     }
@@ -382,13 +388,21 @@
       });
     }
 
-    function addDragListeners(item) {
+    function addDragAndTouchListeners(item) {
+      // Desktop Listeners
       item.addEventListener('dragstart', handleDragStart);
       item.addEventListener('dragover', handleDragOver);
       item.addEventListener('drop', handleDrop);
       item.addEventListener('dragend', handleDragEnd);
+
+      // Mobile Touch Listeners
+      const handle = item.querySelector('.handle');
+      handle.addEventListener('touchstart', handleTouchStart, { passive: false });
+      handle.addEventListener('touchmove', handleTouchMove, { passive: false });
+      handle.addEventListener('touchend', handleTouchEnd);
     }
 
+    /* --- DESKTOP HANDLERS --- */
     function handleDragStart(e) {
       dragSrcEl = this;
       this.classList.add('dragging');
@@ -421,6 +435,45 @@
 
     function handleDragEnd() {
       this.classList.remove('dragging');
+    }
+
+    /* --- MOBILE TOUCH HANDLERS --- */
+    function handleTouchStart(e) {
+      touchItem = this.closest('.drag-item');
+      touchItem.classList.add('dragging');
+      touchY = e.touches[0].clientY;
+    }
+
+    function handleTouchMove(e) {
+      if (!touchItem) return;
+      e.preventDefault();
+
+      const currentY = e.touches[0].clientY;
+      const targetElement = document.elementFromPoint(e.touches[0].clientX, currentY);
+
+      if (targetElement) {
+        const targetItem = targetElement.closest('.drag-item');
+        if (targetItem && targetItem !== touchItem) {
+          const list = document.getElementById('dragList');
+          const items = Array.from(list.children);
+          const srcIdx = items.indexOf(touchItem);
+          const targetIdx = items.indexOf(targetItem);
+
+          if (srcIdx < targetIdx) {
+            list.insertBefore(touchItem, targetItem.nextSibling);
+          } else {
+            list.insertBefore(touchItem, targetItem);
+          }
+          updateRanks();
+        }
+      }
+    }
+
+    function handleTouchEnd() {
+      if (touchItem) {
+        touchItem.classList.remove('dragging');
+        touchItem = null;
+      }
     }
 
     async function saveFears() {
