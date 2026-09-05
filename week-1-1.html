@@ -301,12 +301,12 @@
         const data = await res.json();
 
         if (data.success) {
-          // Goal Prompt
+          // 1. Goal Prompt
           const minGoalText = data.minGoal ? data.minGoal : '[minimum goal]';
           document.getElementById('goalPrompt').innerText = 
             `What are 20 things (fears, blocks, challenges etc) that would keep you from getting ... ${minGoalText}?`;
 
-          // Progress & Checkboxes
+          // 2. Sidebar Progress Checkboxes
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
               const sidebarCheckbox = document.getElementById('chk-' + lessonId);
@@ -317,32 +317,27 @@
             });
           }
 
-          // Populate Fears via getFears action
-          let fearsArray = Array(20).fill('');
-          try {
-            const fearsRes = await fetch(API_URL, {
-              method: "POST",
-              body: JSON.stringify({ action: "getFears", username: username })
-            });
-            const fearsData = await fearsRes.json();
-            if (fearsData.success && Array.isArray(fearsData.fears) && fearsData.fears.length > 0) {
-              fearsArray = fearsData.fears;
-              while (fearsArray.length < 20) {
-                fearsArray.push('');
-              }
-            }
-          } catch (fErr) {
-            console.error("Error fetching fears:", fErr);
+          // 3. Populate Fears
+          let fearsArray = [];
+          if (Array.isArray(data.fears) && data.fears.length > 0) {
+            fearsArray = data.fears;
+          }
+
+          // Pad array to exactly 20 items
+          while (fearsArray.length < 20) {
+            fearsArray.push('');
           }
 
           renderList(fearsArray);
 
-          // Prerequisite Check
+          // 4. Prerequisite Check (Run after rendering content)
           const chk1 = document.getElementById('chk-mod1-item1');
           const chk2 = document.getElementById('chk-mod1-item2');
           const chk3 = document.getElementById('chk-mod1-item3');
 
-          if ((!chk1 || !chk1.checked) || (!chk2 || !chk2.checked) || (!chk3 || !chk3.checked)) {
+          const missingPrereqs = (!chk1 || !chk1.checked) || (!chk2 || !chk2.checked) || (!chk3 || !chk3.checked);
+          
+          if (missingPrereqs) {
             alert("Please complete all Getting Started modules before proceeding.");
             window.location.href = "https://aaronmmyers.com/getting-started-1.html";
             return;
@@ -367,10 +362,12 @@
         li.className = 'drag-item';
         li.draggable = true;
 
+        const safeText = String(text || '').replace(/"/g, '&quot;');
+
         li.innerHTML = `
           <span class="handle">&#x2630;</span>
           <span class="rank-number">#${idx + 1}</span>
-          <input type="text" value="${text.replace(/"/g, '&quot;')}" placeholder="Enter fear / challenge ${idx + 1}">
+          <input type="text" value="${safeText}" placeholder="Enter fear / challenge ${idx + 1}">
         `;
 
         addDragListeners(li);
