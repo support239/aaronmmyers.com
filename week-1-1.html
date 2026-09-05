@@ -307,18 +307,20 @@
     async function loadUserData(username) {
       showLoading(true);
       try {
-        // Check prerequisite completions
-        const resProgress = await fetch(API_URL, {
+        // 1. Fetch user progress, goals, and fears in one call
+        const resUserData = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ action: "getData", username: username })
         });
-        const dataProgress = await resProgress.json();
+        const dataProgress = await resUserData.json();
 
         if (dataProgress.success) {
+          // Set goal prompt
           const minGoalText = dataProgress.minGoal ? dataProgress.minGoal : '[minimum goal]';
           document.getElementById('goalPrompt').innerText = 
-            `What are 20 things (fears, blocks, challenges etc) that would keep you from getting your minimum goal... ${minGoalText}?`;
+            `What are 20 things (fears, blocks, challenges etc) that would keep you from getting ${minGoalText}?`;
 
+          // Sync sidebar checkboxes and completion status
           if (dataProgress.progress) {
             Object.keys(dataProgress.progress).forEach(lessonId => {
               const sidebarCheckbox = document.getElementById('chk-' + lessonId);
@@ -341,18 +343,27 @@
           }
         }
 
-        // Fetch fears
+        // 2. Fetch saved fears directly using explicit getFears action
         const resFears = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({ action: "getFears", username: username })
         });
         const dataFears = await resFears.json();
 
-        let savedFears = (dataFears.success && dataFears.fears && dataFears.fears.length === 20) 
-          ? dataFears.fears 
+        // Check dataFears.fears OR dataProgress.fears depending on backend response format
+        let loadedFears = null;
+        if (dataFears.success && Array.isArray(dataFears.fears) && dataFears.fears.length > 0) {
+          loadedFears = dataFears.fears;
+        } else if (dataProgress.success && Array.isArray(dataProgress.fears) && dataProgress.fears.length > 0) {
+          loadedFears = dataProgress.fears;
+        }
+
+        // Fallback to 20 empty slots if no saved data is found
+        let finalFears = (loadedFears && loadedFears.length === 20) 
+          ? loadedFears 
           : Array(20).fill('');
 
-        renderList(savedFears);
+        renderList(finalFears);
 
       } catch (err) {
         console.error("Error loading user data", err);
