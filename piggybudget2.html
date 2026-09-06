@@ -7,25 +7,35 @@
   <title>Budget & Transaction Dashboard</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    html, body {
       margin: 0;
-      padding: 0 0 70px 0; /* Space for fixed bottom navigation */
+      padding: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f4f6f8;
       color: #333;
     }
 
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
     .container { 
+      flex: 1;
       max-width: 1000px; 
+      width: 100%;
       margin: 0 auto; 
       padding: 15px; 
+      padding-bottom: 75px; /* Space for fixed bottom navigation */
     }
 
     /* Tab Visibility Toggle */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Cards & Containers */
+    /* Cards */
     .card {
       background: white;
       padding: 15px;
@@ -34,45 +44,50 @@
       margin-bottom: 20px;
     }
 
-    /* Sticky Header Table Container */
+    /* Dedicated Scroll Area for Table with Fixed Sticky Header */
     .table-container {
-      max-height: 75vh;
+      max-height: 70vh;
       overflow-y: auto;
-      overflow-x: auto;
+      overflow-x: hidden; /* Stops horizontal scrolling */
       border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      position: relative;
     }
 
     table { 
       width: 100%; 
       border-collapse: separate; 
       border-spacing: 0;
+      table-layout: fixed; /* Keeps columns contained inside screen */
     }
 
-    /* Sticky Headers */
+    /* Sticky Headers Fix */
     th { 
       position: sticky;
       top: 0;
       background-color: #f8f9fa; 
       font-weight: 600; 
       color: #555; 
-      z-index: 10;
-      border-bottom: 2px solid #e0e0e0;
-      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      border-bottom: 2px solid #d0d0d0;
+      padding: 12px 10px;
+      text-align: left;
     }
 
-    th, td { 
+    td { 
       text-align: left; 
       padding: 12px 10px; 
       border-bottom: 1px solid #e0e0e0; 
+      background-color: #ffffff;
+      font-size: 14px;
+      word-wrap: break-word;
     }
 
-    td { background-color: #ffffff; }
-
-    /* Column Sizing & Mobile Optimization */
-    .col-date { width: 15%; min-width: 85px; white-space: nowrap; }
-    .col-desc { width: 45%; min-width: 140px; word-break: break-word; }
-    .col-amount { width: 15%; min-width: 80px; white-space: nowrap; }
-    .col-category { width: 25%; min-width: 120px; }
+    /* Column Width Allocation */
+    .col-date { width: 18%; }
+    .col-desc { width: 42%; }
+    .col-amount { width: 15%; }
+    .col-category { width: 25%; }
 
     select {
       padding: 6px 8px;
@@ -80,10 +95,10 @@
       border: 1px solid #ccc;
       background: white;
       width: 100%;
-      font-size: 14px;
+      font-size: 13px;
     }
 
-    /* Responsive Budget Grid */
+    /* Budget Grid Layout */
     .budget-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -147,12 +162,59 @@
       fill: currentColor;
     }
 
-    /* Small Screen Enhancements */
+    /* MOBILE RESPONSIVE LAYOUT (NO HORIZONTAL SCROLLING) */
     @media (max-width: 600px) {
-      .container { padding: 10px; }
-      .card { padding: 8px; border-radius: 8px; }
-      th, td { padding: 8px 6px; font-size: 13px; }
-      select { font-size: 12px; padding: 4px; }
+      .container { padding: 10px; padding-bottom: 75px; }
+      .card { padding: 8px; }
+
+      /* Convert Table Rows into Mobile Responsive Cards */
+      .table-container { border: none; max-height: none; }
+      
+      table, thead, tbody, th, td, tr { 
+        display: block; 
+      }
+
+      /* Hide table headers on mobile */
+      thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        padding: 10px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px dashed #eee;
+        width: 100% !important;
+        font-size: 13px;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #666;
+        padding-right: 10px;
+      }
+
+      select {
+        width: 60%;
+      }
+
       .budget-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -209,12 +271,10 @@
   </nav>
 
   <script>
-    // Configured Google Apps Script Web App Endpoint URL
     const API_URL = "https://script.google.com/macros/s/AKfycbzHJ5I4BrKihkroMulrIbyqNpPtOpYJfKBKISTTYiZe78hwYqHD5929Udf9IS_AJGzy/exec"; 
 
     let categoriesList = [];
 
-    // Switch Tab Logic
     function switchTab(tabName, element) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
@@ -224,7 +284,6 @@
       window.scrollTo(0, 0);
     }
 
-    // Load Data from Apps Script
     async function loadDashboard() {
       try {
         const response = await fetch(API_URL);
@@ -247,10 +306,10 @@
 
       tbody.innerHTML = transactions.map(tx => `
         <tr>
-          <td class="col-date">${tx.date ? new Date(tx.date).toLocaleDateString() : ''}</td>
-          <td class="col-desc">${tx.description || ''}</td>
-          <td class="col-amount">$${Number(tx.amount || 0).toFixed(2)}</td>
-          <td class="col-category">
+          <td class="col-date" data-label="Date">${tx.date ? new Date(tx.date).toLocaleDateString() : ''}</td>
+          <td class="col-desc" data-label="Description">${tx.description || ''}</td>
+          <td class="col-amount" data-label="Amount">$${Number(tx.amount || 0).toFixed(2)}</td>
+          <td class="col-category" data-label="Category">
             <select onchange="updateCategory('${tx.id}', this.value)">
               <option value="">Uncategorized</option>
               ${categoriesList.map(c => `
