@@ -10,54 +10,95 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
-      padding: 0 0 70px 0; /* Extra space at bottom for sticky nav */
+      padding: 0 0 70px 0; /* Space for fixed bottom navigation */
       background: #f4f6f8;
       color: #333;
     }
 
-    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    .container { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      padding: 15px; 
+    }
 
     /* Tab Visibility Toggle */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Cards & Tables */
+    /* Cards & Containers */
     .card {
       background: white;
-      padding: 20px;
+      padding: 15px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       margin-bottom: 20px;
     }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid #e0e0e0; }
-    th { background-color: #f8f9fa; font-weight: 600; color: #555; }
-
-    /* Budget Grid Layout */
-    .budget-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 15px;
-    }
-    .budget-card {
-      background: #f8f9fa;
-      padding: 16px;
+    /* Sticky Header Table Container */
+    .table-container {
+      max-height: 75vh;
+      overflow-y: auto;
+      overflow-x: auto;
       border-radius: 8px;
-      border-left: 4px solid #007bff;
     }
-    .budget-card strong { font-size: 1.05em; display: block; margin-bottom: 6px; }
-    .budget-card .meta { font-size: 0.88em; color: #666; margin-bottom: 8px; }
-    .budget-card .remaining { font-weight: 600; color: #28a745; }
+
+    table { 
+      width: 100%; 
+      border-collapse: separate; 
+      border-spacing: 0;
+    }
+
+    /* Sticky Headers */
+    th { 
+      position: sticky;
+      top: 0;
+      background-color: #f8f9fa; 
+      font-weight: 600; 
+      color: #555; 
+      z-index: 10;
+      border-bottom: 2px solid #e0e0e0;
+      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td { 
+      text-align: left; 
+      padding: 12px 10px; 
+      border-bottom: 1px solid #e0e0e0; 
+    }
+
+    td { background-color: #ffffff; }
+
+    /* Column Sizing & Mobile Optimization */
+    .col-date { width: 15%; min-width: 85px; white-space: nowrap; }
+    .col-desc { width: 45%; min-width: 140px; word-break: break-word; }
+    .col-amount { width: 15%; min-width: 80px; white-space: nowrap; }
+    .col-category { width: 25%; min-width: 120px; }
 
     select {
-      padding: 6px 10px;
+      padding: 6px 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
       background: white;
       width: 100%;
-      max-width: 220px;
+      font-size: 14px;
     }
+
+    /* Responsive Budget Grid */
+    .budget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+    }
+    .budget-card {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      border-left: 4px solid #007bff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .budget-card strong { font-size: 1.05em; display: block; margin-bottom: 6px; }
+    .budget-card .meta { font-size: 0.88em; color: #666; margin-bottom: 8px; }
+    .budget-card .remaining { font-weight: 600; color: #28a745; }
 
     /* Fixed Bottom Navigation Bar */
     .bottom-nav {
@@ -105,31 +146,44 @@
       margin-bottom: 3px;
       fill: currentColor;
     }
+
+    /* Small Screen Enhancements */
+    @media (max-width: 600px) {
+      .container { padding: 10px; }
+      .card { padding: 8px; border-radius: 8px; }
+      th, td { padding: 8px 6px; font-size: 13px; }
+      select { font-size: 12px; padding: 4px; }
+      .budget-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     
+    <!-- TAB 1: TRANSACTIONS -->
     <div id="tab-transactions" class="tab-content active">
       <h2>Transactions</h2>
       <div class="card">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Amount</th>
-              <th>Category</th>
-            </tr>
-          </thead>
-          <tbody id="transactionTable">
-            <tr><td colspan="4">Loading transactions...</td></tr>
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-date">Date</th>
+                <th class="col-desc">Description</th>
+                <th class="col-amount">Amount</th>
+                <th class="col-category">Category</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTable">
+              <tr><td colspan="4">Loading transactions...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- TAB 2: BUDGETS -->
     <div id="tab-budgets" class="tab-content">
       <h2>Budgets & Categories</h2>
       <div id="budgetGrid" class="budget-grid">Loading categories...</div>
@@ -137,6 +191,7 @@
 
   </div>
 
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
   <nav class="bottom-nav">
     <button class="nav-tab active" onclick="switchTab('transactions', this)">
       <svg viewBox="0 0 24 24">
@@ -154,7 +209,7 @@
   </nav>
 
   <script>
-    // Replace with your Apps Script Web App URL
+    // Configured Google Apps Script Web App Endpoint URL
     const API_URL = "https://script.google.com/macros/s/AKfycbzHJ5I4BrKihkroMulrIbyqNpPtOpYJfKBKISTTYiZe78hwYqHD5929Udf9IS_AJGzy/exec"; 
 
     let categoriesList = [];
@@ -192,10 +247,10 @@
 
       tbody.innerHTML = transactions.map(tx => `
         <tr>
-          <td>${tx.date ? new Date(tx.date).toLocaleDateString() : ''}</td>
-          <td>${tx.description || ''}</td>
-          <td>$${Number(tx.amount || 0).toFixed(2)}</td>
-          <td>
+          <td class="col-date">${tx.date ? new Date(tx.date).toLocaleDateString() : ''}</td>
+          <td class="col-desc">${tx.description || ''}</td>
+          <td class="col-amount">$${Number(tx.amount || 0).toFixed(2)}</td>
+          <td class="col-category">
             <select onchange="updateCategory('${tx.id}', this.value)">
               <option value="">Uncategorized</option>
               ${categoriesList.map(c => `
@@ -226,108 +281,6 @@
     }
 
     async function updateCategory(id, newCategory) {
-      await fetch(API_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "updateCategory", id: id, category: newCategory })
-      });
-      console.log(`Updated transaction ${id} to ${newCategory}`);
-    }
-
-    loadDashboard();
-  </script>
-</body>
-</html>
-  <title>Budget & Transaction Dashboard</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 20px; background: #f4f6f8; }
-    .container { max-width: 1000px; margin: 0 auto; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e0e0e0; }
-    th { background-color: #f8f9fa; }
-    .budget-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
-    .budget-card { background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; }
-    select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>Budget Summary</h2>
-    <div id="budgetGrid" class="budget-grid card">Loading categories...</div>
-
-    <h2>Recent Transactions</h2>
-    <div class="card">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Category</th>
-          </tr>
-        </thead>
-        <tbody id="transactionTable">
-          <tr><td colspan="4">Loading transactions...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    // Replace with your Web App URL from Step 2
-    const API_URL = "https://script.google.com/macros/s/AKfycbzHJ5I4BrKihkroMulrIbyqNpPtOpYJfKBKISTTYiZe78hwYqHD5929Udf9IS_AJGzy/exec"; 
-
-    let categoriesList = [];
-
-    async function loadDashboard() {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        categoriesList = data.categories;
-
-        renderCategories(data.categories);
-        renderTransactions(data.transactions);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      }
-    }
-
-    function renderCategories(categories) {
-      const grid = document.getElementById("budgetGrid");
-      grid.innerHTML = categories.map(c => `
-        <div class="budget-card">
-          <strong>${c.name}</strong><br>
-          <small>Budget: $${c.budget} | Spent: $${c.spent}</small><br>
-          <span>${c.left}</span>
-        </div>
-      `).join('');
-    }
-
-    function renderTransactions(transactions) {
-      const tbody = document.getElementById("transactionTable");
-      tbody.innerHTML = transactions.map(tx => `
-        <tr>
-          <td>${new Date(tx.date).toLocaleDateString()}</td>
-          <td>${tx.description}</td>
-          <td>$${Number(tx.amount).toFixed(2)}</td>
-          <td>
-            <select onchange="updateCategory('${tx.id}', this.value)">
-              <option value="">Uncategorized</option>
-              ${categoriesList.map(c => `
-                <option value="${c.name}" ${tx.category === c.name ? 'selected' : ''}>
-                  ${c.name}
-                </option>
-              `).join('')}
-            </select>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    async function updateCategory(id, newCategory) {
-      // Logic for posting update back to Apps Script
       await fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
