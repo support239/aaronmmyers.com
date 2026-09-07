@@ -22,7 +22,7 @@
       padding: 0; 
     }
 
-    /* Top Account Summary Header (Matching Image) */
+    /* Top Account Summary Header */
     .top-summary-header {
       background: linear-gradient(180deg, #0b3c5d 0%, #082d47 100%);
       color: #ffffff;
@@ -295,6 +295,15 @@
         const data = await response.json();
         categoriesList = data.categories;
 
+        // 1. Sort transactions newest to oldest first
+        if (data.transactions && data.transactions.length > 0) {
+          data.transactions.sort((a, b) => {
+            const dateA = a.date ? new Date(a.date).getTime() : 0;
+            const dateB = b.date ? new Date(b.date).getTime() : 0;
+            return dateB - dateA;
+          });
+        }
+
         calculateTopHeaderTotals(data.transactions, data.categories);
         renderTransactions(data.transactions);
         renderCategories(data.categories);
@@ -303,42 +312,48 @@
       }
     }
 
-    // Calculates top banner available balance & remaining week's upcoming bills
     function calculateTopHeaderTotals(transactions, categories) {
-      // 1. Available Balance: Sum of category remaining balances
-      let totalLeft = 0;
-      if (categories && categories.length > 0) {
-        categories.forEach(c => {
-          const num = parseFloat(String(c.left).replace(/[^0-9.-]+/g, "")) || 0;
-          totalLeft += num;
-        });
+      // --- 1. Available Balance from CSV's Most Recent Balance Column ---
+      let latestBalance = 0;
+      if (transactions && transactions.length > 0) {
+        // Grab 'balance' property from the most recent transaction (index 0)
+        const recentTx = transactions[0];
+        const rawBal = recentTx.balance !== undefined ? recentTx.balance : recentTx.Balance;
+        latestBalance = parseFloat(String(rawBal || 0).replace(/[^0-9.-]+/g, "")) || 0;
       }
-      document.getElementById("availableBalance").innerText = `$${totalLeft.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("availableBalance").innerText = `$${latestBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-      // 2. Upcoming Week's Bills (Current Day through coming Saturday)
+      // --- 2. Upcoming Week's Bills Summed directly from Budgets Tab ---
       const now = new Date();
-      // Set to beginning of today (00:00:00)
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
-      // Calculate coming Saturday at 23:59:59
-      const dayOfWeek = now.getDay(); // 0 is Sunday, 6 is Saturday
+      const dayOfWeek = now.getDay(); // 0 = Sun, 6 = Sat
       const daysUntilSaturday = 6 - dayOfWeek;
       const endOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSaturday, 23, 59, 59);
 
       let upcomingBillsTotal = 0;
 
-      if (transactions && transactions.length > 0) {
-        transactions.forEach(tx => {
-          if (tx.date) {
-            const txDate = new Date(tx.date);
-            // Check if tx falls from today through Saturday
-            if (txDate >= todayStart && txDate <= endOfWeek) {
-              const amt = Number(tx.amount || 0);
-              // Only sum expenses/outflows (negative amounts)
-              if (amt < 0) {
-                upcomingBillsTotal += Math.abs(amt);
-              }
+      if (categories && categories.length > 0) {
+        categories.forEach(item => {
+          // Supports explicit date string (e.g., '2026-09-10') or day of month (e.g., 15) in 'dueDate' / 'due' field
+          let itemDueDate = null;
+          const rawDue = item.dueDate || item.due || item.date;
+
+          if (rawDue) {
+            if (!isNaN(rawDue) && Number(rawDue) >= 1 && Number(rawDue) <= 31) {
+              // Day of month specified (e.g., 10th of current month)
+              itemDueDate = new Date(now.getFullYear(), now.getMonth(), Number(rawDue));
+            } else {
+              // Full date string specified
+              itemDueDate = new Date(rawDue);
             }
+          }
+
+          // If due date falls between today and coming Saturday, sum its amount/budget
+          if (itemDueDate && itemDueDate >= todayStart && itemDueDate <= endOfWeek) {
+            const rawAmt = item.amount || item.budget || item.dueAmount || 0;
+            const amt = parseFloat(String(rawAmt).replace(/[^0-9.-]+/g, "")) || 0;
+            upcomingBillsTotal += Math.abs(amt);
           }
         });
       }
@@ -352,13 +367,6 @@
         container.innerHTML = '<div style="padding: 20px; text-align: center;">No transactions found.</div>';
         return;
       }
-
-      // Sort all transactions from newest to oldest
-      transactions.sort((a, b) => {
-        const dateA = a.date ? new Date(a.date).getTime() : 0;
-        const dateB = b.date ? new Date(b.date).getTime() : 0;
-        return dateB - dateA;
-      });
 
       // Group transactions while maintaining chronological date order
       const grouped = new Map();
