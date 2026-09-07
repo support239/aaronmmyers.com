@@ -295,7 +295,9 @@
         const data = await response.json();
         categoriesList = data.categories;
 
-        // 1. Sort transactions newest to oldest first
+        calculateTopHeaderTotals(data.transactions, data.categories);
+
+        // Sort transactions newest to oldest first for display
         if (data.transactions && data.transactions.length > 0) {
           data.transactions.sort((a, b) => {
             const dateA = a.date ? new Date(a.date).getTime() : 0;
@@ -304,7 +306,6 @@
           });
         }
 
-        calculateTopHeaderTotals(data.transactions, data.categories);
         renderTransactions(data.transactions);
         renderCategories(data.categories);
       } catch (error) {
@@ -316,10 +317,15 @@
       // --- 1. Available Balance from CSV's Most Recent Balance Column ---
       let latestBalance = 0;
       if (transactions && transactions.length > 0) {
-        // Grab 'balance' property from the most recent transaction (index 0)
-        const recentTx = transactions[0];
-        const rawBal = recentTx.balance !== undefined ? recentTx.balance : recentTx.Balance;
-        latestBalance = parseFloat(String(rawBal || 0).replace(/[^0-9.-]+/g, "")) || 0;
+        let recentTx = transactions[0];
+        for (let i = 0; i < transactions.length; i++) {
+          const rawBal = transactions[i].balance !== undefined ? transactions[i].balance : transactions[i].Balance;
+          if (rawBal !== undefined && rawBal !== null && rawBal !== "") {
+            recentTx = transactions[i];
+          }
+        }
+        const finalBal = recentTx.balance !== undefined ? recentTx.balance : recentTx.Balance;
+        latestBalance = parseFloat(String(finalBal || 0).replace(/[^0-9.-]+/g, "")) || 0;
       }
       document.getElementById("availableBalance").innerText = `$${latestBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -335,21 +341,17 @@
 
       if (categories && categories.length > 0) {
         categories.forEach(item => {
-          // Supports explicit date string (e.g., '2026-09-10') or day of month (e.g., 15) in 'dueDate' / 'due' field
           let itemDueDate = null;
           const rawDue = item.dueDate || item.due || item.date;
 
           if (rawDue) {
             if (!isNaN(rawDue) && Number(rawDue) >= 1 && Number(rawDue) <= 31) {
-              // Day of month specified (e.g., 10th of current month)
               itemDueDate = new Date(now.getFullYear(), now.getMonth(), Number(rawDue));
             } else {
-              // Full date string specified
               itemDueDate = new Date(rawDue);
             }
           }
 
-          // If due date falls between today and coming Saturday, sum its amount/budget
           if (itemDueDate && itemDueDate >= todayStart && itemDueDate <= endOfWeek) {
             const rawAmt = item.amount || item.budget || item.dueAmount || 0;
             const amt = parseFloat(String(rawAmt).replace(/[^0-9.-]+/g, "")) || 0;
@@ -368,7 +370,6 @@
         return;
       }
 
-      // Group transactions while maintaining chronological date order
       const grouped = new Map();
       transactions.forEach(tx => {
         const dateStr = tx.date ? new Date(tx.date).toLocaleDateString() : 'Unassigned Date';
@@ -378,7 +379,6 @@
         grouped.get(dateStr).push(tx);
       });
 
-      // Generate HTML with newest date banners first
       let html = '';
       grouped.forEach((txs, date) => {
         html += `<div class="date-group-header">${date}</div>`;
