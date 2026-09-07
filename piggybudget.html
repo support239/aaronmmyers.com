@@ -1,48 +1,816 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<!-- iPhone Home Screen icon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Budget & Transaction Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0 0 70px 0;
+      background: #f0f2f5;
+      color: #1c1e21;
+    }
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      padding: 0; 
+    }
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Screen Time">
+    /* Top Account Summary Header */
+    .top-summary-header {
+      background: linear-gradient(180deg, #0b3c5d 0%, #082d47 100%);
+      color: #ffffff;
+      padding: 24px 16px 20px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
 
-<!-- <script>
-setTimeout(function(){
-  window.location.href = "https://script.google.com/macros/s/AKfycbygeOnl-VOu6Myyco3jjrB4xrN5Ixed9uo_Ngslb5nSX9rixQ1RY7FKbmiYCZUqrB_IIg/exec";
-}, 40000);
-</script> -->
+    .account-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
 
-<!-- <script>
-window.location.href = "https://script.google.com/macros/s/AKfycbygeOnl-VOu6Myyco3jjrB4xrN5Ixed9uo_Ngslb5nSX9rixQ1RY7FKbmiYCZUqrB_IIg/exec";
-</script> 
- -->
+    .account-sub {
+      font-size: 12px;
+      color: #a2b7ca;
+      margin-bottom: 12px;
+    }
 
- <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #ffffff;
-        }
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    .main-balance {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      letter-spacing: -0.5px;
+    }
+
+    .balance-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a2b7ca;
+      margin-bottom: 16px;
+    }
+
+    /* Upcoming Bills Sub-Banner */
+    .upcoming-bills-banner {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 400px;
+      margin: 0 auto;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .upcoming-bills-label {
+      font-size: 12px;
+      color: #d1e0ed;
+      text-align: left;
+    }
+
+    .upcoming-bills-amount {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* Tab Visibility Toggle */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Date Header Bar */
+    .date-group-header {
+      background-color: #dbe3ed;
+      color: #0b3c5d;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 10px 16px;
+      border-top: 1px solid #c7d3e0;
+      border-bottom: 1px solid #c7d3e0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    /* Transaction Row Container */
+    .transaction-card {
+      background: #ffffff;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tx-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    /* Description Styling */
+    .tx-description {
+      font-size: 13px;
+      line-height: 1.35;
+      color: #222;
+      flex: 1;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Right-Aligned Amount Styling */
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .amount-positive { color: #2e7d32; }
+    .amount-negative { color: #c62828; }
+
+    /* Bottom Control Bar in Transaction Card */
+    .tx-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    select.category-select {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f8f9fa;
+      font-size: 12px;
+      color: #555;
+      max-width: 200px;
+    }
+
+    .tx-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: #0b3c5d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .action-btn:hover {
+      background-color: #eaf0f6;
+    }
+
+    .action-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .action-btn.btn-delete:hover {
+      color: #c62828;
+      background-color: #fde8e8;
+    }
+
+    /* Budget Tab Styling */
+    .budget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+      padding: 16px;
+    }
+
+    .budget-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #0b3c5d;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .budget-card strong { font-size: 1.05em; display: block; margin-bottom: 6px; }
+    .budget-card .meta { font-size: 0.88em; color: #666; margin-bottom: 8px; }
+    .budget-card .remaining { font-weight: 600; color: #2e7d32; }
+
+    /* Fixed Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #0b3c5d;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+      z-index: 1000;
+    }
+
+    .nav-tab {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #a2b7ca;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .nav-tab.active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .nav-tab svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 3px;
+      fill: currentColor;
+    }
+
+    /* Modal Overlay and Content Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0b3c5d;
+      margin-top: 0;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #e5e5e5;
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .split-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .split-row select { flex: 2; }
+    .split-row input { flex: 1; }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-primary {
+      background: #0b3c5d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: #e5e5e5;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-add-split {
+      background: #eaf0f6;
+      color: #0b3c5d;
+      border: 1px dashed #0b3c5d;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .split-summary {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      text-align: right;
+    }
+  </style>
 </head>
-
 <body>
 
-    <iframe src="https://www.appsheet.com/start/ab04c236-9a54-4282-bafb-391a56350fe9?refresh=1" allow="geolocation *; camera *"></iframe>
+  <div class="container">
+    
+    <!-- TOP ACCOUNT SUMMARY DISPLAY -->
+    <div class="top-summary-header">
+      <div class="account-title">Max Checking</div>
+      <div class="account-sub">x8943 S01</div>
+      <div class="main-balance" id="availableBalance">$0.00</div>
+      <div class="balance-label">Available Balance</div>
 
+      <div class="upcoming-bills-banner">
+        <div class="upcoming-bills-label">Upcoming Bills (This Week)</div>
+        <div class="upcoming-bills-amount" id="upcomingWeekAmount">$0.00</div>
+      </div>
+    </div>
+
+    <!-- TAB 1: TRANSACTIONS -->
+    <div id="tab-transactions" class="tab-content active">
+      <div id="transactionFeed">
+        <div style="padding: 20px; text-align: center;">Loading transactions...</div>
+      </div>
+    </div>
+
+    <!-- TAB 2: BUDGETS -->
+    <div id="tab-budgets" class="tab-content">
+      <div id="budgetGrid" class="budget-grid">Loading categories...</div>
+    </div>
+
+  </div>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" onclick="switchTab('transactions', this)">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+      </svg>
+      Transactions
+    </button>
+
+    <button class="nav-tab" onclick="switchTab('budgets', this)">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+      </svg>
+      Budgets
+    </button>
+  </nav>
+
+  <!-- EDIT TRANSACTION MODAL -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Edit Transaction</h3>
+      <input type="hidden" id="editTxId">
+      <div class="form-group">
+        <label for="editDate">Date</label>
+        <input type="text" id="editDate" placeholder="MM/DD/YYYY">
+      </div>
+      <div class="form-group">
+        <label for="editDesc">Description</label>
+        <input type="text" id="editDesc">
+      </div>
+      <div class="form-group">
+        <label for="editAmount">Amount ($)</label>
+        <input type="number" step="0.01" id="editAmount">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn-primary" onclick="submitEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPLIT TRANSACTION MODAL -->
+  <div id="splitModal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Split Transaction</h3>
+      <input type="hidden" id="splitTxId">
+      <div style="font-size: 13px; color: #555; margin-bottom: 12px;">
+        Total Amount: <strong id="splitTotalDisplay">$0.00</strong>
+      </div>
+      <div id="splitRowsContainer"></div>
+      <button class="btn-add-split" onclick="addSplitRow()">+ Add Category Split</button>
+      <div class="split-summary" id="splitSummaryText">Remaining: $0.00</div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('splitModal')">Cancel</button>
+        <button class="btn-primary" onclick="submitSplit()">Save Split</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxUDByX9C8rH9UD4XD-jdRZ1FFSbgHtsYmnvlZnRmn0FxDAcJ8GV-6v2v_kmrF1cXJU/exec"; 
+
+    let categoriesList = [];
+    let currentTransactions = [];
+
+    function switchTab(tabName, element) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      element.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        categoriesList = data.categories;
+        currentTransactions = data.transactions || [];
+
+        calculateTopHeaderTotals(currentTransactions, data.categories);
+
+        if (currentTransactions.length > 0) {
+          currentTransactions.sort((a, b) => {
+            const dateA = a.date ? new Date(a.date).getTime() : 0;
+            const dateB = b.date ? new Date(b.date).getTime() : 0;
+            return dateB - dateA;
+          });
+        }
+
+        renderTransactions(currentTransactions);
+        renderCategories(data.categories);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    }
+
+    function calculateTopHeaderTotals(transactions, categories) {
+      let latestBalance = 0;
+      if (transactions && transactions.length > 0) {
+        let recentTx = transactions[0];
+        for (let i = 0; i < transactions.length; i++) {
+          const rawBal = transactions[i].balance !== undefined ? transactions[i].balance : transactions[i].Balance;
+          if (rawBal !== undefined && rawBal !== null && rawBal !== "") {
+            recentTx = transactions[i];
+          }
+        }
+        const finalBal = recentTx.balance !== undefined ? recentTx.balance : recentTx.Balance;
+        latestBalance = parseFloat(String(finalBal || 0).replace(/[^0-9.-]+/g, "")) || 0;
+      }
+      document.getElementById("availableBalance").innerText = `$${latestBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const dayOfWeek = now.getDay();
+      const daysUntilSaturday = 6 - dayOfWeek;
+      const endOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSaturday, 23, 59, 59);
+
+      let upcomingBillsTotal = 0;
+
+      if (categories && categories.length > 0) {
+        categories.forEach(item => {
+          let itemDueDate = null;
+          const rawDue = item.dueDate || item.due || item.date;
+
+          if (rawDue) {
+            if (!isNaN(rawDue) && Number(rawDue) >= 1 && Number(rawDue) <= 31) {
+              itemDueDate = new Date(now.getFullYear(), now.getMonth(), Number(rawDue));
+            } else {
+              itemDueDate = new Date(rawDue);
+            }
+          }
+
+          if (itemDueDate && itemDueDate >= todayStart && itemDueDate <= endOfWeek) {
+            const rawAmt = item.amount || item.budget || item.dueAmount || 0;
+            const amt = parseFloat(String(rawAmt).replace(/[^0-9.-]+/g, "")) || 0;
+            upcomingBillsTotal += Math.abs(amt);
+          }
+        });
+      }
+
+      document.getElementById("upcomingWeekAmount").innerText = `$${upcomingBillsTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function renderTransactions(transactions) {
+      const container = document.getElementById("transactionFeed");
+      if (!transactions || transactions.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; text-align: center;">No transactions found.</div>';
+        return;
+      }
+
+      const grouped = new Map();
+      transactions.forEach(tx => {
+        const dateStr = tx.date ? new Date(tx.date).toLocaleDateString() : 'Unassigned Date';
+        if (!grouped.has(dateStr)) {
+          grouped.set(dateStr, []);
+        }
+        grouped.get(dateStr).push(tx);
+      });
+
+      let html = '';
+      grouped.forEach((txs, date) => {
+        html += `<div class="date-group-header">${date}</div>`;
+        
+        txs.forEach(tx => {
+          const amt = Number(tx.amount || 0);
+          const isPositive = amt >= 0;
+          const formattedAmt = `${isPositive ? '$' : '-$'}${Math.abs(amt).toFixed(2)}`;
+          const amtClass = isPositive ? 'amount-positive' : 'amount-negative';
+
+          html += `
+            <div class="transaction-card" id="tx-card-${tx.id}">
+              <div class="tx-main-row">
+                <div class="tx-description">${tx.description || 'No Description'}</div>
+                <div class="tx-amount ${amtClass}">${formattedAmt}</div>
+              </div>
+              <div class="tx-bottom-row">
+                <select class="category-select" onchange="updateCategory('${tx.id}', this.value)">
+                  <option value="">Select Category...</option>
+                  ${categoriesList.map(c => `
+                    <option value="${c.name}" ${tx.category === c.name ? 'selected' : ''}>
+                      ${c.name}
+                    </option>
+                  `).join('')}
+                </select>
+                <div class="tx-actions">
+                  <!-- Scissors / Split Icon -->
+                  <button class="action-btn" title="Split Transaction" onclick="openSplitModal('${tx.id}')">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm13-8l3-3V6h-3l-4 4 4 4z"/>
+                    </svg>
+                  </button>
+
+                  <!-- Pencil / Edit Icon -->
+                  <button class="action-btn" title="Edit Transaction" onclick="openEditModal('${tx.id}')">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                  </button>
+
+                  <!-- Trash / Delete Icon -->
+                  <button class="action-btn btn-delete" title="Delete Transaction" onclick="deleteTransaction('${tx.id}')">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderCategories(categories) {
+      const grid = document.getElementById("budgetGrid");
+      if (!categories || categories.length === 0) {
+        grid.innerHTML = '<div class="budget-card">No category budgets found.</div>';
+        return;
+      }
+
+      grid.innerHTML = categories.map(c => `
+        <div class="budget-card">
+          <strong>${c.name}</strong>
+          <div class="meta">Budget: $${c.budget} | Spent: $${c.spent}</div>
+          <div class="remaining">${c.left}</div>
+        </div>
+      `).join('');
+    }
+
+    async function updateCategory(id, newCategory) {
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "updateCategory", id: id, category: newCategory })
+      });
+    }
+
+    /* Modal Handlers */
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    /* DELETE TRANSACTION */
+    async function deleteTransaction(id) {
+      if (!confirm("Are you sure you want to delete this transaction?")) return;
+      
+      const card = document.getElementById(`tx-card-${id}`);
+      if (card) card.style.opacity = "0.3";
+
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "deleteTransaction", id: id })
+      });
+
+      loadDashboard();
+    }
+
+    /* EDIT TRANSACTION */
+    function openEditModal(id) {
+      const tx = currentTransactions.find(t => String(t.id) === String(id));
+      if (!tx) return;
+
+      document.getElementById('editTxId').value = tx.id;
+      document.getElementById('editDate').value = tx.date ? new Date(tx.date).toLocaleDateString('en-US') : '';
+      document.getElementById('editDesc').value = tx.description || '';
+      document.getElementById('editAmount').value = tx.amount || 0;
+
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    async function submitEdit() {
+      const id = document.getElementById('editTxId').value;
+      const date = document.getElementById('editDate').value;
+      const description = document.getElementById('editDesc').value;
+      const amount = parseFloat(document.getElementById('editAmount').value) || 0;
+
+      closeModal('editModal');
+
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "editTransaction",
+          id: id,
+          date: date,
+          description: description,
+          amount: amount
+        })
+      });
+
+      loadDashboard();
+    }
+
+    /* SPLIT TRANSACTION */
+    let totalToSplit = 0;
+
+    function openSplitModal(id) {
+      const tx = currentTransactions.find(t => String(t.id) === String(id));
+      if (!tx) return;
+
+      totalToSplit = Math.abs(parseFloat(tx.amount || 0));
+      document.getElementById('splitTxId').value = tx.id;
+      document.getElementById('splitTotalDisplay').innerText = `$${totalToSplit.toFixed(2)}`;
+
+      const container = document.getElementById('splitRowsContainer');
+      container.innerHTML = '';
+      
+      // Default with two split rows
+      addSplitRow(tx.category, totalToSplit / 2);
+      addSplitRow('', totalToSplit / 2);
+
+      updateSplitCalculation();
+      document.getElementById('splitModal').classList.add('active');
+    }
+
+    function addSplitRow(catName = '', amt = '') {
+      const container = document.getElementById('splitRowsContainer');
+      const div = document.createElement('div');
+      div.className = 'split-row';
+      div.innerHTML = `
+        <select class="split-cat">
+          <option value="">Select Category...</option>
+          ${categoriesList.map(c => `
+            <option value="${c.name}" ${c.name === catName ? 'selected' : ''}>${c.name}</option>
+          `).join('')}
+        </select>
+        <input type="number" step="0.01" class="split-amt" value="${amt !== '' ? parseFloat(amt).toFixed(2) : ''}" oninput="updateSplitCalculation()" placeholder="0.00">
+        <button class="action-btn btn-delete" type="button" onclick="this.parentElement.remove(); updateSplitCalculation();">✕</button>
+      `;
+      container.appendChild(div);
+      updateSplitCalculation();
+    }
+
+    function updateSplitCalculation() {
+      const amtInputs = document.querySelectorAll('.split-amt');
+      let sum = 0;
+      amtInputs.forEach(input => {
+        sum += parseFloat(input.value) || 0;
+      });
+
+      const remaining = totalToSplit - sum;
+      const summaryElem = document.getElementById('splitSummaryText');
+      summaryElem.innerText = `Allocated: $${sum.toFixed(2)} | Remaining: $${remaining.toFixed(2)}`;
+      summaryElem.style.color = Math.abs(remaining) < 0.01 ? '#2e7d32' : '#c62828';
+    }
+
+    async function submitSplit() {
+      const id = document.getElementById('splitTxId').value;
+      const rows = document.querySelectorAll('.split-row');
+      const splits = [];
+      let totalSplitAmt = 0;
+
+      rows.forEach(row => {
+        const cat = row.querySelector('.split-cat').value;
+        const amt = parseFloat(row.querySelector('.split-amt').value) || 0;
+        if (cat && amt > 0) {
+          splits.push({ category: cat, amount: amt });
+          totalSplitAmt += amt;
+        }
+      });
+
+      if (splits.length < 2) {
+        alert("Please select at least 2 valid categories to split.");
+        return;
+      }
+
+      if (Math.abs(totalToSplit - totalSplitAmt) > 0.02) {
+        alert("The split amounts must equal the total transaction amount.");
+        return;
+      }
+
+      closeModal('splitModal');
+
+      await fetch(API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "splitTransaction",
+          id: id,
+          splits: splits
+        })
+      });
+
+      loadDashboard();
+    }
+
+    loadDashboard();
+  </script>
 </body>
 </html>
