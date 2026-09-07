@@ -26,7 +26,7 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Date Header Bar (Matching Mobile App Style) */
+    /* Date Header Bar */
     .date-group-header {
       background-color: #dbe3ed;
       color: #0b3c5d;
@@ -65,7 +65,7 @@
       flex: 1;
       word-break: break-word;
       display: -webkit-box;
-      -webkit-line-clamp: 4; /* Maximum 4 lines */
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -125,7 +125,7 @@
       left: 0;
       right: 0;
       height: 60px;
-      background: #0b3c5d; /* Matching mobile app dark blue header */
+      background: #0b3c5d;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -231,16 +231,26 @@
         return;
       }
 
-      // Group transactions by date
-      const grouped = {};
-      transactions.forEach(tx => {
-        const dateStr = tx.date ? new Date(tx.date).toLocaleDateString() : 'Unassigned Date';
-        if (!grouped[dateStr]) grouped[dateStr] = [];
-        grouped[dateStr].push(tx);
+      // 1. Sort all transactions from newest to oldest
+      transactions.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateB - dateA; // Descending Order
       });
 
+      // 2. Group transactions while maintaining chronological date order
+      const grouped = new Map();
+      transactions.forEach(tx => {
+        const dateStr = tx.date ? new Date(tx.date).toLocaleDateString() : 'Unassigned Date';
+        if (!grouped.has(dateStr)) {
+          grouped.set(dateStr, []);
+        }
+        grouped.get(dateStr).push(tx);
+      });
+
+      // 3. Generate HTML with newest date banners first
       let html = '';
-      for (const [date, txs] of Object.entries(grouped)) {
+      grouped.forEach((txs, date) => {
         html += `<div class="date-group-header">${date}</div>`;
         
         txs.forEach(tx => {
@@ -268,7 +278,7 @@
             </div>
           `;
         });
-      }
+      });
 
       container.innerHTML = html;
     }
