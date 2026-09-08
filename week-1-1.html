@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Course Portal - Week 1: 3-Step Cycle Part 1</title>
+  <title>Course Portal - Week 1: Module 1</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; width: 100%; background-color: #f8f9fa; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -24,28 +24,70 @@
     .container { max-width: 900px; width: 100%; }
     h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
     p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
-    .card { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px; }
+    .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background-color: #000; margin-bottom: 25px; }
+    .video-wrapper iframe { position: absolute; top: -11%; left: 0; width: 100%; height: 122%; border: 0; }
+    .video-cover { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; background-image: url('https://img.youtube.com/vi/rZ4n3oxrJHU/hqdefault.jpg'); background-size: cover; background-position: center; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 5; transition: opacity 0.3s ease; }
+    .play-btn { width: 68px; height: 48px; background-color: rgba(255, 0, 0, 0.9); border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s, background-color 0.2s; }
+    .play-btn::before { content: ""; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent #ffffff; margin-left: 3px; }
+    .video-cover:hover .play-btn { background-color: #ff0000; transform: scale(1.08); }
     .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
     .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
     .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
     .btn-next { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s ease-in-out; white-space: nowrap; }
     .btn-next:hover { background-color: #1c7ed6; }
     .login-overlay { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
-      justify-content: center; align-items: center; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      z-index: 1000; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
     }
     .login-box { 
-      background: #fff; padding: 36px 32px; border-radius: 12px; 
-      width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+      background: #fff; 
+      padding: 36px 32px; 
+      border-radius: 12px; 
+      width: 100%; 
+      max-width: 440px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
     }
-    .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
-    .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
+    .login-box h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a252f;
+      margin-bottom: 24px;
+    }
+    .login-box label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 6px;
+    }
     .login-box input[type="text"], 
-    .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .login-box input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+      box-sizing: border-box;
+    }
+    .login-box .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #228be6;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
     .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; }
-    .form-group input { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -58,6 +100,7 @@
       #main-content { padding: 20px 15px; overflow-y: visible; }
       h1 { font-size: 1.4rem; }
       p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
+      .video-wrapper iframe { top: -12%; height: 124%; }
       .completion-card { flex-direction: column; align-items: stretch; text-align: center; }
       .checkbox-label { justify-content: center; margin-bottom: 10px; }
       .btn-next { width: 100%; padding: 14px; }
@@ -98,7 +141,7 @@
           <span>Getting Started</span>
           <span id="mod1-icon">▼</span>
         </div>
-        <ul id="mod1" class="submodules open">
+        <ul id="mod1" class="submodules">
           <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
             <input type="checkbox" id="chk-mod1-item1">
             <span>Module 1: First Exercise</span>
@@ -111,10 +154,6 @@
             <input type="checkbox" id="chk-mod1-item3">
             <span>Module 3: Your Values</span>
           </li>
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-4.html', ['mod1-item1', 'mod1-item2', 'mod1-item3'])">
-            <input type="checkbox" id="chk-mod1-item4">
-            <span>Module 4: Fears, Worries, Challenges, Hangups</span>
-          </li>
         </ul>
       </li>
       <li>
@@ -123,9 +162,13 @@
           <span id="mod2-icon">▼</span>
         </div>
         <ul id="mod2" class="submodules open">
-          <li class="nav-item active" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-1.html', ['mod1-item1', 'mod1-item2', 'mod1-item3', 'mod1-item4'])">
-            <input type="checkbox" id="chk-mod2-item1">
-            <span>Module 1: 3-Step Cycle Part 1</span>
+          <li class="nav-item active" onclick="navigateTo('https://aaronmmyers.com/week-1-1.html')">
+            <input type="checkbox" id="chk-week1-item1">
+            <span>Module 1: Getting Started</span>
+          </li>
+          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-2.html', ['week1-item1'])">
+            <input type="checkbox" id="chk-week1-item2">
+            <span id="week1-item2-label">Module 2: Your Goal</span>
           </li>
         </ul>
       </li>
@@ -134,16 +177,19 @@
 
   <main id="main-content">
     <div class="container">
-      <h1>Week 1: Module 1 - 3-Step Cycle Part 1</h1>
-      <p class="subtitle">Welcome to Week 1. In this module, we will explore the first part of the 3-Step Cycle.</p>
+      <h1>Week 1: Module 1</h1>
+      <p class="subtitle">Watch this video to proceed with Week 1.</p>
 
-      <div class="card">
-        <p>Lesson content coming soon...</p>
+      <div class="video-wrapper">
+        <div class="video-cover" id="videoCover" onclick="playVideo()">
+          <div class="play-btn"></div>
+        </div>
+        <iframe id="ytPlayer" src="https://www.youtube-nocookie.com/embed/rZ4n3oxrJHU?rel=0&modestbranding=1&controls=0&enablejsapi=1" title="Week 1 - Module 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
 
       <div class="completion-card">
         <label class="checkbox-label">
-          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod2-item1')">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('week1-item1')">
           <span>I have completed this module</span>
         </label>
         <button class="btn-next" onclick="nextLesson()">Next Module →</button>
@@ -153,7 +199,7 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
-    const CURRENT_LESSON_ID = 'mod2-item1';
+    const CURRENT_LESSON_ID = 'week1-item1';
 
     function setCookie(name, value, days) {
       let expires = "";
@@ -192,7 +238,6 @@
 
     async function performLogin() {
       showLoading(true);
-
       const user = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
       const errorEl = document.getElementById('loginError');
@@ -233,27 +278,19 @@
           body: JSON.stringify({ action: "getData", username: username })
         });
         const data = await res.json();
-        if (data.success && data.progress) {
-          Object.keys(data.progress).forEach(lessonId => {
-            const isChecked = data.progress[lessonId];
-            const sidebarCheckbox = document.getElementById('chk-' + lessonId);
-            if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
-            if (lessonId === CURRENT_LESSON_ID) {
-              document.getElementById('main-complete-check').checked = isChecked;
-            }
-          });
-
-          const chk1 = document.getElementById('chk-mod1-item1');
-          const chk2 = document.getElementById('chk-mod1-item2');
-          const chk3 = document.getElementById('chk-mod1-item3');
-          const chk4 = document.getElementById('chk-mod1-item4');
-
-          const missingPrereqs = (!chk1 || !chk1.checked) || (!chk2 || !chk2.checked) || (!chk3 || !chk3.checked) || (!chk4 || !chk4.checked);
-          
-          if (missingPrereqs) {
-            alert("Please complete all Getting Started modules before proceeding.");
-            window.location.href = "https://aaronmmyers.com/getting-started-1.html";
-            return;
+        if (data.success) {
+          if (data.minGoal) {
+            document.getElementById('week1-item2-label').textContent = data.minGoal;
+          }
+          if (data.progress) {
+            Object.keys(data.progress).forEach(lessonId => {
+              const isChecked = data.progress[lessonId];
+              const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+              if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+              if (lessonId === CURRENT_LESSON_ID) {
+                document.getElementById('main-complete-check').checked = isChecked;
+              }
+            });
           }
         }
       } catch (err) {
@@ -290,20 +327,27 @@
     }
 
     function navigateTo(url) { window.location.href = url; }
-    function nextLesson() { alert("End of current modules!"); }
+    
+    function nextLesson() {
+      checkAndNavigate('https://aaronmmyers.com/week-1-2.html', ['week1-item1']);
+    }
+
+    function playVideo() {
+      const cover = document.getElementById('videoCover');
+      const iframe = document.getElementById('ytPlayer');
+      cover.style.opacity = '0';
+      setTimeout(() => { cover.style.display = 'none'; }, 300);
+      iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    }
+
     function toggleMobileMenu() { document.getElementById('main-nav-list').classList.toggle('mobile-open'); }
+
     function toggleModule(id) {
       const submodule = document.getElementById(id);
       const icon = document.getElementById(id + '-icon');
       const isOpen = submodule.classList.contains('open');
       submodule.classList.toggle('open');
       icon.textContent = isOpen ? '▶' : '▼';
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkAuthAndInit);
-    } else {
-      checkAuthAndInit();
     }
 
     function checkAndNavigate(targetUrl, requiredLessonIds) {
@@ -313,10 +357,16 @@
       });
 
       if (!allComplete) {
-        alert("Please complete the preceding modules before proceeding.");
+        alert("Please complete this module before proceeding to the next lesson.");
         return;
       }
       window.location.href = targetUrl;
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkAuthAndInit);
+    } else {
+      checkAuthAndInit();
     }
   </script>
 </body>
