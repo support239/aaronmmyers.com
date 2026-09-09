@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Course Portal - Week 1: Module 2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; width: 100%; background-color: #f8f9fa; color: #333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: row; overflow: hidden; }
+    #sidebar { width: 300px; background-color: #ffffff; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; font-weight: 700; font-size: 1.1rem; color: #1a252f; display: flex; justify-content: space-between; align-items: center; }
+    .nav-list { list-style: none; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
+    .module-title { padding: 16px 20px; background-color: #f1f3f5; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; user-select: none; }
+    .module-title:hover { background-color: #e9ecef; }
+    .submodules { list-style: none; display: none; background-color: #ffffff; }
+    .submodules.open { display: block; }
+    .nav-item { padding: 14px 20px 14px 30px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
+    .nav-item:hover { background-color: #f8f9fa; }
+    .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
+    .nav-item input[type="checkbox"] { pointer-events: none; }
+    .mobile-nav-toggle { display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #1a252f; }
+    #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; position: relative; }
+    .container { max-width: 900px; width: 100%; }
+    h1 { margin-bottom: 10px; color: #1a252f; font-size: 1.75rem; line-height: 1.2; }
+    p.subtitle { color: #6c757d; margin-bottom: 25px; font-size: 1rem; }
+    .card { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px; }
+    .card h2 { font-size: 1.2rem; color: #1a252f; margin-bottom: 15px; }
+    .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; }
+    .form-group input[type="text"], .form-group textarea { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
+    .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #228be6; }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .input-row span { font-weight: 600; color: #495057; width: 20px; }
+    .input-row input { flex-grow: 1; padding: 10px 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
+    .checkbox-item { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #343a40; margin-top: 15px; cursor: pointer; user-select: none; }
+    .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: #228be6; cursor: pointer; }
+    .btn-action { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; width: 100%; margin-top: 10px; }
+    .btn-action:hover { background-color: #1c7ed6; }
+    .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
+    .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
+    .btn-next { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; white-space: nowrap; text-decoration: none; display: inline-block; text-align: center; }
+    .btn-next:hover { background-color: #1c7ed6; }
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: #fff; padding: 36px 32px; border-radius: 12px; width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
+    .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
+    .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
+    .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @media (max-width: 768px) {
+      body { flex-direction: column; overflow: auto; }
+      #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
+      .mobile-nav-toggle { display: block; }
+      .nav-list { display: none; max-height: 350px; }
+      .nav-list.mobile-open { display: block; }
+      #main-content { padding: 20px 15px; overflow-y: visible; }
+      h1 { font-size: 1.4rem; }
+      p.subtitle { font-size: 0.9rem; margin-bottom: 15px; }
+      .completion-card { flex-direction: column; align-items: stretch; text-align: center; }
+      .checkbox-label { justify-content: center; margin-bottom: 10px; }
+      .btn-next { width: 100%; padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
+  </div>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>Portal Login</h2>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password">
+      </div>
+      <button class="btn-action" onclick="performLogin()" style="margin-top: 10px;">Sign In</button>
+      <p id="loginError" style="color: red; font-size: 0.85rem; margin-top: 10px; display: none;"></p>
+    </div>
+  </div>
+
+  <nav id="sidebar"></nav>
+
+  <main id="main-content">
+    <div class="container">
+      <h1 id="pageTitle">Week 1: Module 2</h1>
+      <p class="subtitle">Examine your primary block and seek clarity.</p>
+
+      <!-- Step 1: ALWAYS True -->
+      <div class="card">
+        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"></div>
+        <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"></div>
+        <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"></div>
+        <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"></div>
+        <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"></div>
+      </div>
+
+      <!-- Step 2: NEVER True -->
+      <div class="card">
+        <h2 id="neverTruePrompt">5 things that are NEVER true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"></div>
+        <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"></div>
+        <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"></div>
+        <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"></div>
+        <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"></div>
+      </div>
+
+      <!-- Step 3: Overlaps & Verification -->
+      <div class="card">
+        <h2>Overlaps & Verification</h2>
+        <div class="form-group">
+          <label for="overlapsText">Where are the overlaps between those two lists?</label>
+          <textarea id="overlapsText" placeholder="Describe the overlaps here..."></textarea>
+        </div>
+
+        <label class="checkbox-item">
+          <input type="checkbox" id="overlapCheck">
+          <span>I have verified that these overlaps from the two lists are true.</span>
+        </label>
+      </div>
+
+      <!-- Step 4: Spiritual Inquiry -->
+      <div class="card">
+        <h2>Spiritual Guidance</h2>
+        <label class="checkbox-item" style="margin-top: 0;">
+          <input type="checkbox" id="prayerCheck1">
+          <span>Pray and know if those overlaps are true.</span>
+        </label>
+
+        <label class="checkbox-item">
+          <input type="checkbox" id="prayerCheck2">
+          <span>Pray to know what else Heavenly Father wants you to know.</span>
+        </label>
+
+        <button class="btn-action" onclick="saveExerciseAnswers()" style="margin-top: 20px;">Save Exercise Responses</button>
+      </div>
+
+      <!-- Module Completion -->
+      <div class="completion-card">
+        <label class="checkbox-label">
+          <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod2-item2')">
+          <span>I have completed this module</span>
+        </label>
+        <button class="btn-next" onclick="nextLesson()">Next Module →</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
+    const CURRENT_LESSON_ID = 'mod2-item2';
+    const CURRENT_PAGE_URL = 'https://aaronmmyers.com/week-1-2.html';
+    let topFear = "[Your Number One Fear]";
+
+    async function loadNav() {
+      try {
+        const res = await fetch('nav.html');
+        const html = await res.text();
+        document.getElementById('sidebar').innerHTML = html;
+        const currentItem = document.querySelector(`.nav-item[data-url="${CURRENT_PAGE_URL}"]`);
+        if (currentItem) currentItem.classList.add('active');
+      } catch (e) {
+        console.error("Error loading navigation:", e);
+      }
+    }
+
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=aaronmmyers.com; SameSite=Lax";
+    }
+
+    function getCookie(name) {
+      let nameEQ = name + "=";
+      let ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    async function checkAuthAndInit() {
+      await loadNav();
+      const user = getCookie("portal_user");
+      if (!user) {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      } else {
+        document.getElementById('loginOverlay').style.display = 'none';
+        await fetchUserData(user);
+        await fetchExerciseData(user);
+      }
+    }
+
+    async function performLogin() {
+      showLoading(true);
+      const user = document.getElementById('loginUser').value;
+      const pass = document.getElementById('loginPass').value;
+      const errorEl = document.getElementById('loginError');
+
+      if (!user || !pass) {
+        showLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "login", username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          setCookie("portal_user", data.username, 7);
+          document.getElementById('loginOverlay').style.display = 'none';
+          await fetchUserData(data.username);
+          await fetchExerciseData(data.username);
+        } else {
+          errorEl.textContent = data.message || "Invalid credentials";
+          errorEl.style.display = "block";
+          showLoading(false);
+        }
+      } catch (err) {
+        errorEl.textContent = "Error connecting to server.";
+        errorEl.style.display = "block";
+        showLoading(false);
+      }
+    }
+
+    async function fetchUserData(username) {
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getData", username: username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (data.fears && data.fears.length > 0 && data.fears[0]) {
+            topFear = data.fears[0];
+          }
+          document.getElementById('alwaysTruePrompt').textContent = `5 things that are ALWAYS true about "${topFear}"`;
+          document.getElementById('neverTruePrompt').textContent = `5 things that are NEVER true about "${topFear}"`;
+
+          if (data.minGoal) {
+            const goalTextEl = document.getElementById('mod2-item2-text');
+            if (goalTextEl) goalTextEl.textContent = `Module 2: ${data.minGoal}`;
+          }
+
+          if (data.progress) {
+            Object.keys(data.progress).forEach(lessonId => {
+              const isChecked = data.progress[lessonId];
+              const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+              if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+              if (lessonId === CURRENT_LESSON_ID) {
+                document.getElementById('main-complete-check').checked = isChecked;
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load user data", err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function fetchExerciseData(username) {
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getWeek1Module2", username: username })
+        });
+        const data = await res.json();
+        if (data.success && data.found) {
+          if (data.alwaysTrue) {
+            data.alwaysTrue.forEach((val, i) => {
+              const el = document.getElementById(`always-${i+1}`);
+              if (el) el.value = val || '';
+            });
+          }
+          if (data.neverTrue) {
+            data.neverTrue.forEach((val, i) => {
+              const el = document.getElementById(`never-${i+1}`);
+              if (el) el.value = val || '';
+            });
+          }
+          document.getElementById('overlapsText').value = data.overlapsText || '';
+          document.getElementById('overlapCheck').checked = data.overlapCheck === true;
+          document.getElementById('prayerCheck1').checked = data.prayerCheck1 === true;
+          document.getElementById('prayerCheck2').checked = data.prayerCheck2 === true;
+        }
+      } catch (err) {
+        console.error("Failed to load exercise responses", err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function saveExerciseAnswers() {
+      const user = getCookie("portal_user");
+      if (!user) return alert("Please log in first.");
+
+      const alwaysTrue = [
+        document.getElementById('always-1').value,
+        document.getElementById('always-2').value,
+        document.getElementById('always-3').value,
+        document.getElementById('always-4').value,
+        document.getElementById('always-5').value
+      ];
+
+      const neverTrue = [
+        document.getElementById('never-1').value,
+        document.getElementById('never-2').value,
+        document.getElementById('never-3').value,
+        document.getElementById('never-4').value,
+        document.getElementById('never-5').value
+      ];
+
+      showLoading(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "saveWeek1Module2",
+            username: user,
+            alwaysTrue: alwaysTrue,
+            neverTrue: neverTrue,
+            overlapsText: document.getElementById('overlapsText').value,
+            overlapCheck: document.getElementById('overlapCheck').checked,
+            prayerCheck1: document.getElementById('prayerCheck1').checked,
+            prayerCheck2: document.getElementById('prayerCheck2').checked
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Your responses have been saved successfully!");
+        } else {
+          alert("Error saving responses: " + (data.message || 'Unknown error'));
+        }
+      } catch (err) {
+        alert("Failed to reach database server.");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function toggleCompletion(lessonId) {
+      const user = getCookie("portal_user");
+      if (!user) return;
+
+      const isChecked = document.getElementById('main-complete-check').checked;
+      const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+      if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+
+      showLoading(true);
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "saveProgress",
+            username: user,
+            lessonId: lessonId,
+            completed: isChecked
+          })
+        });
+      } catch (err) {
+        console.error("Failed to sync progress to database", err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function navigateTo(url) { window.location.href = url; }
+    function nextLesson() { window.location.href = "https://aaronmmyers.com/week-1-3.html"; }
+    function toggleMobileMenu() { document.getElementById('main-nav-list').classList.toggle('mobile-open'); }
+    function toggleModule(id) {
+      const submodule = document.getElementById(id);
+      const icon = document.getElementById(id + '-icon');
+      const isOpen = submodule.classList.contains('open');
+      submodule.classList.toggle('open');
+      if (icon) icon.textContent = isOpen ? '▶' : '▼';
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkAuthAndInit);
+    } else {
+      checkAuthAndInit();
+    }
+
+    function checkAndNavigate(targetUrl, requiredLessonIds) {
+      const allComplete = requiredLessonIds.every(id => {
+        const chk = document.getElementById('chk-' + id);
+        return chk && chk.checked;
+      });
+
+      if (!allComplete) {
+        alert("Please complete the preceding modules before proceeding.");
+        return;
+      }
+      window.location.href = targetUrl;
+    }
+  </script>
+</body>
+</html>
