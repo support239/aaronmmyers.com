@@ -50,22 +50,12 @@
     .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-top: 20px; }
     .checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; user-select: none; }
     .checkbox-label input { width: 22px; height: 22px; cursor: pointer; accent-color: #228be6; }
-    
-    .login-overlay { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
-      justify-content: center; align-items: center; 
-    }
-    .login-box { 
-      background: #fff; padding: 36px 32px; border-radius: 12px; 
-      width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-    }
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+    .login-box { background: #fff; padding: 36px 32px; border-radius: 12px; width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
     .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
-    .login-box input[type="text"], 
-    .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
     .login-box .btn { width: 100%; padding: 12px; background-color: #228be6; font-size: 1rem; font-weight: 600; border-radius: 6px; margin-top: 6px; }
-
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -96,54 +86,7 @@
     </div>
   </div>
 
-  <nav id="sidebar">
-    <div class="sidebar-header">
-      <span>Course Content</span>
-      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">☰</button>
-    </div>
-    <ul class="nav-list" id="main-nav-list">
-      <li>
-        <div class="module-title" onclick="toggleModule('mod1')">
-          <span>Getting Started</span>
-          <span id="mod1-icon">▼</span>
-        </div>
-        <ul id="mod1" class="submodules open">
-          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
-            <input type="checkbox" id="chk-mod1-item1">
-            <span>Module 1: First Exercise</span>
-          </li>
-          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
-            <input type="checkbox" id="chk-mod1-item2">
-            <span>Module 2: Course Overview</span>
-          </li>
-          <li class="nav-item active" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-3.html', ['mod1-item1', 'mod1-item2'])">
-            <input type="checkbox" id="chk-mod1-item3">
-            <span>Module 3: Your Values</span>
-          </li>
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-4.html', ['mod1-item1', 'mod1-item2', 'mod1-item3'])">
-            <input type="checkbox" id="chk-mod1-item4">
-            <span>Module 4: Fears, Worries, Challenges, Hangups</span>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <div class="module-title" onclick="toggleModule('mod2')">
-          <span>Week 1</span>
-          <span id="mod2-icon">▶</span>
-        </div>
-        <ul id="mod2" class="submodules">
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-1.html', ['mod1-item1', 'mod1-item2', 'mod1-item3', 'mod1-item4'])">
-            <input type="checkbox" id="chk-mod2-item1">
-            <span>Module 1: 3-Step Cycle Part 1</span>
-          </li>
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-2.html', ['mod1-item1', 'mod1-item2', 'mod1-item3', 'mod1-item4', 'mod2-item1'])">
-            <input type="checkbox" id="chk-mod2-item2">
-            <span>Module 2: [Your Goal From getting-started-1.html]</span>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
+  <nav id="sidebar"></nav>
 
   <main id="main-content">
     <div class="container">
@@ -210,10 +153,10 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
     const CURRENT_LESSON_ID = 'mod1-item3';
+    const CURRENT_PAGE_URL = 'https://aaronmmyers.com/getting-started-3.html';
 
     const colorPalette = ["#FF5733", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F", "#E67E22", "#1ABC9C", "#E91E63", "#34495E", "#8E44AD"];
     let colorIndex = 0;
-    
     let masterValues = [];
 
     const modalQuestions = {
@@ -224,11 +167,25 @@
       5: "Review your expenses. If you grouped your spending, what are the top 3 categories you spend the most money on?"
     };
 
+    async function loadNav() {
+      try {
+        const res = await fetch('nav.html');
+        const html = await res.text();
+        document.getElementById('sidebar').innerHTML = html;
+        
+        const currentItem = document.querySelector(`.nav-item[data-url="${CURRENT_PAGE_URL}"]`);
+        if (currentItem) currentItem.classList.add('active');
+      } catch (e) {
+        console.error("Error loading navigation:", e);
+      }
+    }
+
     function setCookie(n,v,d){let e="";if(d){let t=new Date();t.setTime(t.getTime()+(d*864e5));e="; expires="+t.toUTCString()}document.cookie=n+"="+(v||"")+e+"; path=/; domain=aaronmmyers.com; SameSite=Lax"}
     function getCookie(n){let e=n+"=",c=document.cookie.split(';');for(let i=0;i<c.length;i++){let t=c[i];while(t.charAt(0)===' ')t=t.substring(1);if(t.indexOf(e)===0)return t.substring(e.length)}return null}
     function showLoading(s){document.getElementById('loadingOverlay').style.display=s?'flex':'none'}
 
     async function checkAuthAndInit() {
+      await loadNav();
       const user = getCookie("portal_user");
       if (!user) {
         document.getElementById('loginOverlay').style.display = 'flex';
@@ -243,7 +200,6 @@
 
     async function performLogin() {
       showLoading(true);
-
       const user = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
       const errorEl = document.getElementById('loginError');
@@ -282,12 +238,18 @@
       try {
         const resProgress = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getData", username: user }) });
         const dataProgress = await resProgress.json();
-        if (dataProgress.success && dataProgress.progress) {
-          Object.keys(dataProgress.progress).forEach(lessonId => {
-            const sidebarCheckbox = document.getElementById('chk-' + lessonId);
-            if (sidebarCheckbox) sidebarCheckbox.checked = dataProgress.progress[lessonId];
-            if (lessonId === CURRENT_LESSON_ID) document.getElementById('main-complete-check').checked = dataProgress.progress[lessonId];
-          });
+        if (dataProgress.success) {
+          if (dataProgress.minGoal) {
+            const goalTextEl = document.getElementById('mod2-item2-text');
+            if (goalTextEl) goalTextEl.textContent = `Module 2: ${dataProgress.minGoal}`;
+          }
+          if (dataProgress.progress) {
+            Object.keys(dataProgress.progress).forEach(lessonId => {
+              const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+              if (sidebarCheckbox) sidebarCheckbox.checked = dataProgress.progress[lessonId];
+              if (lessonId === CURRENT_LESSON_ID) document.getElementById('main-complete-check').checked = dataProgress.progress[lessonId];
+            });
+          }
         }
 
         const chk1 = document.getElementById('chk-mod1-item1');
