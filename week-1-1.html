@@ -263,10 +263,19 @@
         });
         const data = await res.json();
         if (data.success) {
-          const week1Item2Label = document.getElementById('week1-item2-label');
-          if (data.minGoal && week1Item2Label) {
-            week1Item2Label.textContent = data.minGoal;
+          let week1Item2Label = document.getElementById('week1-item2-label');
+          
+          if (data.minGoal) {
+            // Wait briefly if DOM isn't updated yet
+            if (!week1Item2Label) {
+              await new Promise(resolve => setTimeout(resolve, 100));
+              week1Item2Label = document.getElementById('week1-item2-label');
+            }
+            if (week1Item2Label) {
+              week1Item2Label.textContent = data.minGoal;
+            }
           }
+
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
               const isChecked = data.progress[lessonId];
