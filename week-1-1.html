@@ -130,50 +130,8 @@
     </div>
   </div>
 
-  <nav id="sidebar">
-    <div class="sidebar-header">
-      <span>Course Content</span>
-      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">☰</button>
-    </div>
-    <ul class="nav-list" id="main-nav-list">
-      <li>
-        <div class="module-title" onclick="toggleModule('mod1')">
-          <span>Getting Started</span>
-          <span id="mod1-icon">▼</span>
-        </div>
-        <ul id="mod1" class="submodules">
-          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-1.html')">
-            <input type="checkbox" id="chk-mod1-item1">
-            <span>Module 1: First Exercise</span>
-          </li>
-          <li class="nav-item" onclick="navigateTo('https://aaronmmyers.com/getting-started-2.html')">
-            <input type="checkbox" id="chk-mod1-item2">
-            <span>Module 2: Course Overview</span>
-          </li>
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/getting-started-3.html', ['mod1-item1', 'mod1-item2'])">
-            <input type="checkbox" id="chk-mod1-item3">
-            <span>Module 3: Your Values</span>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <div class="module-title" onclick="toggleModule('mod2')">
-          <span>Week 1</span>
-          <span id="mod2-icon">▼</span>
-        </div>
-        <ul id="mod2" class="submodules open">
-          <li class="nav-item active" onclick="navigateTo('https://aaronmmyers.com/week-1-1.html')">
-            <input type="checkbox" id="chk-week1-item1">
-            <span>Module 1: Getting Started</span>
-          </li>
-          <li class="nav-item" onclick="checkAndNavigate('https://aaronmmyers.com/week-1-2.html', ['week1-item1'])">
-            <input type="checkbox" id="chk-week1-item2">
-            <span id="week1-item2-label">Module 2: Your Goal</span>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
+  <!-- Dynamic Sidebar Navigation Loading -->
+  <div id="nav-placeholder"></div>
 
   <main id="main-content">
     <div class="container">
@@ -201,6 +159,31 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
     const CURRENT_LESSON_ID = 'week1-item1';
 
+    async function loadNavigation() {
+      try {
+        const response = await fetch('nav.html');
+        const navHtml = await response.text();
+        document.getElementById('nav-placeholder').innerHTML = navHtml;
+        
+        // Highlight active lesson and set relevant expanded module
+        const activeItem = document.getElementById('chk-' + CURRENT_LESSON_ID);
+        if (activeItem) {
+          const parentNavItem = activeItem.closest('.nav-item');
+          if (parentNavItem) parentNavItem.classList.add('active');
+          
+          const parentSubmodule = activeItem.closest('.submodules');
+          if (parentSubmodule) {
+            parentSubmodule.classList.add('open');
+            const iconId = parentSubmodule.id + '-icon';
+            const iconEl = document.getElementById(iconId);
+            if (iconEl) iconEl.textContent = '▼';
+          }
+        }
+      } catch (err) {
+        console.error('Error loading navigation:', err);
+      }
+    }
+
     function setCookie(name, value, days) {
       let expires = "";
       if (days) {
@@ -227,6 +210,7 @@
     }
 
     async function checkAuthAndInit() {
+      await loadNavigation();
       const user = getCookie("portal_user");
       if (!user) {
         document.getElementById('loginOverlay').style.display = 'flex';
@@ -279,8 +263,9 @@
         });
         const data = await res.json();
         if (data.success) {
-          if (data.minGoal) {
-            document.getElementById('week1-item2-label').textContent = data.minGoal;
+          const week1Item2Label = document.getElementById('week1-item2-label');
+          if (data.minGoal && week1Item2Label) {
+            week1Item2Label.textContent = data.minGoal;
           }
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
