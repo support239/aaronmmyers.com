@@ -130,7 +130,7 @@
         </label>
       </div>
 
-      <!-- Step 4: Spiritual Inquiry -->
+      <!-- Step 4: Spiritual Guidance -->
       <div class="card">
         <h2>Spiritual Guidance</h2>
         <label class="checkbox-item" style="margin-top: 0;">
@@ -138,12 +138,17 @@
           <span>Pray and know if those overlaps are true.</span>
         </label>
 
-        <label class="checkbox-item">
+        <label class="checkbox-item" style="margin-bottom: 15px;">
           <input type="checkbox" id="prayerCheck2">
           <span>Pray to know what else Heavenly Father wants you to know.</span>
         </label>
 
-        <button class="btn-action" onclick="saveExerciseAnswers()" style="margin-top: 20px;">Save Exercise Responses</button>
+        <div class="form-group">
+          <label for="prayerText">What else does Heavenly Father want you to know?</label>
+          <textarea id="prayerText" placeholder="Record your thoughts or impressions here..."></textarea>
+        </div>
+
+        <button class="btn-action" onclick="saveExerciseAnswers()" style="margin-top: 15px;">Save Exercise Responses</button>
       </div>
 
       <!-- Module Completion -->
@@ -310,6 +315,7 @@
           document.getElementById('overlapCheck').checked = data.overlapCheck === true;
           document.getElementById('prayerCheck1').checked = data.prayerCheck1 === true;
           document.getElementById('prayerCheck2').checked = data.prayerCheck2 === true;
+          document.getElementById('prayerText').value = data.prayerText || '';
         }
       } catch (err) {
         console.error("Failed to load exercise responses", err);
@@ -350,7 +356,8 @@
             overlapsText: document.getElementById('overlapsText').value,
             overlapCheck: document.getElementById('overlapCheck').checked,
             prayerCheck1: document.getElementById('prayerCheck1').checked,
-            prayerCheck2: document.getElementById('prayerCheck2').checked
+            prayerCheck2: document.getElementById('prayerCheck2').checked,
+            prayerText: document.getElementById('prayerText').value
           })
         });
         const data = await res.json();
