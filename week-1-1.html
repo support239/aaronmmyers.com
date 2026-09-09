@@ -17,7 +17,7 @@
     .submodules.open { display: block; }
     .nav-item { padding: 14px 20px 14px 30px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
     .nav-item:hover { background-color: #f8f9fa; }
-    .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
+    .nav-item.active { background-color: #e7f5ff !important; color: #1c7ed6 !important; font-weight: 600 !important; }
     .nav-item input[type="checkbox"] { pointer-events: none; }
     .mobile-nav-toggle { display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #1a252f; }
     #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; }
@@ -158,29 +158,48 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
     const CURRENT_LESSON_ID = 'week1-item1';
+    const CURRENT_PAGE_URL = 'week-1-1.html';
+
+    let cachedUserData = null;
 
     async function loadNavigation() {
       try {
         const response = await fetch('nav.html');
         const navHtml = await response.text();
         document.getElementById('nav-placeholder').innerHTML = navHtml;
-        
-        // Highlight active lesson and set relevant expanded module
-        const activeItem = document.getElementById('chk-' + CURRENT_LESSON_ID);
-        if (activeItem) {
-          const parentNavItem = activeItem.closest('.nav-item');
-          if (parentNavItem) parentNavItem.classList.add('active');
-          
-          const parentSubmodule = activeItem.closest('.submodules');
+
+        // Highlight current item in navigation
+        const chkItem = document.getElementById('chk-' + CURRENT_LESSON_ID);
+        let navItem = chkItem ? chkItem.closest('.nav-item') : null;
+
+        if (!navItem) {
+          const links = Array.from(document.querySelectorAll('#nav-placeholder a, #nav-placeholder .nav-item'));
+          navItem = links.find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(CURRENT_PAGE_URL));
+        }
+
+        if (navItem) {
+          navItem.classList.add('active');
+          const parentSubmodule = navItem.closest('.submodules');
           if (parentSubmodule) {
             parentSubmodule.classList.add('open');
-            const iconId = parentSubmodule.id + '-icon';
-            const iconEl = document.getElementById(iconId);
+            const iconEl = document.getElementById(parentSubmodule.id + '-icon');
             if (iconEl) iconEl.textContent = '▼';
           }
         }
+
+        // Apply cached goal data if user data loaded first
+        if (cachedUserData && cachedUserData.minGoal) {
+          updateGoalLabel(cachedUserData.minGoal);
+        }
       } catch (err) {
         console.error('Error loading navigation:', err);
+      }
+    }
+
+    function updateGoalLabel(goalText) {
+      const week1Item2Label = document.getElementById('week1-item2-label');
+      if (week1Item2Label) {
+        week1Item2Label.textContent = goalText;
       }
     }
 
@@ -210,13 +229,13 @@
     }
 
     async function checkAuthAndInit() {
-      await loadNavigation();
       const user = getCookie("portal_user");
       if (!user) {
+        await loadNavigation();
         document.getElementById('loginOverlay').style.display = 'flex';
       } else {
         document.getElementById('loginOverlay').style.display = 'none';
-        await fetchUserData(user);
+        await Promise.all([loadNavigation(), fetchUserData(user)]);
       }
     }
 
@@ -263,19 +282,10 @@
         });
         const data = await res.json();
         if (data.success) {
-          let week1Item2Label = document.getElementById('week1-item2-label');
-          
+          cachedUserData = data;
           if (data.minGoal) {
-            // Wait briefly if DOM isn't updated yet
-            if (!week1Item2Label) {
-              await new Promise(resolve => setTimeout(resolve, 100));
-              week1Item2Label = document.getElementById('week1-item2-label');
-            }
-            if (week1Item2Label) {
-              week1Item2Label.textContent = data.minGoal;
-            }
+            updateGoalLabel(data.minGoal);
           }
-
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
               const isChecked = data.progress[lessonId];
@@ -334,14 +344,19 @@
       iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
     }
 
-    function toggleMobileMenu() { document.getElementById('main-nav-list').classList.toggle('mobile-open'); }
+    function toggleMobileMenu() { 
+      const navList = document.querySelector('#sidebar .nav-list') || document.getElementById('main-nav-list');
+      if (navList) navList.classList.toggle('mobile-open'); 
+    }
 
     function toggleModule(id) {
       const submodule = document.getElementById(id);
       const icon = document.getElementById(id + '-icon');
-      const isOpen = submodule.classList.contains('open');
-      submodule.classList.toggle('open');
-      icon.textContent = isOpen ? '▶' : '▼';
+      if (submodule) {
+        const isOpen = submodule.classList.contains('open');
+        submodule.classList.toggle('open');
+        if (icon) icon.textContent = isOpen ? '▶' : '▼';
+      }
     }
 
     function checkAndNavigate(targetUrl, requiredLessonIds) {
