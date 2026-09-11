@@ -192,10 +192,39 @@
         const res = await fetch('nav.html');
         const html = await res.text();
         document.getElementById('sidebar').innerHTML = html;
+        
         const currentItem = document.querySelector(`.nav-item[data-url="${CURRENT_PAGE_URL}"]`);
         if (currentItem) currentItem.classList.add('active');
+
+        // Automatically open Week 1 dropdown module in sidebar
+        const mod2 = document.getElementById('mod2');
+        const mod2Icon = document.getElementById('mod2-icon');
+        if (mod2) mod2.classList.add('open');
+        if (mod2Icon) mod2Icon.textContent = '▼';
       } catch (e) {
         console.error("Error loading navigation:", e);
+      }
+    }
+
+    function checkAndNavigate(url, requiredLessons) {
+      if (!requiredLessons || requiredLessons.length === 0) {
+        window.location.href = url;
+        return;
+      }
+
+      let allCompleted = true;
+      for (let i = 0; i < requiredLessons.length; i++) {
+        const chk = document.getElementById('chk-' + requiredLessons[i]);
+        if (chk && !chk.checked) {
+          allCompleted = false;
+          break;
+        }
+      }
+
+      if (allCompleted) {
+        window.location.href = url;
+      } else {
+        alert("Please complete the preceding modules before moving forward.");
       }
     }
 
