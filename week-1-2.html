@@ -32,7 +32,7 @@
     .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #228be6; }
     .form-group textarea { resize: vertical; min-height: 90px; }
     .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .input-row span { font-weight: 600; color: #495057; width: 20px; }
+    .input-row span:first-child { font-weight: 600; color: #495057; width: 20px; }
     .input-row input { flex-grow: 1; padding: 10px 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
     .checkbox-item { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #343a40; margin-top: 15px; cursor: pointer; user-select: none; }
     .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: #228be6; cursor: pointer; }
@@ -51,6 +51,23 @@
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* NLI Evaluation Badges */
+    .nli-status {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-left: 8px;
+      min-width: 24px;
+      display: inline-block;
+      text-align: center;
+    }
+    .nli-status.valid {
+      color: #2b8a3e; /* Green Checkmark */
+    }
+    .nli-status.invalid {
+      color: #c92a2a; /* Red X */
+    }
+
     @media (max-width: 768px) {
       body { flex-direction: column; overflow: auto; }
       #sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; }
@@ -70,7 +87,7 @@
 
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
-    <p style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
+    <p id="loadingText" style="margin-top: 15px; font-weight: 600; color: #495057;">Syncing with database...</p>
   </div>
 
   <div class="login-overlay" id="loginOverlay">
@@ -99,21 +116,23 @@
       <!-- Step 1: ALWAYS True -->
       <div class="card">
         <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
-        <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"></div>
-        <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"></div>
-        <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"></div>
-        <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"></div>
-        <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"></div>
+        <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"><span class="nli-status" id="always-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"><span class="nli-status" id="always-5-status"></span></div>
+        <button class="btn-action" onclick="evaluateNLISemantics('always')" style="margin-top: 10px;">Check "Always True" Statements</button>
       </div>
 
       <!-- Step 2: NEVER True -->
       <div class="card">
         <h2 id="neverTruePrompt">5 things that are NEVER true about [Your Number One Fear]</h2>
-        <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"></div>
-        <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"></div>
-        <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"></div>
-        <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"></div>
-        <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"></div>
+        <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"><span class="nli-status" id="never-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"><span class="nli-status" id="never-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"><span class="nli-status" id="never-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"><span class="nli-status" id="never-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"><span class="nli-status" id="never-5-status"></span></div>
+        <button class="btn-action" onclick="evaluateNLISemantics('never')" style="margin-top: 10px;">Check "Never True" Statements</button>
       </div>
 
       <!-- Step 3: Overlaps & Verification -->
@@ -162,6 +181,9 @@
     </div>
   </main>
 
+  <!-- Client-side zero-shot NLI processing via Hugging Face Transformers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0"></script>
+
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
     const CURRENT_LESSON_ID = 'mod2-item2';
@@ -201,8 +223,11 @@
       return null;
     }
 
-    function showLoading(show) {
-      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    function showLoading(show, message = "Syncing with database...") {
+      const overlay = document.getElementById('loadingOverlay');
+      const textEl = document.getElementById('loadingText');
+      if (textEl) textEl.textContent = message;
+      overlay.style.display = show ? 'flex' : 'none';
     }
 
     async function checkAuthAndInit() {
@@ -218,7 +243,7 @@
     }
 
     async function performLogin() {
-      showLoading(true);
+      showLoading(true, "Signing in...");
       const user = document.getElementById('loginUser').value;
       const pass = document.getElementById('loginPass').value;
       const errorEl = document.getElementById('loginError');
@@ -253,7 +278,7 @@
     }
 
     async function fetchUserData(username) {
-      showLoading(true);
+      showLoading(true, "Fetching user profile...");
       try {
         const res = await fetch(API_URL, {
           method: "POST",
@@ -291,7 +316,7 @@
     }
 
     async function fetchExerciseData(username) {
-      showLoading(true);
+      showLoading(true, "Loading exercise responses...");
       try {
         const res = await fetch(API_URL, {
           method: "POST",
@@ -344,7 +369,7 @@
         document.getElementById('never-5').value
       ];
 
-      showLoading(true);
+      showLoading(true, "Saving responses...");
       try {
         const res = await fetch(API_URL, {
           method: "POST",
@@ -381,7 +406,7 @@
       const sidebarCheckbox = document.getElementById('chk-' + lessonId);
       if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
 
-      showLoading(true);
+      showLoading(true, "Updating progress...");
       try {
         await fetch(API_URL, {
           method: "POST",
@@ -394,6 +419,75 @@
         });
       } catch (err) {
         console.error("Failed to sync progress to database", err);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // NLI Semantic Evaluation Engine
+    let nliPipeline = null;
+
+    async function initNLIEngine() {
+      if (!nliPipeline) {
+        nliPipeline = await window.Transformers.pipeline(
+          'zero-shot-classification', 
+          'Xenova/mobilebert-uncased-mnli'
+        );
+      }
+    }
+
+    async function evaluateNLISemantics(type) {
+      if (!topFear || topFear === "[Your Number One Fear]") {
+        alert("No fear/hold-up loaded from profile.");
+        return;
+      }
+
+      showLoading(true, "Running semantic validation model...");
+      
+      try {
+        await initNLIEngine();
+        const prefix = type === 'always' ? 'always' : 'never';
+
+        for (let i = 1; i <= 5; i++) {
+          const inputEl = document.getElementById(`${prefix}-${i}`);
+          const statusEl = document.getElementById(`${prefix}-${i}-status`);
+          const statement = inputEl.value.trim();
+
+          if (!statement) {
+            statusEl.innerHTML = '';
+            continue;
+          }
+
+          // Run NLI Zero-Shot Classification against Premise (topFear)
+          const res = await nliPipeline(statement, [
+            `always true regarding ${topFear}`,
+            `never true regarding ${topFear}`
+          ]);
+
+          const topLabel = res.labels[0];
+          const topScore = res.scores[0];
+
+          if (type === 'always') {
+            if (topLabel.includes('always true') && topScore > 0.5) {
+              statusEl.innerHTML = '&#10004;'; // Green Checkmark
+              statusEl.className = 'nli-status valid';
+            } else {
+              statusEl.innerHTML = '&#10008;'; // Red X
+              statusEl.className = 'nli-status invalid';
+            }
+          } else if (type === 'never') {
+            if (topLabel.includes('never true') && topScore > 0.5) {
+              statusEl.innerHTML = '&#10004;'; // Green Checkmark
+              statusEl.className = 'nli-status valid';
+            } else {
+              statusEl.innerHTML = '&#10008;'; // Red X
+              statusEl.className = 'nli-status invalid';
+            }
+          }
+        }
+      } catch (err) {
+        console.error("NLI Evaluation Error:", err);
+        alert("An error occurred while evaluating semantics.");
       } finally {
         showLoading(false);
       }
