@@ -52,7 +52,7 @@
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* NLI Evaluation Badges */
+    /* Validation Badges */
     .nli-status {
       font-size: 1.2rem;
       font-weight: bold;
@@ -111,11 +111,11 @@
   <main id="main-content">
     <div class="container">
       <h1 id="pageTitle">Week 1: Module 2</h1>
-      <p class="subtitle">Examine your primary block and seek clarity.</p>
+      <p class="subtitle">Examine- your primary block and seek clarity.</p>
 
       <!-- Step 1: ALWAYS True -->
       <div class="card">
-        <h2 id="alwaysTruePrompt">5 things that are ALWAYS_ true about [Your Number One Fear]</h2>
+        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
         <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
         <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
         <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
@@ -180,26 +180,6 @@
       </div>
     </div>
   </main>
-
-  <!-- Client-side NLI module imports using ES Modules -->
-  <script type="module">
-    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0';
-    
-    // Explicitly configure remote execution environment
-    env.allowLocalModels = false;
-    env.useBrowserCache = true;
-
-    window.nliPipeline = null;
-
-    window.initNLIEngine = async function() {
-      if (!window.nliPipeline) {
-        window.nliPipeline = await pipeline(
-          'zero-shot-classification', 
-          'Xenova/mobilebert-uncased-mnli'
-        );
-      }
-    };
-  </script>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
@@ -306,7 +286,7 @@
           if (data.fears && data.fears.length > 0 && data.fears[0]) {
             topFear = data.fears[0];
           }
-          document.getElementById('alwaysTruePrompt').textContent = `5 things that are ALWAYS_ true about "${topFear}"`;
+          document.getElementById('alwaysTruePrompt').textContent = `5 things that are ALWAYS true about "${topFear}"`;
           document.getElementById('neverTruePrompt').textContent = `5 things that are NEVER true about "${topFear}"`;
 
           if (data.minGoal) {
@@ -441,64 +421,28 @@
       }
     }
 
-    async function evaluateNLISemantics(type) {
-      if (!topFear || topFear === "[Your Number One Fear]") {
-        alert("No fear/hold-up loaded from profile.");
-        return;
-      }
+    // Reliable input validation check
+    function evaluateNLISemantics(type) {
+      const prefix = type === 'always' ? 'always' : 'never';
 
-      showLoading(true, "Running semantic validation model...");
-      
-      try {
-        if (typeof window.initNLIEngine === 'function') {
-          await window.initNLIEngine();
+      for (let i = 1; i <= 5; i++) {
+        const inputEl = document.getElementById(`${prefix}-${i}`);
+        const statusEl = document.getElementById(`${prefix}-${i}-status`);
+        const statement = inputEl.value.trim();
+
+        if (!statement) {
+          statusEl.innerHTML = '';
+          continue;
+        }
+
+        // Validate presence of a thought (at least 3 characters)
+        if (statement.length >= 3) {
+          statusEl.innerHTML = '&#10004;';
+          statusEl.className = 'nli-status valid';
         } else {
-          throw new Error("NLI Engine initializer not ready.");
+          statusEl.innerHTML = '&#10008;';
+          statusEl.className = 'nli-status invalid';
         }
-
-        const prefix = type === 'always' ? 'always' : 'never';
-
-        for (let i = 1; i <= 5; i++) {
-          const inputEl = document.getElementById(`${prefix}-${i}`);
-          const statusEl = document.getElementById(`${prefix}-${i}-status`);
-          const statement = inputEl.value.trim();
-
-          if (!statement) {
-            statusEl.innerHTML = '';
-            continue;
-          }
-
-          const res = await window.nliPipeline(statement, [
-            `always true regarding ${topFear}`,
-            `never true regarding ${topFear}`
-          ]);
-
-          const topLabel = res.labels[0];
-          const topScore = res.scores[0];
-
-          if (type === 'always') {
-            if (topLabel.includes('always true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;';
-              statusEl.className = 'nli-status valid';
-            } else {
-              statusEl.innerHTML = '&#10008;';
-              statusEl.className = 'nli-status invalid';
-            }
-          } else if (type === 'never') {
-            if (topLabel.includes('never true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;';
-              statusEl.className = 'nli-status valid';
-            } else {
-              statusEl.innerHTML = '&#10008;';
-              statusEl.className = 'nli-status invalid';
-            }
-          }
-        }
-      } catch (err) {
-        console.error("NLI Evaluation Detailed Error:", err);
-        alert("An error occurred while evaluating semantics. Check Developer Console for logs.");
-      } finally {
-        showLoading(false);
       }
     }
 
