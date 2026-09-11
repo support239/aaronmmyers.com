@@ -115,7 +115,7 @@
 
       <!-- Step 1: ALWAYS True -->
       <div class="card">
-        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
+        <h2 id="alwaysTruePrompt">5 things that are ALWAYS  true about [Your Number One Fear]</h2>
         <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
         <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
         <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
@@ -468,24 +468,30 @@
             continue;
           }
 
-          // Evaluate statement against premise using structured hypothesis
-          const textToEvaluate = `Regarding "${topFear}": ${statement}`;
-          const candidateLabels = ['accurate', 'inaccurate'];
+          const res = await window.nliPipeline(statement, [
+            `always true regarding ${topFear}`,
+            `never true regarding ${topFear}`
+          ]);
 
-          const res = await window.nliPipeline(textToEvaluate, candidateLabels, {
-            hypothesis_template: 'This idea is {}'
-          });
+          const topLabel = res.labels[0];
+          const topScore = res.scores[0];
 
-          const accurateIndex = res.labels.indexOf('accurate');
-          const accurateScore = res.scores[accurateIndex];
-
-          // Threshold evaluation: mark valid if score exceeds 0.40
-          if (accurateScore >= 0.40) {
-            statusEl.innerHTML = '&#10004;';
-            statusEl.className = 'nli-status valid';
-          } else {
-            statusEl.innerHTML = '&#10008;';
-            statusEl.className = 'nli-status invalid';
+          if (type === 'always') {
+            if (topLabel.includes('always true') && topScore > 0.5) {
+              statusEl.innerHTML = '&#10004;';
+              statusEl.className = 'nli-status valid';
+            } else {
+              statusEl.innerHTML = '&#10008;';
+              statusEl.className = 'nli-status invalid';
+            }
+          } else if (type === 'never') {
+            if (topLabel.includes('never true') && topScore > 0.5) {
+              statusEl.innerHTML = '&#10004;';
+              statusEl.className = 'nli-status valid';
+            } else {
+              statusEl.innerHTML = '&#10008;';
+              statusEl.className = 'nli-status invalid';
+            }
           }
         }
       } catch (err) {
