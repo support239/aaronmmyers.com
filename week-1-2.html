@@ -27,7 +27,7 @@
     .card { background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px; }
     .card h2 { font-size: 1.2rem; color: #1a252f; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; }
+    .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; display: flex; align-items: center; justify-content: space-between; }
     .form-group input[type="text"], .form-group textarea { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
     .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #228be6; }
     .form-group textarea { resize: vertical; min-height: 90px; }
@@ -139,14 +139,13 @@
       <div class="card">
         <h2>Overlaps & Verification</h2>
         <div class="form-group">
-          <label for="overlapsText">Where are the overlaps between those two lists?</label>
+          <label for="overlapsText">
+            Where are the overlaps between those two lists?
+            <span class="nli-status" id="overlapsText-status"></span>
+          </label>
           <textarea id="overlapsText" placeholder="Describe the overlaps here..."></textarea>
         </div>
-
-        <label class="checkbox-item">
-          <input type="checkbox" id="overlapCheck">
-          <span>I have verified that these overlaps from the two lists are true.</span>
-        </label>
+        <button class="btn-action" onclick="evaluateOverlapLogic()" style="margin-top: 5px;">Check Overlap Logic</button>
       </div>
 
       <!-- Step 4: Spiritual Guidance -->
@@ -335,7 +334,6 @@
             });
           }
           document.getElementById('overlapsText').value = data.overlapsText || '';
-          document.getElementById('overlapCheck').checked = data.overlapCheck === true;
           document.getElementById('prayerCheck1').checked = data.prayerCheck1 === true;
           document.getElementById('prayerCheck2').checked = data.prayerCheck2 === true;
           document.getElementById('prayerText').value = data.prayerText || '';
@@ -377,7 +375,6 @@
             alwaysTrue: alwaysTrue,
             neverTrue: neverTrue,
             overlapsText: document.getElementById('overlapsText').value,
-            overlapCheck: document.getElementById('overlapCheck').checked,
             prayerCheck1: document.getElementById('prayerCheck1').checked,
             prayerCheck2: document.getElementById('prayerCheck2').checked,
             prayerText: document.getElementById('prayerText').value
@@ -422,7 +419,7 @@
       }
     }
 
-    // Serverless Cloudflare logic evaluation
+    // Serverless Cloudflare logic evaluation for Always/Never lists
     async function evaluateNLISemantics(type) {
       const prefix = type === 'always' ? 'always' : 'never';
       showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
@@ -448,7 +445,7 @@
             body: JSON.stringify({
               premise: topFear,
               statement: statement,
-              type: type // Explicitly passes 'always' or 'never'
+              type: type
             })
           });
 
@@ -461,6 +458,55 @@
             statusEl.innerHTML = '&#10008;';
             statusEl.className = 'nli-status invalid';
           }
+        }
+      } catch (error) {
+        console.error("Cloud verification error:", error);
+        alert("Logic evaluation service unavailable.");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Serverless evaluation for the Overlaps field
+    async function evaluateOverlapLogic() {
+      const inputEl = document.getElementById('overlapsText');
+      const statusEl = document.getElementById('overlapsText-status');
+      const statement = inputEl.value.trim();
+
+      if (!statement) {
+        statusEl.innerHTML = '';
+        statusEl.className = 'nli-status';
+        return alert("Please enter your overlap observations first.");
+      }
+
+      showLoading(true, "Evaluating overlap logic...");
+      statusEl.innerHTML = '⏳';
+      statusEl.className = 'nli-status';
+
+      const alwaysTrue = [1,2,3,4,5].map(i => document.getElementById(`always-${i}`).value.trim()).filter(Boolean);
+      const neverTrue = [1,2,3,4,5].map(i => document.getElementById(`never-${i}`).value.trim()).filter(Boolean);
+
+      try {
+        const response = await fetch(CLOUDFLARE_WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            premise: topFear,
+            statement: statement,
+            type: "overlap",
+            alwaysList: alwaysTrue,
+            neverList: neverTrue
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.isValid === true) {
+          statusEl.innerHTML = '&#10004;';
+          statusEl.className = 'nli-status valid';
+        } else {
+          statusEl.innerHTML = '&#10008;';
+          statusEl.className = 'nli-status invalid';
         }
       } catch (error) {
         console.error("Cloud verification error:", error);
