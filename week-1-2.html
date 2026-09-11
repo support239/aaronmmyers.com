@@ -468,30 +468,19 @@
             continue;
           }
 
-          const res = await window.nliPipeline(statement, [
-            `always true regarding ${topFear}`,
-            `never true regarding ${topFear}`
-          ]);
+          // Structured entailment evaluation setup
+          const premise = `When considering "${topFear}": ${statement}.`;
+          const candidateLabels = ['true statement', 'false statement'];
 
+          const res = await window.nliPipeline(premise, candidateLabels);
           const topLabel = res.labels[0];
-          const topScore = res.scores[0];
 
-          if (type === 'always') {
-            if (topLabel.includes('always true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;';
-              statusEl.className = 'nli-status valid';
-            } else {
-              statusEl.innerHTML = '&#10008;';
-              statusEl.className = 'nli-status invalid';
-            }
-          } else if (type === 'never') {
-            if (topLabel.includes('never true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;';
-              statusEl.className = 'nli-status valid';
-            } else {
-              statusEl.innerHTML = '&#10008;';
-              statusEl.className = 'nli-status invalid';
-            }
+          if (topLabel === 'true statement') {
+            statusEl.innerHTML = '&#10004;';
+            statusEl.className = 'nli-status valid';
+          } else {
+            statusEl.innerHTML = '&#10008;';
+            statusEl.className = 'nli-status invalid';
           }
         }
       } catch (err) {
