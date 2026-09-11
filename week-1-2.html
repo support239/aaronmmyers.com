@@ -181,8 +181,25 @@
     </div>
   </main>
 
-  <!-- Client-side zero-shot NLI processing via Hugging Face Transformers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0"></script>
+  <!-- Client-side NLI module imports using ES Modules -->
+  <script type="module">
+    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0';
+    
+    // Explicitly configure remote execution environment
+    env.allowLocalModels = false;
+    env.useBrowserCache = true;
+
+    window.nliPipeline = null;
+
+    window.initNLIEngine = async function() {
+      if (!window.nliPipeline) {
+        window.nliPipeline = await pipeline(
+          'zero-shot-classification', 
+          'Xenova/mobilebert-uncased-mnli'
+        );
+      }
+    };
+  </script>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
@@ -424,18 +441,6 @@
       }
     }
 
-    // NLI Semantic Evaluation Engine
-    let nliPipeline = null;
-
-    async function initNLIEngine() {
-      if (!nliPipeline) {
-        nliPipeline = await window.Transformers.pipeline(
-          'zero-shot-classification', 
-          'Xenova/mobilebert-uncased-mnli'
-        );
-      }
-    }
-
     async function evaluateNLISemantics(type) {
       if (!topFear || topFear === "[Your Number One Fear]") {
         alert("No fear/hold-up loaded from profile.");
@@ -445,7 +450,12 @@
       showLoading(true, "Running semantic validation model...");
       
       try {
-        await initNLIEngine();
+        if (typeof window.initNLIEngine === 'function') {
+          await window.initNLIEngine();
+        } else {
+          throw new Error("NLI Engine initializer not ready.");
+        }
+
         const prefix = type === 'always' ? 'always' : 'never';
 
         for (let i = 1; i <= 5; i++) {
@@ -458,8 +468,7 @@
             continue;
           }
 
-          // Run NLI Zero-Shot Classification against Premise (topFear)
-          const res = await nliPipeline(statement, [
+          const res = await window.nliPipeline(statement, [
             `always true regarding ${topFear}`,
             `never true regarding ${topFear}`
           ]);
@@ -469,25 +478,25 @@
 
           if (type === 'always') {
             if (topLabel.includes('always true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;'; // Green Checkmark
+              statusEl.innerHTML = '&#10004;';
               statusEl.className = 'nli-status valid';
             } else {
-              statusEl.innerHTML = '&#10008;'; // Red X
+              statusEl.innerHTML = '&#10008;';
               statusEl.className = 'nli-status invalid';
             }
           } else if (type === 'never') {
             if (topLabel.includes('never true') && topScore > 0.5) {
-              statusEl.innerHTML = '&#10004;'; // Green Checkmark
+              statusEl.innerHTML = '&#10004;';
               statusEl.className = 'nli-status valid';
             } else {
-              statusEl.innerHTML = '&#10008;'; // Red X
+              statusEl.innerHTML = '&#10008;';
               statusEl.className = 'nli-status invalid';
             }
           }
         }
       } catch (err) {
-        console.error("NLI Evaluation Error:", err);
-        alert("An error occurred while evaluating semantics.");
+        console.error("NLI Evaluation Detailed Error:", err);
+        alert("An error occurred while evaluating semantics. Check Developer Console for logs.");
       } finally {
         showLoading(false);
       }
@@ -508,19 +517,6 @@
       document.addEventListener('DOMContentLoaded', checkAuthAndInit);
     } else {
       checkAuthAndInit();
-    }
-
-    function checkAndNavigate(targetUrl, requiredLessonIds) {
-      const allComplete = requiredLessonIds.every(id => {
-        const chk = document.getElementById('chk-' + id);
-        return chk && chk.checked;
-      });
-
-      if (!allComplete) {
-        alert("Please complete the preceding modules before proceeding.");
-        return;
-      }
-      window.location.href = targetUrl;
     }
   </script>
 </body>
