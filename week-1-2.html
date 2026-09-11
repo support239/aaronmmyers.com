@@ -468,14 +468,19 @@
             continue;
           }
 
-          // Structured entailment evaluation setup
-          const premise = `When considering "${topFear}": ${statement}.`;
-          const candidateLabels = ['true statement', 'false statement'];
+          // Evaluate statement against premise using structured hypothesis
+          const textToEvaluate = `Regarding "${topFear}": ${statement}`;
+          const candidateLabels = ['accurate', 'inaccurate'];
 
-          const res = await window.nliPipeline(premise, candidateLabels);
-          const topLabel = res.labels[0];
+          const res = await window.nliPipeline(textToEvaluate, candidateLabels, {
+            hypothesis_template: 'This idea is {}'
+          });
 
-          if (topLabel === 'true statement') {
+          const accurateIndex = res.labels.indexOf('accurate');
+          const accurateScore = res.scores[accurateIndex];
+
+          // Threshold evaluation: mark valid if score exceeds 0.40
+          if (accurateScore >= 0.40) {
             statusEl.innerHTML = '&#10004;';
             statusEl.className = 'nli-status valid';
           } else {
