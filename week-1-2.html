@@ -183,6 +183,7 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwZya_Jgg9L215S5gM5Wp3Tqjx5YzYes2p5d58vWkWOoLIlRl1k-6WF8vg1pUO8hN3sVg/exec";
+    const CLOUDFLARE_WORKER_URL = "https://logic-evaluator.curly-wildflower-f55e.workers.dev";
     const CURRENT_LESSON_ID = 'mod2-item2';
     const CURRENT_PAGE_URL = 'https://aaronmmyers.com/week-1-2.html';
     let topFear = "[Your Number One Fear]";
@@ -421,28 +422,49 @@
       }
     }
 
-    // Reliable input validation check
-    function evaluateNLISemantics(type) {
+    // Serverless Cloudflare logic evaluation
+    async function evaluateNLISemantics(type) {
       const prefix = type === 'always' ? 'always' : 'never';
+      showLoading(true, "Evaluating logic...");
 
-      for (let i = 1; i <= 5; i++) {
-        const inputEl = document.getElementById(`${prefix}-${i}`);
-        const statusEl = document.getElementById(`${prefix}-${i}-status`);
-        const statement = inputEl.value.trim();
+      try {
+        for (let i = 1; i <= 5; i++) {
+          const inputEl = document.getElementById(`${prefix}-${i}`);
+          const statusEl = document.getElementById(`${prefix}-${i}-status`);
+          const statement = inputEl.value.trim();
 
-        if (!statement) {
-          statusEl.innerHTML = '';
-          continue;
+          if (!statement) {
+            statusEl.innerHTML = '';
+            continue;
+          }
+
+          statusEl.innerHTML = '⏳';
+
+          const response = await fetch(CLOUDFLARE_WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              premise: topFear,
+              statement: statement,
+              type: type
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.isValid === true) {
+            statusEl.innerHTML = '&#10004;';
+            statusEl.className = 'nli-status valid';
+          } else {
+            statusEl.innerHTML = '&#10008;';
+            statusEl.className = 'nli-status invalid';
+          }
         }
-
-        // Validate presence of a thought (at least 3 characters)
-        if (statement.length >= 3) {
-          statusEl.innerHTML = '&#10004;';
-          statusEl.className = 'nli-status valid';
-        } else {
-          statusEl.innerHTML = '&#10008;';
-          statusEl.className = 'nli-status invalid';
-        }
+      } catch (error) {
+        console.error("Cloud verification error:", error);
+        alert("Logic evaluation service unavailable.");
+      } finally {
+        showLoading(false);
       }
     }
 
