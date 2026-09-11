@@ -111,7 +111,7 @@
   <main id="main-content">
     <div class="container">
       <h1 id="pageTitle">Week 1: Module 2</h1>
-      <p class="subtitle">Examine- your primary block and seek clarity.</p>
+      <p class="subtitle">Examine your primary block and seek clarity.</p>
 
       <!-- Step 1: ALWAYS True -->
       <div class="card">
@@ -425,7 +425,7 @@
     // Serverless Cloudflare logic evaluation
     async function evaluateNLISemantics(type) {
       const prefix = type === 'always' ? 'always' : 'never';
-      showLoading(true, "Evaluating logic...");
+      showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
 
       try {
         for (let i = 1; i <= 5; i++) {
@@ -435,10 +435,12 @@
 
           if (!statement) {
             statusEl.innerHTML = '';
+            statusEl.className = 'nli-status';
             continue;
           }
 
           statusEl.innerHTML = '⏳';
+          statusEl.className = 'nli-status';
 
           const response = await fetch(CLOUDFLARE_WORKER_URL, {
             method: "POST",
@@ -446,7 +448,7 @@
             body: JSON.stringify({
               premise: topFear,
               statement: statement,
-              type: type
+              type: type // Explicitly passes 'always' or 'never'
             })
           });
 
