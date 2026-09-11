@@ -52,7 +52,6 @@
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Validation Badges */
     .nli-status {
       font-size: 1.2rem;
       font-weight: bold;
@@ -61,12 +60,8 @@
       display: inline-block;
       text-align: center;
     }
-    .nli-status.valid {
-      color: #2b8a3e; /* Green Checkmark */
-    }
-    .nli-status.invalid {
-      color: #c92a2a; /* Red X */
-    }
+    .nli-status.valid { color: #2b8a3e; }
+    .nli-status.invalid { color: #c92a2a; }
 
     @media (max-width: 768px) {
       body { flex-direction: column; overflow: auto; }
@@ -325,9 +320,17 @@
 
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
-              const isChecked = data.progress[lessonId];
-              const sidebarCheckbox = document.getElementById('chk-' + lessonId);
+              const isChecked = data.progress[lessonId] === true || data.progress[lessonId] === "true" || data.progress[lessonId] == 1;
+              
+              // Map database key 'week1-item1' or 'mod2-item1' to sidebar checkbox 'chk-mod2-item1'
+              let targetCheckboxId = 'chk-' + lessonId;
+              if (lessonId === 'week1-item1' || lessonId === 'mod2-item1') {
+                targetCheckboxId = 'chk-mod2-item1';
+              }
+
+              const sidebarCheckbox = document.getElementById(targetCheckboxId);
               if (sidebarCheckbox) sidebarCheckbox.checked = isChecked;
+
               if (lessonId === CURRENT_LESSON_ID) {
                 document.getElementById('main-complete-check').checked = isChecked;
               }
@@ -448,7 +451,6 @@
       }
     }
 
-    // Serverless Cloudflare logic evaluation for Always/Never lists
     async function evaluateNLISemantics(type) {
       const prefix = type === 'always' ? 'always' : 'never';
       showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
@@ -496,7 +498,6 @@
       }
     }
 
-    // Serverless evaluation for the Overlaps field
     async function evaluateOverlapLogic() {
       const inputEl = document.getElementById('overlapsText');
       const statusEl = document.getElementById('overlapsText-status');
