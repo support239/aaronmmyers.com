@@ -52,6 +52,11 @@
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    .input-block {
+      margin-bottom: 12px;
+    }
+
+
     .nli-reason {
       font-size: 0.85rem;
       color: #c92a2a;
@@ -523,51 +528,58 @@
     }
 
     async function evaluateNLISemantics(type) {
-      const prefix = type === 'always' ? 'always' : 'never';
-      showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
+  const prefix = type === 'always' ? 'always' : 'never';
+  showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
 
-      try {
-        for (let i = 1; i <= 5; i++) {
-          const inputEl = document.getElementById(`${prefix}-${i}`);
-          const statusEl = document.getElementById(`${prefix}-${i}-status`);
-          const statement = inputEl.value.trim();
+  try {
+    for (let i = 1; i <= 5; i++) {
+      const inputEl = document.getElementById(`\({prefix}-\){i}`);
+      const statusEl = document.getElementById(`\({prefix}-\){i}-status`);
+      const reasonEl = document.getElementById(`\({prefix}-\){i}-reason`);
+      const statement = inputEl.value.trim();
 
-          if (!statement) {
-            statusEl.innerHTML = '';
-            statusEl.className = 'nli-status';
-            continue;
-          }
+      if (!statement) {
+        statusEl.innerHTML = '';
+        statusEl.className = 'nli-status';
+        if (reasonEl) reasonEl.innerHTML = '';
+        continue;
+      }
 
-          statusEl.innerHTML = '⏳';
-          statusEl.className = 'nli-status';
+      statusEl.innerHTML = '⏳';
+      statusEl.className = 'nli-status';
 
-          const response = await fetch(CLOUDFLARE_WORKER_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              premise: topFear,
-              statement: statement,
-              type: type
-            })
-          });
+      const response = await fetch(CLOUDFLARE_WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          premise: topFear,
+          statement: statement,
+          type: type
+        })
+      });
 
-          const result = await response.json();
+      const result = await response.json();
 
-          if (result.isValid === true) {
-            statusEl.innerHTML = '&#10004;';
-            statusEl.className = 'nli-status valid';
-          } else {
-            statusEl.innerHTML = '&#10008;';
-            statusEl.className = 'nli-status invalid';
-          }
-        }
-      } catch (error) {
-        console.error("Cloud verification error:", error);
-        alert("Logic evaluation service unavailable.");
-      } finally {
-        showLoading(false);
+      if (result.isValid === true) {
+        statusEl.innerHTML = '✔';
+        statusEl.className = 'nli-status valid';
+      } else {
+        statusEl.innerHTML = '✘';
+        statusEl.className = 'nli-status invalid';
+      }
+
+      // Display explanation message from API response
+      if (reasonEl) {
+        reasonEl.innerHTML = result.reason || result.message || '';
       }
     }
+  } catch (error) {
+    console.error("Cloud verification error:", error);
+    alert("Logic evaluation service unavailable.");
+  } finally {
+    showLoading(false);
+  }
+}
 
     async function evaluateOverlapLogic() {
       const inputEl = document.getElementById('overlapsText');
