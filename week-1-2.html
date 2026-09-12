@@ -18,7 +18,7 @@
     .nav-item { padding: 14px 20px 14px 30px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f8f9fa; font-size: 0.95rem; }
     .nav-item:hover { background-color: #f8f9fa; }
     .nav-item.active { background-color: #e7f5ff; color: #1c7ed6; font-weight: 600; }
-    .nav-item input<type="checkbox"> { pointer-events: none; }
+    .nav-item input[type="checkbox"] { pointer-events: none; }
     .mobile-nav-toggle { display: none; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #1a252f; }
     #main-content { flex-grow: 1; padding: 40px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; -webkit-overflow-scrolling: touch; position: relative; }
     .container { max-width: 900px; width: 100%; }
@@ -28,18 +28,14 @@
     .card h2 { font-size: 1.2rem; color: #1a252f; margin-bottom: 15px; }
     .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
     .form-group label { font-size: 0.9rem; font-weight: 600; color: #495057; display: flex; align-items: center; justify-content: space-between; }
-    .form-group input<type="text">, .form-group textarea { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
-    .form-group input<type="text">:focus, .form-group textarea:focus { border-color: #228be6; }
+    .form-group input[type="text"], .form-group textarea { padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
+    .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #228be6; }
     .form-group textarea { resize: vertical; min-height: 90px; }
-    
-    .input-block { margin-bottom: 12px; }
-    .input-row { display: flex; align-items: center; gap: 10px; }
+    .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .input-row span:first-child { font-weight: 600; color: #495057; width: 20px; }
     .input-row input { flex-grow: 1; padding: 10px 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; }
-    .reason-text { font-size: 0.85rem; color: #c92a2a; margin-left: 30px; margin-top: 4px; display: none; }
-    
     .checkbox-item { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #343a40; margin-top: 15px; cursor: pointer; user-select: none; }
-    .checkbox-item input<type="checkbox"> { width: 20px; height: 20px; accent-color: #228be6; cursor: pointer; }
+    .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: #228be6; cursor: pointer; }
     .btn-action { background-color: #228be6; color: #ffffff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: background-color 0.2s; width: 100%; margin-top: 10px; }
     .btn-action:hover { background-color: #1c7ed6; }
     .completion-card { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
@@ -51,7 +47,7 @@
     .login-box { background: #fff; padding: 36px 32px; border-radius: 12px; width: 100%; max-width: 440px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .login-box h2 { font-size: 1.5rem; font-weight: 700; color: #1a252f; margin-bottom: 24px; }
     .login-box label { display: block; font-size: 0.9rem; font-weight: 600; color: #495057; margin-bottom: 6px; }
-    .login-box input<type="text">, .login-box input<type="password"> { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
+    .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 12px 14px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; margin-bottom: 18px; box-sizing: border-box; }
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.75); z-index: 1100; display: none; flex-direction: column; justify-content: center; align-items: center; }
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -112,59 +108,29 @@
       <h1 id="pageTitle">Week 1: Module 2</h1>
       <p class="subtitle">Examine your primary block and seek clarity.</p>
 
-      
+      <!-- Step 1: ALWAYS True -->
       <div class="card">
-        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about <Your Number One Fear></h2>
-        <div class="input-block">
-          <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
-          <div class="reason-text" id="always-1-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
-          <div class="reason-text" id="always-2-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
-          <div class="reason-text" id="always-3-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"><span class="nli-status" id="always-4-status"></span></div>
-          <div class="reason-text" id="always-4-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"><span class="nli-status" id="always-5-status"></span></div>
-          <div class="reason-text" id="always-5-reason"></div>
-        </div>
+        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"><span class="nli-status" id="always-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"><span class="nli-status" id="always-5-status"></span></div>
         <button class="btn-action" onclick="evaluateNLISemantics('always')" style="margin-top: 10px;">Check "Always True" Statements</button>
       </div>
 
-      
+      <!-- Step 2: NEVER True -->
       <div class="card">
-        <h2 id="neverTruePrompt">5 things that are NEVER true about <Your Number One Fear></h2>
-        <div class="input-block">
-          <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"><span class="nli-status" id="never-1-status"></span></div>
-          <div class="reason-text" id="never-1-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"><span class="nli-status" id="never-2-status"></span></div>
-          <div class="reason-text" id="never-2-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"><span class="nli-status" id="never-3-status"></span></div>
-          <div class="reason-text" id="never-3-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"><span class="nli-status" id="never-4-status"></span></div>
-          <div class="reason-text" id="never-4-reason"></div>
-        </div>
-        <div class="input-block">
-          <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"><span class="nli-status" id="never-5-status"></span></div>
-          <div class="reason-text" id="never-5-reason"></div>
-        </div>
+        <h2 id="neverTruePrompt">5 things that are NEVER true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"><span class="nli-status" id="never-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"><span class="nli-status" id="never-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"><span class="nli-status" id="never-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"><span class="nli-status" id="never-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"><span class="nli-status" id="never-5-status"></span></div>
         <button class="btn-action" onclick="evaluateNLISemantics('never')" style="margin-top: 10px;">Check "Never True" Statements</button>
       </div>
 
-      
+      <!-- Step 3: Overlaps & Verification -->
       <div class="card">
         <h2>Overlaps & Verification</h2>
         <div class="form-group">
@@ -173,12 +139,11 @@
             <span class="nli-status" id="overlapsText-status"></span>
           </label>
           <textarea id="overlapsText" placeholder="Describe the overlaps here..."></textarea>
-          <div class="reason-text" id="overlapsText-reason" style="margin-left: 0;"></div>
         </div>
         <button class="btn-action" onclick="evaluateOverlapLogic()" style="margin-top: 5px;">Check Overlap Logic</button>
       </div>
 
-      
+      <!-- Step 4: Spiritual Guidance -->
       <div class="card">
         <h2>Spiritual Guidance</h2>
         <label class="checkbox-item" style="margin-top: 0;">
@@ -199,7 +164,7 @@
         <button class="btn-action" onclick="saveExerciseAnswers()" style="margin-top: 15px;">Save Exercise Responses</button>
       </div>
 
-      
+      <!-- Module Completion -->
       <div class="completion-card">
         <label class="checkbox-label">
           <input type="checkbox" id="main-complete-check" onchange="toggleCompletion('mod2-item2')">
@@ -215,7 +180,7 @@
     const CLOUDFLARE_WORKER_URL = "https://logic-evaluator.curly-wildflower-f55e.workers.dev";
     const CURRENT_LESSON_ID = 'mod2-item2';
     const CURRENT_PAGE_URL = 'https://aaronmmyers.com/week-1-2.html';
-    let topFear = "<Your Number One Fear>";
+    let topFear = "[Your Number One Fear]";
 
     async function loadNav() {
       try {
@@ -223,9 +188,10 @@
         const html = await res.text();
         document.getElementById('sidebar').innerHTML = html;
         
-        const currentItem = document.querySelector(`.nav-item<data-url="${CURRENT_PAGE_URL}">`);
+        const currentItem = document.querySelector(`.nav-item[data-url="${CURRENT_PAGE_URL}"]`);
         if (currentItem) currentItem.classList.add('active');
 
+        // Automatically open Week 1 dropdown module in sidebar
         const mod2 = document.getElementById('mod2');
         const mod2Icon = document.getElementById('mod2-icon');
         if (mod2) mod2.classList.add('open');
@@ -243,7 +209,7 @@
 
       let allCompleted = true;
       for (let i = 0; i < requiredLessons.length; i++) {
-        const chk = document.getElementById('chk-' + requiredLessons<i>);
+        const chk = document.getElementById('chk-' + requiredLessons[i]);
         if (chk && !chk.checked) {
           allCompleted = false;
           break;
@@ -271,7 +237,7 @@
       let nameEQ = name + "=";
       let ca = document.cookie.split(';');
       for (let i = 0; i < ca.length; i++) {
-        let c = ca<i>;
+        let c = ca[i];
         while (c.charAt(0) === ' ') c = c.substring(1, c.length);
         if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
       }
@@ -341,8 +307,8 @@
         });
         const data = await res.json();
         if (data.success) {
-          if (data.fears && data.fears.length > 0 && data.fears<0>) {
-            topFear = data.fears<0>;
+          if (data.fears && data.fears.length > 0 && data.fears[0]) {
+            topFear = data.fears[0];
           }
           document.getElementById('alwaysTruePrompt').textContent = `5 things that are ALWAYS true about "${topFear}"`;
           document.getElementById('neverTruePrompt').textContent = `5 things that are NEVER true about "${topFear}"`;
@@ -354,8 +320,9 @@
 
           if (data.progress) {
             Object.keys(data.progress).forEach(lessonId => {
-              const isChecked = data.progress<lessonId> === true || data.progress<lessonId> === "true" || data.progress<lessonId> == 1;
+              const isChecked = data.progress[lessonId] === true || data.progress[lessonId] === "true" || data.progress[lessonId] == 1;
               
+              // Map database key 'week1-item1' or 'mod2-item1' to sidebar checkbox 'chk-mod2-item1'
               let targetCheckboxId = 'chk-' + lessonId;
               if (lessonId === 'week1-item1' || lessonId === 'mod2-item1') {
                 targetCheckboxId = 'chk-mod2-item1';
@@ -414,21 +381,21 @@
       const user = getCookie("portal_user");
       if (!user) return alert("Please log in first.");
 
-      const alwaysTrue = <
+      const alwaysTrue = [
         document.getElementById('always-1').value,
         document.getElementById('always-2').value,
         document.getElementById('always-3').value,
         document.getElementById('always-4').value,
         document.getElementById('always-5').value
-      >;
+      ];
 
-      const neverTrue = <
+      const neverTrue = [
         document.getElementById('never-1').value,
         document.getElementById('never-2').value,
         document.getElementById('never-3').value,
         document.getElementById('never-4').value,
         document.getElementById('never-5').value
-      >;
+      ];
 
       showLoading(true, "Saving responses...");
       try {
@@ -490,21 +457,18 @@
 
       try {
         for (let i = 1; i <= 5; i++) {
-          const inputEl = document.getElementById(`\({prefix}-\){i}`);
-          const statusEl = document.getElementById(`\({prefix}-\){i}-status`);
-          const reasonEl = document.getElementById(`\({prefix}-\){i}-reason`);
+          const inputEl = document.getElementById(`${prefix}-${i}`);
+          const statusEl = document.getElementById(`${prefix}-${i}-status`);
           const statement = inputEl.value.trim();
 
           if (!statement) {
             statusEl.innerHTML = '';
             statusEl.className = 'nli-status';
-            if (reasonEl) reasonEl.style.display = 'none';
             continue;
           }
 
           statusEl.innerHTML = '⏳';
           statusEl.className = 'nli-status';
-          if (reasonEl) reasonEl.style.display = 'none';
 
           const response = await fetch(CLOUDFLARE_WORKER_URL, {
             method: "POST",
@@ -519,16 +483,11 @@
           const result = await response.json();
 
           if (result.isValid === true) {
-            statusEl.innerHTML = '✔';
+            statusEl.innerHTML = '&#10004;';
             statusEl.className = 'nli-status valid';
-            if (reasonEl) reasonEl.style.display = 'none';
           } else {
-            statusEl.innerHTML = '✘';
+            statusEl.innerHTML = '&#10008;';
             statusEl.className = 'nli-status invalid';
-            if (reasonEl) {
-              reasonEl.textContent = result.reason || "This statement does not fit the required logic.";
-              reasonEl.style.display = 'block';
-            }
           }
         }
       } catch (error) {
@@ -542,23 +501,20 @@
     async function evaluateOverlapLogic() {
       const inputEl = document.getElementById('overlapsText');
       const statusEl = document.getElementById('overlapsText-status');
-      const reasonEl = document.getElementById('overlapsText-reason');
       const statement = inputEl.value.trim();
 
       if (!statement) {
         statusEl.innerHTML = '';
         statusEl.className = 'nli-status';
-        if (reasonEl) reasonEl.style.display = 'none';
         return alert("Please enter your overlap observations first.");
       }
 
       showLoading(true, "Evaluating overlap logic...");
       statusEl.innerHTML = '⏳';
       statusEl.className = 'nli-status';
-      if (reasonEl) reasonEl.style.display = 'none';
 
-      const alwaysTrue = <1,2,3,4,5>.map(i => document.getElementById(`always-${i}`).value.trim()).filter(Boolean);
-      const neverTrue = <1,2,3,4,5>.map(i => document.getElementById(`never-${i}`).value.trim()).filter(Boolean);
+      const alwaysTrue = [1,2,3,4,5].map(i => document.getElementById(`always-${i}`).value.trim()).filter(Boolean);
+      const neverTrue = [1,2,3,4,5].map(i => document.getElementById(`never-${i}`).value.trim()).filter(Boolean);
 
       try {
         const response = await fetch(CLOUDFLARE_WORKER_URL, {
@@ -576,16 +532,11 @@
         const result = await response.json();
 
         if (result.isValid === true) {
-          statusEl.innerHTML = '✔';
+          statusEl.innerHTML = '&#10004;';
           statusEl.className = 'nli-status valid';
-          if (reasonEl) reasonEl.style.display = 'none';
         } else {
-          statusEl.innerHTML = '✘';
+          statusEl.innerHTML = '&#10008;';
           statusEl.className = 'nli-status invalid';
-          if (reasonEl) {
-            reasonEl.textContent = result.reason || "The overlap explanation needs clarification.";
-            reasonEl.style.display = 'block';
-          }
         }
       } catch (error) {
         console.error("Cloud verification error:", error);
