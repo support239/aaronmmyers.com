@@ -600,7 +600,7 @@
       const neverTrue = [1,2,3,4,5].map(i => document.getElementById(`never-${i}`).value.trim()).filter(Boolean);
 
       try {
-        const response = await fetch(logic-evaluator.curly-wildflower-f55e.workers.dev, {
+        const response = await fetch(CLOUDFLARE_WORKER_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
