@@ -52,19 +52,6 @@
     .spinner { width: 45px; height: 45px; border: 5px solid #e9ecef; border-top: 5px solid #228be6; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .input-block {
-      margin-bottom: 12px;
-    }
-
-
-    .nli-reason {
-      font-size: 0.85rem;
-      color: #c92a2a;
-      margin-left: 30px;
-      margin-bottom: 8px;
-      font-style: italic;
-    }
-
     .nli-status {
       font-size: 1.2rem;
       font-weight: bold;
@@ -119,92 +106,29 @@
   <main id="main-content">
     <div class="container">
       <h1 id="pageTitle">Week 1: Module 2</h1>
-      <p class="subtitle">Examine your primary block and seek clarity.</p>
+      <p class="subtitle">Examine- your primary block and seek clarity.</p>
 
       <!-- Step 1: ALWAYS True -->
-      <!-- Step 1: ALWAYS True -->
-<div class="card">
-  <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
-  
-  <div class="input-block">
-    <div class="input-row">
-      <span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span>
-    </div>
-    <div class="nli-reason" id="always-1-reason"></div>
-  </div>
+      <div class="card">
+        <h2 id="alwaysTruePrompt">5 things that are ALWAYS true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="always-1" placeholder="Enter statement 1"><span class="nli-status" id="always-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"><span class="nli-status" id="always-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"><span class="nli-status" id="always-5-status"></span></div>
+        <button class="btn-action" onclick="evaluateNLISemantics('always')" style="margin-top: 10px;">Check "Always True" Statements</button>
+      </div>
 
-  <div class="input-block">
-    <div class="input-row">
-      <span>2.</span><input type="text" id="always-2" placeholder="Enter statement 2"><span class="nli-status" id="always-2-status"></span>
-    </div>
-    <div class="nli-reason" id="always-2-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>3.</span><input type="text" id="always-3" placeholder="Enter statement 3"><span class="nli-status" id="always-3-status"></span>
-    </div>
-    <div class="nli-reason" id="always-3-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>4.</span><input type="text" id="always-4" placeholder="Enter statement 4"><span class="nli-status" id="always-4-status"></span>
-    </div>
-    <div class="nli-reason" id="always-4-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>5.</span><input type="text" id="always-5" placeholder="Enter statement 5"><span class="nli-status" id="always-5-status"></span>
-    </div>
-    <div class="nli-reason" id="always-5-reason"></div>
-  </div>
-
-  <button class="btn-action" onclick="evaluateNLISemantics('always')" style="margin-top: 10px;">Check "Always True" Statements</button>
-</div>
-
-<!-- Step 2: NEVER True -->
-<div class="card">
-  <h2 id="neverTruePrompt">5 things that are NEVER true about [Your Number One Fear]</h2>
-  
-  <div class="input-block">
-    <div class="input-row">
-      <span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"><span class="nli-status" id="never-1-status"></span>
-    </div>
-    <div class="nli-reason" id="never-1-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"><span class="nli-status" id="never-2-status"></span>
-    </div>
-    <div class="nli-reason" id="never-2-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"><span class="nli-status" id="never-3-status"></span>
-    </div>
-    <div class="nli-reason" id="never-3-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"><span class="nli-status" id="never-4-status"></span>
-    </div>
-    <div class="nli-reason" id="never-4-reason"></div>
-  </div>
-
-  <div class="input-block">
-    <div class="input-row">
-      <span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"><span class="nli-status" id="never-5-status"></span>
-    </div>
-    <div class="nli-reason" id="never-5-reason"></div>
-  </div>
-
-  <button class="btn-action" onclick="evaluateNLISemantics('never')" style="margin-top: 10px;">Check "Never True" Statements</button>
-</div>
+      <!-- Step 2: NEVER True -->
+      <div class="card">
+        <h2 id="neverTruePrompt">5 things that are NEVER true about [Your Number One Fear]</h2>
+        <div class="input-row"><span>1.</span><input type="text" id="never-1" placeholder="Enter statement 1"><span class="nli-status" id="never-1-status"></span></div>
+        <div class="input-row"><span>2.</span><input type="text" id="never-2" placeholder="Enter statement 2"><span class="nli-status" id="never-2-status"></span></div>
+        <div class="input-row"><span>3.</span><input type="text" id="never-3" placeholder="Enter statement 3"><span class="nli-status" id="never-3-status"></span></div>
+        <div class="input-row"><span>4.</span><input type="text" id="never-4" placeholder="Enter statement 4"><span class="nli-status" id="never-4-status"></span></div>
+        <div class="input-row"><span>5.</span><input type="text" id="never-5" placeholder="Enter statement 5"><span class="nli-status" id="never-5-status"></span></div>
+        <button class="btn-action" onclick="evaluateNLISemantics('never')" style="margin-top: 10px;">Check "Never True" Statements</button>
+      </div>
 
       <!-- Step 3: Overlaps & Verification -->
       <div class="card">
@@ -528,58 +452,51 @@
     }
 
     async function evaluateNLISemantics(type) {
-  const prefix = type === 'always' ? 'always' : 'never';
-  showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
+      const prefix = type === 'always' ? 'always' : 'never';
+      showLoading(true, `Evaluating ${type.toUpperCase()} TRUE logic...`);
 
-  try {
-    for (let i = 1; i <= 5; i++) {
-      const inputEl = document.getElementById(`\({prefix}-\){i}`);
-      const statusEl = document.getElementById(`\({prefix}-\){i}-status`);
-      const reasonEl = document.getElementById(`\({prefix}-\){i}-reason`);
-      const statement = inputEl.value.trim();
+      try {
+        for (let i = 1; i <= 5; i++) {
+          const inputEl = document.getElementById(`${prefix}-${i}`);
+          const statusEl = document.getElementById(`${prefix}-${i}-status`);
+          const statement = inputEl.value.trim();
 
-      if (!statement) {
-        statusEl.innerHTML = '';
-        statusEl.className = 'nli-status';
-        if (reasonEl) reasonEl.innerHTML = '';
-        continue;
-      }
+          if (!statement) {
+            statusEl.innerHTML = '';
+            statusEl.className = 'nli-status';
+            continue;
+          }
 
-      statusEl.innerHTML = '⏳';
-      statusEl.className = 'nli-status';
+          statusEl.innerHTML = '⏳';
+          statusEl.className = 'nli-status';
 
-      const response = await fetch(CLOUDFLARE_WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          premise: topFear,
-          statement: statement,
-          type: type
-        })
-      });
+          const response = await fetch(CLOUDFLARE_WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              premise: topFear,
+              statement: statement,
+              type: type
+            })
+          });
 
-      const result = await response.json();
+          const result = await response.json();
 
-      if (result.isValid === true) {
-        statusEl.innerHTML = '✔';
-        statusEl.className = 'nli-status valid';
-      } else {
-        statusEl.innerHTML = '✘';
-        statusEl.className = 'nli-status invalid';
-      }
-
-      // Display explanation message from API response
-      if (reasonEl) {
-        reasonEl.innerHTML = result.reason || result.message || '';
+          if (result.isValid === true) {
+            statusEl.innerHTML = '&#10004;';
+            statusEl.className = 'nli-status valid';
+          } else {
+            statusEl.innerHTML = '&#10008;';
+            statusEl.className = 'nli-status invalid';
+          }
+        }
+      } catch (error) {
+        console.error("Cloud verification error:", error);
+        alert("Logic evaluation service unavailable.");
+      } finally {
+        showLoading(false);
       }
     }
-  } catch (error) {
-    console.error("Cloud verification error:", error);
-    alert("Logic evaluation service unavailable.");
-  } finally {
-    showLoading(false);
-  }
-}
 
     async function evaluateOverlapLogic() {
       const inputEl = document.getElementById('overlapsText');
