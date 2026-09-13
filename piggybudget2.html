@@ -31,6 +31,35 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
+    .sync-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #ffffff;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .sync-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+
+    .sync-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+
     .account-title {
       font-size: 14px;
       font-weight: 700;
@@ -389,6 +418,13 @@
     
     <!-- TOP ACCOUNT SUMMARY DISPLAY -->
     <div class="top-summary-header">
+      <!-- Sync Button / SVG Placement -->
+      <button class="sync-btn" title="Sync Data" onclick="triggerSync()">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+        </svg>
+      </button>
+
       <div class="account-title">Max Checking</div>
       <div class="account-sub">x8943 S01</div>
       <div class="main-balance" id="availableBalance">$0.00</div>
@@ -487,6 +523,12 @@
       element.classList.add('active');
       window.scrollTo(0, 0);
     }
+
+    function triggerSync() {
+      console.log("Sync button clicked.");
+      alert("Sync function triggered!");
+    }
+
 
     async function loadDashboard() {
       try {
