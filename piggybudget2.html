@@ -534,28 +534,25 @@
     //   alert("Sync function triggered!");
     // }
 
-        const CLOUDFLARE_WORKER_URL = "https://piggy-sync-worker.curly-wildflower-f55e.workers.dev/";
+            const CLOUDFLARE_WORKER_URL = "https://piggy-sync-worker.curly-wildflower-f55e.workers.dev/";
 
     async function triggerSync() {
-      console.log("Triggering sync request to Cloudflare Worker...");
+      console.log("Sending request to Cloudflare Worker...");
       try {
         const response = await fetch(CLOUDFLARE_WORKER_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ action: "startSync" })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "syncRequest" })
         });
         
-        if (response.ok) {
-          alert("Sync initiated successfully.");
-        } else {
-          alert("Failed to communicate with the sync server.");
-        }
+        const data = await response.json();
+        alert("Worker response: " + data.message);
       } catch (error) {
-        console.error("Sync error:", error);
+        console.error("Error connecting to Cloudflare Worker:", error);
+        alert("Could not connect to Cloudflare Worker.");
       }
     }
+
 
 
     async function loadDashboard() {
