@@ -529,33 +529,33 @@
       window.scrollTo(0, 0);
     }
 
-    function triggerSync() {
-      console.log("Sync button clicked.");
-      alert("Sync function triggered!");
-    }
+    // function triggerSync() {
+    //   console.log("Sync button clicked.");
+    //   alert("Sync function triggered!");
+    // }
 
-    //     const CLOUDFLARE_WORKER_URL = "https://your-worker.your-subdomain.workers.dev/sync";
+        const CLOUDFLARE_WORKER_URL = "https://piggy-sync-worker.curly-wildflower-f55e.workers.dev/";
 
-    // // async function triggerSync() {
-    // //   console.log("Triggering sync request to Cloudflare Worker...");
-    // //   try {
-    // //     const response = await fetch(CLOUDFLARE_WORKER_URL, {
-    // //       method: "POST",
-    // //       headers: {
-    // //         "Content-Type": "application/json"
-    // //       },
-    // //       body: JSON.stringify({ action: "startSync" })
-    // //     });
+    async function triggerSync() {
+      console.log("Triggering sync request to Cloudflare Worker...");
+      try {
+        const response = await fetch(CLOUDFLARE_WORKER_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ action: "startSync" })
+        });
         
-    // //     if (response.ok) {
-    // //       alert("Sync initiated successfully.");
-    // //     } else {
-    // //       alert("Failed to communicate with the sync server.");
-    // //     }
-    // //   } catch (error) {
-    // //     console.error("Sync error:", error);
-    // //   }
-    // // }
+        if (response.ok) {
+          alert("Sync initiated successfully.");
+        } else {
+          alert("Failed to communicate with the sync server.");
+        }
+      } catch (error) {
+        console.error("Sync error:", error);
+      }
+    }
 
 
     async function loadDashboard() {
