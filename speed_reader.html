@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speed Reader</title>
   <style>
     * {
@@ -137,6 +137,10 @@
       transition: background-color 0.2s, transform 0.1s;
     }
 
+    button:active {
+      transform: scale(0.96);
+    }
+
     /* Center Play / Pause Button */
     .play-pause-btn {
       width: 200px;
@@ -257,6 +261,9 @@
     </div>
   </div>
 
+  <!-- Tesseract OCR engine library -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
   <script>
     const textInput = document.getElementById('text-input');
     const wpmInput = document.getElementById('wpm-input');
@@ -304,11 +311,30 @@
       cameraFileInput.click();
     });
 
-    cameraFileInput.addEventListener('change', (event) => {
+    // Automatically process image to text using Tesseract OCR
+    cameraFileInput.addEventListener('change', async (event) => {
       const file = event.target.files[0];
-      if (file) {
-        // Triggers native device capture UI
-        alert("Image captured! (Note: Connect an OCR API like Tesseract.js to convert photos directly into editable text).");
+      if (!file) return;
+
+      wordDisplay.textContent = "Scanning image...";
+
+      try {
+        // Perform local OCR on captured photo
+        const result = await Tesseract.recognize(file, 'eng');
+        const extractedText = result.data.text.trim();
+
+        if (extractedText) {
+          textInput.value = extractedText;
+          currentIndex = 0;
+          wordDisplay.textContent = "Ready";
+        } else {
+          wordDisplay.textContent = "No text found";
+          alert("Could not detect any clear text in that photo. Please try a clearer picture.");
+        }
+      } catch (error) {
+        console.error(error);
+        wordDisplay.textContent = "Error";
+        alert("Failed to process image text.");
       }
     });
 
@@ -331,7 +357,7 @@
 
     function startReader() {
       if (!loadWords()) {
-        alert("Please enter or paste some text first.");
+        alert("Please enter, paste, or take a picture of some text first.");
         return;
       }
 
