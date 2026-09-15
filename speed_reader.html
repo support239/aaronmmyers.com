@@ -1,9 +1,15 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <meta charset="UTF-8">
   <title>Speed Reader</title>
   <style>
     * {
@@ -54,7 +60,7 @@
 
     textarea {
       width: 100%;
-      height: 150px;
+      height: 130px;
       padding: 12px;
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -62,60 +68,9 @@
       resize: vertical;
     }
 
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
-      justify-content: space-between;
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #e9ecef;
-    }
-
-    .control-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Number-only input styling */
-    input[type="number"] {
-      width: 90px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-      text-align: center;
-    }
-
-    button {
-      padding: 10px 24px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #fff;
-      background-color: #007bff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    button.paused {
-      background-color: #28a745;
-    }
-
-    button.paused:hover {
-      background-color: #218838;
-    }
-
+    /* Text Playback Area */
     .display-area {
-      min-height: 200px;
+      min-height: 220px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -133,6 +88,71 @@
       color: #111;
       transition: font-size 0.1s ease;
     }
+
+    /* Big Start/Pause Button Area */
+    .action-section {
+      display: flex;
+      justify-content: center;
+    }
+
+    .big-btn {
+      width: 100%;
+      max-width: 400px;
+      padding: 18px 32px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .big-btn:hover {
+      background-color: #218838;
+    }
+
+    .big-btn:active {
+      transform: scale(0.98);
+    }
+
+    .big-btn.playing {
+      background-color: #dc3545;
+    }
+
+    .big-btn.playing:hover {
+      background-color: #c82333;
+    }
+
+    /* Bottom Settings Bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-around;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input[type="number"] {
+      width: 90px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -140,33 +160,33 @@
   <div class="container">
     <h1>Speed Reader</h1>
 
-    <!-- Text Area Input -->
+    <!-- 1. Text Area Input -->
     <div class="input-section">
       <label for="text-input">Paste your book or text here:</label>
       <textarea id="text-input" placeholder="Paste the text you want to speed-read here..."></textarea>
     </div>
 
-    <!-- Controls Bar -->
+    <!-- 2. Text Playback Display -->
+    <div class="display-area">
+      <div id="word-display">Ready</div>
+    </div>
+
+    <!-- 3. Big Start/Pause Button directly under word display -->
+    <div class="action-section">
+      <button id="toggle-btn" class="big-btn">Start</button>
+    </div>
+
+    <!-- 4. Settings Controls at Bottom -->
     <div class="controls">
-      <!-- Speed Input (Number only) -->
       <div class="control-group">
         <label for="wpm-input">Speed (WPM):</label>
         <input type="number" id="wpm-input" value="300" min="50" max="2000" step="25" />
       </div>
 
-      <!-- Font Size Input (Number only) -->
       <div class="control-group">
         <label for="font-size-input">Font Size (px):</label>
         <input type="number" id="font-size-input" value="60" min="20" max="150" step="5" />
       </div>
-
-      <!-- Start/Pause Toggle Button -->
-      <button id="toggle-btn" class="paused">Start</button>
-    </div>
-
-    <!-- Text Playback Area -->
-    <div class="display-area">
-      <div id="word-display">Ready</div>
     </div>
   </div>
 
@@ -201,7 +221,6 @@
     });
 
     function startReader() {
-      // If we are starting fresh or text changed, process words
       const rawText = textInput.value.trim();
       
       if (!rawText) {
@@ -218,7 +237,7 @@
 
       isPlaying = true;
       toggleBtn.textContent = 'Pause';
-      toggleBtn.classList.remove('paused');
+      toggleBtn.classList.add('playing');
 
       scheduleNextWord();
     }
@@ -227,7 +246,7 @@
       isPlaying = false;
       clearTimeout(timerId);
       toggleBtn.textContent = 'Start';
-      toggleBtn.classList.add('paused');
+      toggleBtn.classList.remove('playing');
     }
 
     function scheduleNextWord() {
