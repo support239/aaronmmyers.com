@@ -1,15 +1,13 @@
- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speed Reader</title>
   <style>
     * {
@@ -89,41 +87,60 @@
       transition: font-size 0.1s ease;
     }
 
-    /* Big Start/Pause Button Area */
+    /* Action Control Row */
     .action-section {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
     }
 
-    .big-btn {
-      width: 100%;
-      max-width: 400px;
-      padding: 18px 32px;
-      font-size: 1.5rem;
+    /* Base Button Styles */
+    button {
       font-weight: bold;
       color: #fff;
-      background-color: #28a745;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
       transition: background-color 0.2s, transform 0.1s;
     }
 
-    .big-btn:hover {
+    button:active {
+      transform: scale(0.96);
+    }
+
+    /* Center Play / Pause Button (Half of original width) */
+    .play-pause-btn {
+      width: 200px;
+      padding: 14px 20px;
+      font-size: 1.25rem;
+      background-color: #28a745;
+    }
+
+    .play-pause-btn:hover {
       background-color: #218838;
     }
 
-    .big-btn:active {
-      transform: scale(0.98);
-    }
-
-    .big-btn.playing {
+    .play-pause-btn.playing {
       background-color: #dc3545;
     }
 
-    .big-btn.playing:hover {
+    .play-pause-btn.playing:hover {
       background-color: #c82333;
+    }
+
+    /* Rewind & Fast Forward Buttons (1/4 size of original width) */
+    .nav-btn {
+      width: 100px;
+      padding: 14px 10px;
+      font-size: 1rem;
+      background-color: #6c757d;
+    }
+
+    .nav-btn:hover {
+      background-color: #5a6268;
     }
 
     /* Bottom Settings Bar */
@@ -171,9 +188,16 @@
       <div id="word-display">Ready</div>
     </div>
 
-    <!-- 3. Big Start/Pause Button directly under word display -->
+    <!-- 3. Navigation & Start/Pause Control Row -->
     <div class="action-section">
-      <button id="toggle-btn" class="big-btn">Start</button>
+      <!-- Rewind 10 Words (Left) -->
+      <button id="rewind-btn" class="nav-btn" title="Rewind 10 words">&#171; -10</button>
+      
+      <!-- Start / Pause Toggle Button (Center) -->
+      <button id="toggle-btn" class="play-pause-btn">Start</button>
+
+      <!-- Fast Forward 10 Words (Right) -->
+      <button id="ff-btn" class="nav-btn" title="Fast-forward 10 words">+10 &#187;</button>
     </div>
 
     <!-- 4. Settings Controls at Bottom -->
@@ -185,7 +209,7 @@
 
       <div class="control-group">
         <label for="font-size-input">Font Size (px):</label>
-        <input type="number" id="font-size-input" value="30" min="20" max="150" step="5" />
+        <input type="number" id="font-size-input" value="60" min="20" max="150" step="5" />
       </div>
     </div>
   </div>
@@ -195,6 +219,8 @@
     const wpmInput = document.getElementById('wpm-input');
     const fontSizeInput = document.getElementById('font-size-input');
     const toggleBtn = document.getElementById('toggle-btn');
+    const rewindBtn = document.getElementById('rewind-btn');
+    const ffBtn = document.getElementById('ff-btn');
     const wordDisplay = document.getElementById('word-display');
 
     let words = [];
@@ -202,16 +228,24 @@
     let isPlaying = false;
     let timerId = null;
 
-    // Set initial font size
+    // Initial setup
     wordDisplay.style.fontSize = `${fontSizeInput.value}px`;
 
-    // Update font size dynamically on input change
+    // Font size listener
     fontSizeInput.addEventListener('input', () => {
       const size = fontSizeInput.value || 40;
       wordDisplay.style.fontSize = `${size}px`;
     });
 
-    // Start / Pause button click handler
+    // Helper to get fresh words array
+    function loadWords() {
+      const rawText = textInput.value.trim();
+      if (!rawText) return false;
+      words = rawText.split(/\s+/);
+      return true;
+    }
+
+    // Toggle Start/Pause
     toggleBtn.addEventListener('click', () => {
       if (isPlaying) {
         pauseReader();
@@ -221,18 +255,13 @@
     });
 
     function startReader() {
-      const rawText = textInput.value.trim();
-      
-      if (!rawText) {
+      if (!loadWords()) {
         alert("Please enter or paste some text first.");
         return;
       }
 
-      // Split text into individual words filtering out blank spaces
-      words = rawText.split(/\s+/);
-
       if (currentIndex >= words.length) {
-        currentIndex = 0; // Restart if it reached the end
+        currentIndex = 0;
       }
 
       isPlaying = true;
@@ -253,24 +282,35 @@
       if (!isPlaying) return;
 
       if (currentIndex < words.length) {
-        // Display current word
         wordDisplay.textContent = words[currentIndex];
         currentIndex++;
 
-        // Calculate delay in milliseconds from Words Per Minute (WPM)
         const wpm = parseInt(wpmInput.value, 10) || 300;
         const interval = (60 / wpm) * 1000;
 
         timerId = setTimeout(scheduleNextWord, interval);
       } else {
-        // Reached end of text
         wordDisplay.textContent = "Finished!";
         pauseReader();
         currentIndex = 0;
       }
     }
 
-    // Ensure speed changes apply live if reading is in progress
+    // Rewind 10 Words Button
+    rewindBtn.addEventListener('click', () => {
+      if (!loadWords()) return;
+      currentIndex = Math.max(0, currentIndex - 10);
+      wordDisplay.textContent = words[currentIndex] || "Ready";
+    });
+
+    // Fast Forward 10 Words Button
+    ffBtn.addEventListener('click', () => {
+      if (!loadWords()) return;
+      currentIndex = Math.min(words.length - 1, currentIndex + 10);
+      wordDisplay.textContent = words[currentIndex] || "Ready";
+    });
+
+    // Speed update listener
     wpmInput.addEventListener('change', () => {
       if (isPlaying) {
         clearTimeout(timerId);
@@ -281,3 +321,4 @@
 
 </body>
 </html>
+
