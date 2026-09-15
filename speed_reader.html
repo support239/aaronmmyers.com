@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speed Reader</title>
   <style>
@@ -201,7 +201,7 @@
       text-align: center;
     }
 
-    /* Hidden Camera Input */
+    /* Hidden Native Camera Input */
     #camera-file-input {
       display: none;
     }
@@ -227,12 +227,12 @@
       </button>
     </div>
 
-    <!-- Hidden native camera input -->
+    <!-- Hidden native camera launcher for iOS/Android -->
     <input type="file" id="camera-file-input" accept="image/*" capture="environment">
 
     <!-- 2. Text Area Input -->
     <div class="input-section">
-      <textarea id="text-input" placeholder="Paste or capture text to speed-read..."></textarea>
+      <textarea id="text-input" placeholder="Paste or type text to speed-read..."></textarea>
     </div>
 
     <!-- 3. Text Playback Display -->
@@ -260,9 +260,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Tesseract OCR engine library -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <script>
     const textInput = document.getElementById('text-input');
@@ -306,36 +303,9 @@
       }
     });
 
-    // Camera Button Functionality
+    // Camera Button Functionality - Opens native camera directly
     cameraBtn.addEventListener('click', () => {
       cameraFileInput.click();
-    });
-
-    // Automatically process image to text using Tesseract OCR
-    cameraFileInput.addEventListener('change', async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      wordDisplay.textContent = "Scanning image...";
-
-      try {
-        // Perform local OCR on captured photo
-        const result = await Tesseract.recognize(file, 'eng');
-        const extractedText = result.data.text.trim();
-
-        if (extractedText) {
-          textInput.value = extractedText;
-          currentIndex = 0;
-          wordDisplay.textContent = "Ready";
-        } else {
-          wordDisplay.textContent = "No text found";
-          alert("Could not detect any clear text in that photo. Please try a clearer picture.");
-        }
-      } catch (error) {
-        console.error(error);
-        wordDisplay.textContent = "Error";
-        alert("Failed to process image text.");
-      }
     });
 
     // Helper to get fresh words array
@@ -357,7 +327,7 @@
 
     function startReader() {
       if (!loadWords()) {
-        alert("Please enter, paste, or take a picture of some text first.");
+        alert("Please paste or enter some text first.");
         return;
       }
 
@@ -422,4 +392,3 @@
 
 </body>
 </html>
-
