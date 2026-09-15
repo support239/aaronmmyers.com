@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speed Reader</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      color: #333;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #222;
+    }
+
+    .input-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      resize: vertical;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Number-only input styling */
+    input[type="number"] {
+      width: 90px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button.paused {
+      background-color: #28a745;
+    }
+
+    button.paused:hover {
+      background-color: #218838;
+    }
+
+    .display-area {
+      min-height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px dashed #007bff;
+      border-radius: 8px;
+      background: #fafafa;
+      text-align: center;
+      padding: 20px;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    #word-display {
+      font-weight: bold;
+      color: #111;
+      transition: font-size 0.1s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Speed Reader</h1>
+
+    <!-- Text Area Input -->
+    <div class="input-section">
+      <label for="text-input">Paste your book or text here:</label>
+      <textarea id="text-input" placeholder="Paste the text you want to speed-read here..."></textarea>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls">
+      <!-- Speed Input (Number only) -->
+      <div class="control-group">
+        <label for="wpm-input">Speed (WPM):</label>
+        <input type="number" id="wpm-input" value="300" min="50" max="2000" step="25" />
+      </div>
+
+      <!-- Font Size Input (Number only) -->
+      <div class="control-group">
+        <label for="font-size-input">Font Size (px):</label>
+        <input type="number" id="font-size-input" value="60" min="20" max="150" step="5" />
+      </div>
+
+      <!-- Start/Pause Toggle Button -->
+      <button id="toggle-btn" class="paused">Start</button>
+    </div>
+
+    <!-- Text Playback Area -->
+    <div class="display-area">
+      <div id="word-display">Ready</div>
+    </div>
+  </div>
+
+  <script>
+    const textInput = document.getElementById('text-input');
+    const wpmInput = document.getElementById('wpm-input');
+    const fontSizeInput = document.getElementById('font-size-input');
+    const toggleBtn = document.getElementById('toggle-btn');
+    const wordDisplay = document.getElementById('word-display');
+
+    let words = [];
+    let currentIndex = 0;
+    let isPlaying = false;
+    let timerId = null;
+
+    // Set initial font size
+    wordDisplay.style.fontSize = `${fontSizeInput.value}px`;
+
+    // Update font size dynamically on input change
+    fontSizeInput.addEventListener('input', () => {
+      const size = fontSizeInput.value || 40;
+      wordDisplay.style.fontSize = `${size}px`;
+    });
+
+    // Start / Pause button click handler
+    toggleBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        pauseReader();
+      } else {
+        startReader();
+      }
+    });
+
+    function startReader() {
+      // If we are starting fresh or text changed, process words
+      const rawText = textInput.value.trim();
+      
+      if (!rawText) {
+        alert("Please enter or paste some text first.");
+        return;
+      }
+
+      // Split text into individual words filtering out blank spaces
+      words = rawText.split(/\s+/);
+
+      if (currentIndex >= words.length) {
+        currentIndex = 0; // Restart if it reached the end
+      }
+
+      isPlaying = true;
+      toggleBtn.textContent = 'Pause';
+      toggleBtn.classList.remove('paused');
+
+      scheduleNextWord();
+    }
+
+    function pauseReader() {
+      isPlaying = false;
+      clearTimeout(timerId);
+      toggleBtn.textContent = 'Start';
+      toggleBtn.classList.add('paused');
+    }
+
+    function scheduleNextWord() {
+      if (!isPlaying) return;
+
+      if (currentIndex < words.length) {
+        // Display current word
+        wordDisplay.textContent = words[currentIndex];
+        currentIndex++;
+
+        // Calculate delay in milliseconds from Words Per Minute (WPM)
+        const wpm = parseInt(wpmInput.value, 10) || 300;
+        const interval = (60 / wpm) * 1000;
+
+        timerId = setTimeout(scheduleNextWord, interval);
+      } else {
+        // Reached end of text
+        wordDisplay.textContent = "Finished!";
+        pauseReader();
+        currentIndex = 0;
+      }
+    }
+
+    // Ensure speed changes apply live if reading is in progress
+    wpmInput.addEventListener('change', () => {
+      if (isPlaying) {
+        clearTimeout(timerId);
+        scheduleNextWord();
+      }
+    });
+  </script>
+
+</body>
+</html>
