@@ -1,12 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speed Reader</title>
   <style>
@@ -49,11 +50,12 @@
     .icon-toolbar {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .icon-btn {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 10px 18px;
@@ -64,6 +66,7 @@
       border: 1px solid #b6d4fe;
       border-radius: 8px;
       cursor: pointer;
+      text-decoration: none;
       transition: background-color 0.2s, transform 0.1s;
     }
 
@@ -141,7 +144,7 @@
       transform: scale(0.96);
     }
 
-    /* Center Play / Pause Button */
+    /* Play / Pause Button */
     .play-pause-btn {
       width: 200px;
       padding: 14px 20px;
@@ -200,11 +203,6 @@
       font-size: 1rem;
       text-align: center;
     }
-
-    /* Hidden Native Camera Input */
-    #camera-file-input {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -212,13 +210,13 @@
   <div class="container">
     <h1>Speed Reader</h1>
 
-    <!-- 1. Toolbar directly under Speed Reader text -->
+    <!-- Toolbar -->
     <div class="icon-toolbar">
-      <!-- Camera Button -->
-      <button id="camera-btn" class="icon-btn" title="Take a picture">
+      <!-- Shortcut Link to iOS Shortcut -->
+      <a href="shortcuts://run-shortcut?name=Scan%20to%20Reader" class="icon-btn" title="Run iOS Shortcut">
         <svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-        Camera
-      </button>
+        Scan (Shortcut)
+      </a>
 
       <!-- Paste Button -->
       <button id="paste-btn" class="icon-btn" title="Paste clipboard text">
@@ -227,27 +225,24 @@
       </button>
     </div>
 
-    <!-- Hidden native camera launcher for iOS/Android -->
-    <input type="file" id="camera-file-input" accept="image/*" capture="environment">
-
-    <!-- 2. Text Area Input -->
+    <!-- Text Area Input -->
     <div class="input-section">
       <textarea id="text-input" placeholder="Paste or type text to speed-read..."></textarea>
     </div>
 
-    <!-- 3. Text Playback Display -->
+    <!-- Text Playback Display -->
     <div class="display-area">
       <div id="word-display">Ready</div>
     </div>
 
-    <!-- 4. Navigation & Start/Pause Control Row -->
+    <!-- Navigation & Playback Controls -->
     <div class="action-section">
       <button id="rewind-btn" class="nav-btn" title="Rewind 10 words">&#171; -10</button>
       <button id="toggle-btn" class="play-pause-btn">Start</button>
       <button id="ff-btn" class="nav-btn" title="Fast-forward 10 words">+10 &#187;</button>
     </div>
 
-    <!-- 5. Settings Controls at Bottom -->
+    <!-- Settings Controls -->
     <div class="controls">
       <div class="control-group">
         <label for="wpm-input">Speed (WPM):</label>
@@ -256,7 +251,7 @@
 
       <div class="control-group">
         <label for="font-size-input">Font Size (px):</label>
-        <input type="number" id="font-size-input" value="30" min="20" max="150" step="5" />
+        <input type="number" id="font-size-input" value="60" min="20" max="150" step="5" />
       </div>
     </div>
   </div>
@@ -269,8 +264,6 @@
     const rewindBtn = document.getElementById('rewind-btn');
     const ffBtn = document.getElementById('ff-btn');
     const pasteBtn = document.getElementById('paste-btn');
-    const cameraBtn = document.getElementById('camera-btn');
-    const cameraFileInput = document.getElementById('camera-file-input');
     const wordDisplay = document.getElementById('word-display');
 
     let words = [];
@@ -278,45 +271,47 @@
     let isPlaying = false;
     let timerId = null;
 
-    // Initial setup
+    // Font size setting
     wordDisplay.style.fontSize = `${fontSizeInput.value}px`;
-
-    // Font size listener
     fontSizeInput.addEventListener('input', () => {
-      const size = fontSizeInput.value || 40;
-      wordDisplay.style.fontSize = `${size}px`;
+      wordDisplay.style.fontSize = `${fontSizeInput.value || 40}px`;
     });
 
-    // Paste Button Functionality
+    // Handle Paste Button
     pasteBtn.addEventListener('click', async () => {
       try {
         const clipboardText = await navigator.clipboard.readText();
-        if (clipboardText) {
-          textInput.value = clipboardText;
-          currentIndex = 0;
-          wordDisplay.textContent = "Ready";
+        if (clipboardText && clipboardText.trim()) {
+          textInput.value = clipboardText.trim();
+          resetReader();
         } else {
           alert("Clipboard is empty.");
         }
       } catch (err) {
-        alert("Clipboard access blocked. Please allow browser clipboard permissions.");
+        alert("Please allow clipboard permissions to paste.");
       }
     });
 
-    // Camera Button Functionality - Opens native camera directly
-    cameraBtn.addEventListener('click', () => {
-      cameraFileInput.click();
+    // Reset reader variables when text changes
+    textInput.addEventListener('input', () => {
+      resetReader();
     });
 
-    // Helper to get fresh words array
+    function resetReader() {
+      pauseReader();
+      currentIndex = 0;
+      words = [];
+      wordDisplay.textContent = "Ready";
+    }
+
     function loadWords() {
       const rawText = textInput.value.trim();
       if (!rawText) return false;
       words = rawText.split(/\s+/);
-      return true;
+      return words.length > 0;
     }
 
-    // Toggle Start/Pause
+    // Toggle Play/Pause Button
     toggleBtn.addEventListener('click', () => {
       if (isPlaying) {
         pauseReader();
@@ -327,10 +322,11 @@
 
     function startReader() {
       if (!loadWords()) {
-        alert("Please paste or enter some text first.");
+        alert("Please paste or type text first.");
         return;
       }
 
+      // If finished, start over from the beginning
       if (currentIndex >= words.length) {
         currentIndex = 0;
       }
@@ -339,7 +335,7 @@
       toggleBtn.textContent = 'Pause';
       toggleBtn.classList.add('playing');
 
-      scheduleNextWord();
+      runLoop();
     }
 
     function pauseReader() {
@@ -349,7 +345,7 @@
       toggleBtn.classList.remove('playing');
     }
 
-    function scheduleNextWord() {
+    function runLoop() {
       if (!isPlaying) return;
 
       if (currentIndex < words.length) {
@@ -359,7 +355,7 @@
         const wpm = parseInt(wpmInput.value, 10) || 300;
         const interval = (60 / wpm) * 1000;
 
-        timerId = setTimeout(scheduleNextWord, interval);
+        timerId = setTimeout(runLoop, interval);
       } else {
         wordDisplay.textContent = "Finished!";
         pauseReader();
@@ -367,25 +363,25 @@
       }
     }
 
-    // Rewind 10 Words
+    // Rewind 10 words
     rewindBtn.addEventListener('click', () => {
       if (!loadWords()) return;
       currentIndex = Math.max(0, currentIndex - 10);
       wordDisplay.textContent = words[currentIndex] || "Ready";
     });
 
-    // Fast Forward 10 Words
+    // Fast-Forward 10 words
     ffBtn.addEventListener('click', () => {
       if (!loadWords()) return;
       currentIndex = Math.min(words.length - 1, currentIndex + 10);
       wordDisplay.textContent = words[currentIndex] || "Ready";
     });
 
-    // Speed update listener
+    // Update interval live if WPM changes during playback
     wpmInput.addEventListener('change', () => {
       if (isPlaying) {
         clearTimeout(timerId);
-        scheduleNextWord();
+        runLoop();
       }
     });
   </script>
