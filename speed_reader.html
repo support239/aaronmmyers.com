@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+      <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speed Reader</title>
   <style>
@@ -46,7 +45,7 @@
       color: #222;
     }
 
-    /* Icon Bar directly under Speed Reader header */
+    /* Icon Bar */
     .icon-toolbar {
       display: flex;
       justify-content: center;
@@ -144,7 +143,6 @@
       transform: scale(0.96);
     }
 
-    /* Play / Pause Button */
     .play-pause-btn {
       width: 200px;
       padding: 14px 20px;
@@ -164,7 +162,6 @@
       background-color: #c82333;
     }
 
-    /* Rewind & Fast Forward Buttons */
     .nav-btn {
       width: 100px;
       padding: 14px 10px;
@@ -176,7 +173,6 @@
       background-color: #5a6268;
     }
 
-    /* Bottom Settings Bar */
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -212,10 +208,10 @@
 
     <!-- Toolbar -->
     <div class="icon-toolbar">
-      <!-- Shortcut Link to iOS Shortcut -->
-      <a href="shortcuts://run-shortcut?name=Scan%20to%20Reader" class="icon-btn" title="Run iOS Shortcut">
+      <!-- Shortcut Link with auto-redirect back callback -->
+      <a id="scan-shortcut-link" href="#" class="icon-btn" title="Run iOS Shortcut">
         <svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-        Scan (Shortcut)
+        Scan Text
       </a>
 
       <!-- Paste Button -->
@@ -227,22 +223,22 @@
 
     <!-- Text Area Input -->
     <div class="input-section">
-      <textarea id="text-input" placeholder="Paste or type text to speed-read..."></textarea>
+      <textarea id="text-input" placeholder="Paste or scan text to speed-read..."></textarea>
     </div>
 
-    <!-- Text Playback Display -->
+    <!-- Text Display -->
     <div class="display-area">
       <div id="word-display">Ready</div>
     </div>
 
-    <!-- Navigation & Playback Controls -->
+    <!-- Controls -->
     <div class="action-section">
       <button id="rewind-btn" class="nav-btn" title="Rewind 10 words">&#171; -10</button>
       <button id="toggle-btn" class="play-pause-btn">Start</button>
       <button id="ff-btn" class="nav-btn" title="Fast-forward 10 words">+10 &#187;</button>
     </div>
 
-    <!-- Settings Controls -->
+    <!-- Settings -->
     <div class="controls">
       <div class="control-group">
         <label for="wpm-input">Speed (WPM):</label>
@@ -264,6 +260,7 @@
     const rewindBtn = document.getElementById('rewind-btn');
     const ffBtn = document.getElementById('ff-btn');
     const pasteBtn = document.getElementById('paste-btn');
+    const scanShortcutLink = document.getElementById('scan-shortcut-link');
     const wordDisplay = document.getElementById('word-display');
 
     let words = [];
@@ -271,13 +268,32 @@
     let isPlaying = false;
     let timerId = null;
 
+    // Dynamically set Shortcut URL so it returns directly to this web page
+    const currentUrl = encodeURIComponent(window.location.href);
+    scanShortcutLink.href = `shortcuts://x-callback-url/run-shortcut?name=Scan%20to%20Reader&x-success=${currentUrl}`;
+
+    // Auto-paste text when returning from camera shortcut
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible') {
+        try {
+          const clipboardText = await navigator.clipboard.readText();
+          if (clipboardText && clipboardText.trim() !== textInput.value.trim()) {
+            textInput.value = clipboardText.trim();
+            resetReader();
+          }
+        } catch (err) {
+          // Silent catch if clipboard permission isn't granted yet
+        }
+      }
+    });
+
     // Font size setting
     wordDisplay.style.fontSize = `${fontSizeInput.value}px`;
     fontSizeInput.addEventListener('input', () => {
       wordDisplay.style.fontSize = `${fontSizeInput.value || 40}px`;
     });
 
-    // Handle Paste Button
+    // Paste Button Function
     pasteBtn.addEventListener('click', async () => {
       try {
         const clipboardText = await navigator.clipboard.readText();
@@ -288,11 +304,10 @@
           alert("Clipboard is empty.");
         }
       } catch (err) {
-        alert("Please allow clipboard permissions to paste.");
+        alert("Please allow clipboard permissions.");
       }
     });
 
-    // Reset reader variables when text changes
     textInput.addEventListener('input', () => {
       resetReader();
     });
@@ -311,7 +326,7 @@
       return words.length > 0;
     }
 
-    // Toggle Play/Pause Button
+    // Toggle Play/Pause
     toggleBtn.addEventListener('click', () => {
       if (isPlaying) {
         pauseReader();
@@ -322,11 +337,10 @@
 
     function startReader() {
       if (!loadWords()) {
-        alert("Please paste or type text first.");
+        alert("Please scan or paste some text first.");
         return;
       }
 
-      // If finished, start over from the beginning
       if (currentIndex >= words.length) {
         currentIndex = 0;
       }
@@ -363,21 +377,20 @@
       }
     }
 
-    // Rewind 10 words
+    // Rewind 10
     rewindBtn.addEventListener('click', () => {
       if (!loadWords()) return;
       currentIndex = Math.max(0, currentIndex - 10);
       wordDisplay.textContent = words[currentIndex] || "Ready";
     });
 
-    // Fast-Forward 10 words
+    // Fast Forward 10
     ffBtn.addEventListener('click', () => {
       if (!loadWords()) return;
       currentIndex = Math.min(words.length - 1, currentIndex + 10);
       wordDisplay.textContent = words[currentIndex] || "Ready";
     });
 
-    // Update interval live if WPM changes during playback
     wpmInput.addEventListener('change', () => {
       if (isPlaying) {
         clearTimeout(timerId);
