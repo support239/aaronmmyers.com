@@ -284,7 +284,7 @@
     // Dynamically set Shortcut URL so it returns directly to this page
     const baseUrl = window.location.origin + window.location.pathname;
     const currentUrl = encodeURIComponent(baseUrl);
-    scanShortcutLink.href = `shortcuts://x-callback-url/run-shortcut?name=Scan%20to%20Reader&x-success=${currentUrl}`;
+    scanShortcutLink.href = scanShortcutLink.href = `shortcuts://run-shortcut?name=Scan%20to%20Reader`;
 
     // 1. CHECK FOR URL PARAMETER (If shortcut passes text directly in URL)
     window.addEventListener('DOMContentLoaded', () => {
