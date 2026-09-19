@@ -17,7 +17,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
       padding: 0 0 70px 0;
-      background: #f0f2f5;
+      background: #c8e0f4; /* Matching image background tint */
       color: #1c1e21;
     }
 
@@ -34,6 +34,7 @@
       padding: 24px 16px 20px 16px;
       text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: relative;
     }
 
     .sync-btn {
@@ -63,7 +64,6 @@
       height: 20px;
       fill: currentColor;
     }
-
 
     .account-title {
       font-size: 14px;
@@ -156,7 +156,6 @@
       gap: 12px;
     }
 
-    /* Description Styling */
     .tx-description {
       font-size: 13px;
       line-height: 1.35;
@@ -169,7 +168,6 @@
       overflow: hidden;
     }
 
-    /* Right-Aligned Amount Styling */
     .tx-amount {
       font-size: 15px;
       font-weight: 700;
@@ -180,7 +178,6 @@
     .amount-positive { color: #2e7d32; }
     .amount-negative { color: #c62828; }
 
-    /* Bottom Control Bar in Transaction Card */
     .tx-bottom-row {
       display: flex;
       justify-content: space-between;
@@ -217,9 +214,7 @@
       transition: background-color 0.2s, color 0.2s;
     }
 
-    .action-btn:hover {
-      background-color: #eaf0f6;
-    }
+    .action-btn:hover { background-color: #eaf0f6; }
 
     .action-btn svg {
       width: 18px;
@@ -232,25 +227,122 @@
       background-color: #fde8e8;
     }
 
-    /* Budget Tab Styling */
-    .budget-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 15px;
-      padding: 16px;
+    /* ==========================================
+       SINGLE COLUMN BANNER STYLES (IMG_3380)
+       ========================================== */
+    .budget-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px 16px;
+      max-width: 500px;
+      margin: 0 auto;
     }
 
-    .budget-card {
-      background: white;
-      padding: 16px;
+    .banner-wrapper {
+      position: relative;
+      filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.25));
+    }
+
+    .banner-card {
+      display: flex;
+      align-items: stretch;
+      height: 62px;
+    }
+
+    /* Left Light-Blue Due Date Badge */
+    .banner-date-badge {
+      background-color: #3bb2e6;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      width: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    /* Main Dark-Blue Title & Numbers Area */
+    .banner-body {
+      background-color: #0d2847;
+      color: #ffffff;
+      flex: 1;
+      padding: 6px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .banner-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .banner-stats {
+      font-size: 11px;
+      color: #a0c4e2;
+      margin-top: 3px;
+    }
+
+    .editable-val {
+      cursor: pointer;
+      text-decoration: underline dotted #a0c4e2;
+    }
+
+    /* Right Arrow / Chevron Tip */
+    .banner-arrow {
+      width: 0;
+      height: 0;
+      border-top: 31px solid transparent;
+      border-bottom: 31px solid transparent;
+      border-left: 20px solid #0d2847;
+      flex-shrink: 0;
+    }
+
+    /* iPhone-Style Notification Badge */
+    .notification-badge {
+      position: absolute;
+      top: -6px;
+      right: 2px;
+      background-color: #ff3b30;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 5;
+    }
+
+    /* Bottom Nav Notification Badge */
+    .nav-badge {
+      position: absolute;
+      top: 6px;
+      right: 22%;
+      background-color: #ff3b30;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
       border-radius: 8px;
-      border-left: 4px solid #0b3c5d;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
     }
-
-    .budget-card strong { font-size: 1.05em; display: block; margin-bottom: 6px; }
-    .budget-card .meta { font-size: 0.88em; color: #666; margin-bottom: 8px; }
-    .budget-card .remaining { font-weight: 600; color: #2e7d32; }
 
     /* Fixed Bottom Navigation Bar */
     .bottom-nav {
@@ -280,6 +372,7 @@
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
+      position: relative;
       transition: color 0.2s;
     }
 
@@ -310,9 +403,7 @@
       padding: 16px;
     }
 
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-overlay.active { display: flex; }
 
     .modal-box {
       background: #ffffff;
@@ -335,9 +426,7 @@
       padding-bottom: 8px;
     }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
+    .form-group { margin-bottom: 12px; }
 
     .form-group label {
       display: block;
@@ -423,7 +512,6 @@
     
     <!-- TOP ACCOUNT SUMMARY DISPLAY -->
     <div class="top-summary-header">
-      <!-- Sync Button / SVG Placement -->
       <button class="sync-btn" title="Sync Data" onclick="triggerSync()">
         <svg viewBox="0 0 24 24">
           <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
@@ -450,7 +538,7 @@
 
     <!-- TAB 2: BUDGETS -->
     <div id="tab-budgets" class="tab-content">
-      <div id="budgetGrid" class="budget-grid">Loading categories...</div>
+      <div id="budgetGrid" class="budget-list-container">Loading categories...</div>
     </div>
 
   </div>
@@ -465,6 +553,7 @@
     </button>
 
     <button class="nav-tab" onclick="switchTab('budgets', this)">
+      <div id="tabNotificationBadge" class="nav-badge" style="display: none;">0</div>
       <svg viewBox="0 0 24 24">
         <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
       </svg>
@@ -530,20 +619,17 @@
     }
 
     function triggerSync() {
-      console.log("Redirecting to LMCU...");
       window.location.href = "https://www.lmcu.org/";
     }
-
-
 
     async function loadDashboard() {
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
-        categoriesList = data.categories;
+        categoriesList = data.categories || [];
         currentTransactions = data.transactions || [];
 
-        calculateTopHeaderTotals(currentTransactions, data.categories);
+        calculateTopHeaderTotals(currentTransactions, categoriesList);
 
         if (currentTransactions.length > 0) {
           currentTransactions.sort((a, b) => {
@@ -554,7 +640,7 @@
         }
 
         renderTransactions(currentTransactions);
-        renderCategories(data.categories);
+        renderCategories(categoriesList, currentTransactions);
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -650,21 +736,18 @@
                   `).join('')}
                 </select>
                 <div class="tx-actions">
-                  <!-- Scissors / Split Icon -->
                   <button class="action-btn" title="Split Transaction" onclick="openSplitModal('${tx.id}')">
                     <svg viewBox="0 0 24 24">
                       <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm13-8l3-3V6h-3l-4 4 4 4z"/>
                     </svg>
                   </button>
 
-                  <!-- Pencil / Edit Icon -->
                   <button class="action-btn" title="Edit Transaction" onclick="openEditModal('${tx.id}')">
                     <svg viewBox="0 0 24 24">
                       <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
                   </button>
 
-                  <!-- Trash / Delete Icon -->
                   <button class="action-btn btn-delete" title="Delete Transaction" onclick="deleteTransaction('${tx.id}')">
                     <svg viewBox="0 0 24 24">
                       <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -680,20 +763,116 @@
       container.innerHTML = html;
     }
 
-    function renderCategories(categories) {
-      const grid = document.getElementById("budgetGrid");
+    /* RENDER SINGLE-COLUMN BANNER BUDGETS */
+    function renderCategories(categories, transactions) {
+      const container = document.getElementById("budgetGrid");
       if (!categories || categories.length === 0) {
-        grid.innerHTML = '<div class="budget-card">No category budgets found.</div>';
+        container.innerHTML = '<div style="text-align:center; padding: 20px;">No category budgets found.</div>';
         return;
       }
 
-      grid.innerHTML = categories.map(c => `
-        <div class="budget-card">
-          <strong>${c.name}</strong>
-          <div class="meta">Budget: $${c.budget} | Spent: $${c.spent}</div>
-          <div class="remaining">${c.left}</div>
-        </div>
-      `).join('');
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+      const todayDate = now.getDate();
+
+      // Sort Categories Chronologically by Due Date
+      const sortedCategories = [...categories].sort((a, b) => {
+        const dayA = parseInt(a.dueDate) || 99;
+        const dayB = parseInt(b.dueDate) || 99;
+        return dayA - dayB;
+      });
+
+      let totalTabNotifications = 0;
+
+      const html = sortedCategories.map((c, index) => {
+        const dueDay = parseInt(c.dueDate) || (index + 1);
+        
+        // Calculate missing transactions and overdue status (> 3 days past due date)
+        const budgetDueDate = new Date(currentYear, currentMonth, dueDay);
+        const daysPastDue = Math.floor((now - budgetDueDate) / (1000 * 60 * 60 * 24));
+
+        let hasTransactionThisMonth = false;
+        if (transactions && transactions.length > 0) {
+          hasTransactionThisMonth = transactions.some(t => {
+            if (!t.category || t.category.trim().toLowerCase() !== c.name.trim().toLowerCase()) return false;
+            const tDate = t.date ? new Date(t.date) : null;
+            return tDate && tDate.getFullYear() === currentYear && tDate.getMonth() === currentMonth;
+          });
+        }
+
+        // Notification active if missing transaction by due date or >3 days after
+        const isOverdueMissing = !hasTransactionThisMonth && (todayDate >= dueDay || daysPastDue > 3);
+        const notificationCount = isOverdueMissing ? 1 : 0;
+        totalTabNotifications += notificationCount;
+
+        const rawBudget = parseFloat(String(c.budget).replace(/[^0-9.-]+/g, "")) || 0;
+        const rawSpent = parseFloat(String(c.spent).replace(/[^0-9.-]+/g, "")) || 0;
+        const rawLeft = parseFloat(String(c.left).replace(/[^0-9.-]+/g, "")) || (rawBudget - rawSpent);
+
+        return `
+          <div class="banner-wrapper">
+            ${notificationCount > 0 ? `<div class="notification-badge">${notificationCount}</div>` : ''}
+            <div class="banner-card">
+              <!-- Light Blue Left Due Date -->
+              <div class="banner-date-badge" title="Click to edit due date" onclick="editCategoryDueDate('${c.name}', ${dueDay})">
+                ${dueDay}
+              </div>
+
+              <!-- Main Dark Blue Banner Body -->
+              <div class="banner-body">
+                <div class="banner-title">${c.name}</div>
+                <div class="banner-stats">
+                  Budget: <span class="editable-val" onclick="editCategoryBudget('${c.name}', ${rawBudget})" title="Click to edit budget">$${rawBudget.toFixed(2)}</span> | 
+                  Spent: $${Math.abs(rawSpent).toFixed(2)} | 
+                  Rem: $${rawLeft.toFixed(2)}
+                </div>
+              </div>
+
+              <!-- Arrow Point -->
+              <div class="banner-arrow"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+
+      // Update Bottom Nav Notification Badge
+      const tabBadge = document.getElementById("tabNotificationBadge");
+      if (totalTabNotifications > 0) {
+        tabBadge.innerText = totalTabNotifications;
+        tabBadge.style.display = "flex";
+      } else {
+        tabBadge.style.display = "none";
+      }
+    }
+
+    /* INLINE EDIT HANDLERS */
+    async function editCategoryBudget(catName, currentVal) {
+      const newVal = prompt(`Enter new total budget for ${catName}:`, currentVal);
+      if (newVal !== null && !isNaN(parseFloat(newVal))) {
+        await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "updateBudget", name: catName, budget: parseFloat(newVal) })
+        });
+        loadDashboard();
+      }
+    }
+
+    async function editCategoryDueDate(catName, currentDay) {
+      const newDay = prompt(`Enter day of the month due for ${catName} (1-31):`, currentDay);
+      if (newDay !== null && !isNaN(parseInt(newDay)) && parseInt(newDay) >= 1 && parseInt(newDay) <= 31) {
+        await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "updateBudget", name: catName, dueDate: parseInt(newDay) })
+        });
+        loadDashboard();
+      }
     }
 
     async function updateCategory(id, newCategory) {
@@ -703,6 +882,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "updateCategory", id: id, category: newCategory })
       });
+      loadDashboard();
     }
 
     /* Modal Handlers */
@@ -778,7 +958,6 @@
       const container = document.getElementById('splitRowsContainer');
       container.innerHTML = '';
       
-      // Default with two split rows
       addSplitRow(tx.category, totalToSplit / 2);
       addSplitRow('', totalToSplit / 2);
 
