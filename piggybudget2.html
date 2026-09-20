@@ -34,12 +34,17 @@
       position: relative;
     }
 
-    .header-actions {
+    /* Position buttons symmetrically on opposite sides */
+    .header-action-left {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+    }
+
+    .header-action-right {
       position: absolute;
       top: 16px;
       right: 16px;
-      display: flex;
-      gap: 8px;
     }
 
     .sync-btn {
@@ -500,15 +505,17 @@
     
     <!-- TOP ACCOUNT SUMMARY DISPLAY -->
     <div class="top-summary-header">
-      <div class="header-actions">
-        <!-- Transfer Button -->
+      <!-- Transfer Button on the Top Left -->
+      <div class="header-action-left">
         <button class="sync-btn" title="Transfer Money" onclick="openTransferModal()">
           <svg viewBox="0 0 24 24">
             <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
           </svg>
         </button>
+      </div>
 
-        <!-- Sync Button -->
+      <!-- Sync Button on the Top Right -->
+      <div class="header-action-right">
         <button class="sync-btn" title="Sync Data" onclick="triggerSync()">
           <svg viewBox="0 0 24 24">
             <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
@@ -646,7 +653,6 @@
     }
 
     function triggerSync() {
-      // Dispatches custom event for content script, with fallback
       window.dispatchEvent(new CustomEvent("startSync"));
       setTimeout(() => {
         window.location.href = "https://www.lmcu.org/";
@@ -675,10 +681,9 @@
         amount: amount
       };
 
-      // Dispatch event to extension content script
+      // Dispatches custom event for the content script
       window.dispatchEvent(new CustomEvent("startTransfer", { detail: transferDetail }));
 
-      // Fallback navigation in case extension is running independently
       setTimeout(() => {
         window.location.href = "https://www.lmcu.org/";
       }, 200);
