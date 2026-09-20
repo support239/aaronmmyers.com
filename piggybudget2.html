@@ -37,6 +37,36 @@
       position: relative;
     }
 
+    /* Transfer Button (Top Left) */
+    .transfer-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #ffffff;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .transfer-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+
+    .transfer-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Sync Button (Top Right) */
     .sync-btn {
       position: absolute;
       top: 16px;
@@ -227,9 +257,7 @@
       background-color: #fde8e8;
     }
 
-    /* ==========================================
-       SINGLE COLUMN BANNER STYLES (IMG_3380)
-       ========================================== */
+    /* Single Column Banner Styles */
     .budget-list-container {
       display: flex;
       flex-direction: column;
@@ -512,6 +540,14 @@
     
     <!-- TOP ACCOUNT SUMMARY DISPLAY -->
     <div class="top-summary-header">
+      <!-- Transfer Button (Top Left) -->
+      <button class="transfer-btn" title="Initiate Transfer" onclick="triggerTransfer()">
+        <svg viewBox="0 0 24 24">
+          <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
+        </svg>
+      </button>
+
+      <!-- Sync Button (Top Right) -->
       <button class="sync-btn" title="Sync Data" onclick="triggerSync()">
         <svg viewBox="0 0 24 24">
           <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
@@ -619,6 +655,12 @@
     }
 
     function triggerSync() {
+      window.location.href = "https://www.lmcu.org/";
+    }
+
+    function triggerTransfer() {
+      // Signals intent to your browser extension script
+      window.postMessage({ type: "PIGGYBUDGET_INITIATE_TRANSFER" }, "*");
       window.location.href = "https://www.lmcu.org/";
     }
 
@@ -776,7 +818,6 @@
       const currentMonth = now.getMonth();
       const todayDate = now.getDate();
 
-      // Sort Categories Chronologically by Due Date
       const sortedCategories = [...categories].sort((a, b) => {
         const dayA = parseInt(a.dueDate) || 99;
         const dayB = parseInt(b.dueDate) || 99;
@@ -788,7 +829,6 @@
       const html = sortedCategories.map((c, index) => {
         const dueDay = parseInt(c.dueDate) || (index + 1);
         
-        // Calculate missing transactions and overdue status (> 3 days past due date)
         const budgetDueDate = new Date(currentYear, currentMonth, dueDay);
         const daysPastDue = Math.floor((now - budgetDueDate) / (1000 * 60 * 60 * 24));
 
@@ -801,7 +841,6 @@
           });
         }
 
-        // Notification active if missing transaction by due date or >3 days after
         const isOverdueMissing = !hasTransactionThisMonth && (todayDate >= dueDay || daysPastDue > 3);
         const notificationCount = isOverdueMissing ? 1 : 0;
         totalTabNotifications += notificationCount;
@@ -838,7 +877,6 @@
 
       container.innerHTML = html;
 
-      // Update Bottom Nav Notification Badge
       const tabBadge = document.getElementById("tabNotificationBadge");
       if (totalTabNotifications > 0) {
         tabBadge.innerText = totalTabNotifications;
@@ -848,7 +886,6 @@
       }
     }
 
-    /* INLINE EDIT HANDLERS */
     async function editCategoryBudget(catName, currentVal) {
       const newVal = prompt(`Enter new total budget for ${catName}:`, currentVal);
       if (newVal !== null && !isNaN(parseFloat(newVal))) {
@@ -885,12 +922,10 @@
       loadDashboard();
     }
 
-    /* Modal Handlers */
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
     }
 
-    /* DELETE TRANSACTION */
     async function deleteTransaction(id) {
       if (!confirm("Are you sure you want to delete this transaction?")) return;
       
@@ -907,7 +942,6 @@
       loadDashboard();
     }
 
-    /* EDIT TRANSACTION */
     function openEditModal(id) {
       const tx = currentTransactions.find(t => String(t.id) === String(id));
       if (!tx) return;
@@ -944,7 +978,6 @@
       loadDashboard();
     }
 
-    /* SPLIT TRANSACTION */
     let totalToSplit = 0;
 
     function openSplitModal(id) {
