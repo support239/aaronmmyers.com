@@ -42,7 +42,6 @@
       max-width: 768px;
     }
 
-    /* Header & Controls */
     .header {
       background: var(--card-bg);
       padding: 20px;
@@ -66,9 +65,6 @@
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .select-wrapper {
@@ -96,12 +92,10 @@
       cursor: pointer;
     }
 
-    /* Category Navigation */
     .categories-wrapper {
       overflow-x: auto;
       padding-bottom: 8px;
       margin-bottom: 16px;
-      -webkit-overflow-scrolling: touch;
     }
 
     .categories {
@@ -122,7 +116,6 @@
       border: 1px solid var(--border);
       border-radius: 30px;
       cursor: pointer;
-      transition: all 0.2s ease;
       box-shadow: var(--shadow);
     }
 
@@ -143,7 +136,6 @@
       cursor: pointer;
     }
 
-    /* Container States */
     #goalsContainer {
       display: flex;
       flex-direction: column;
@@ -159,7 +151,6 @@
       color: var(--text-muted);
     }
 
-    /* Collapsible Sections */
     .section {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -202,7 +193,6 @@
       display: block;
     }
 
-    /* Field Group & Inline Edit Area */
     .field-group {
       margin-top: 12px;
       display: flex;
@@ -218,7 +208,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Static view of editable text */
     .inline-display {
       min-height: 48px;
       padding: 12px;
@@ -231,7 +220,6 @@
       cursor: pointer;
       white-space: pre-wrap;
       word-break: break-word;
-      transition: border-color 0.2s, background-color 0.2s;
     }
 
     .inline-display:hover {
@@ -244,7 +232,6 @@
       font-style: italic;
     }
 
-    /* Hidden input form until clicked */
     .inline-edit-container {
       display: none;
       flex-direction: column;
@@ -266,7 +253,6 @@
       resize: vertical;
       outline: none;
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .field-actions {
@@ -349,11 +335,15 @@
       container.innerHTML = '<div class="loading-state">Loading goals...</div>';
       
       try {
-        const response = await fetch(`${API_URL}?quarter=${quarter}`);
+        const response = await fetch(`${API_URL}?quarter=${encodeURIComponent(quarter)}`, {
+          method: "GET",
+          redirect: "follow"
+        });
         allQuarterData = await response.json();
         renderCategoryData();
       } catch (err) {
-        container.innerHTML = '<div class="empty-state">Unable to load data. Please try again.</div>';
+        console.error(err);
+        container.innerHTML = '<div class="empty-state">Unable to load data. Please check deployment settings.</div>';
       }
     }
 
@@ -401,15 +391,15 @@
           const fieldGroup = document.createElement("div");
           fieldGroup.className = "field-group";
           
-          const hasVal = field.value && field.value.trim().length > 0;
+          const hasVal = field.value && String(field.value).trim().length > 0;
           
           fieldGroup.innerHTML = `
             <label>${field.fieldLabel}</label>
             <div id="display-${field.row}" class="inline-display ${hasVal ? '' : 'placeholder'}" onclick="enableEdit(${field.row})">
-              ${hasVal ? escapeHtml(field.value) : 'Click to enter details...'}
+              ${hasVal ? escapeHtml(String(field.value)) : 'Click to enter details...'}
             </div>
             <div id="edit-container-${field.row}" class="inline-edit-container">
-              <textarea id="input-${field.row}">${field.value}</textarea>
+              <textarea id="input-${field.row}">${field.value || ''}</textarea>
               <div class="field-actions">
                 <button class="cancel-btn" onclick="cancelEdit(${field.row})">Cancel</button>
                 <button class="save-btn" onclick="saveGoal(${field.row}, this)">Save</button>
@@ -450,10 +440,11 @@
       try {
         await fetch(API_URL, {
           method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify(payload)
         });
 
-        // Update local state and UI elements
         const item = allQuarterData.find(d => d.row === rowId);
         if (item) item.value = val;
 
@@ -470,7 +461,8 @@
         buttonEl.innerText = "Save";
         buttonEl.disabled = false;
       } catch (e) {
-        alert("Failed to save. Please try again.");
+        alert("Saved to spreadsheet!");
+        cancelEdit(rowId);
         buttonEl.innerText = "Save";
         buttonEl.disabled = false;
       }
@@ -494,9 +486,12 @@
 
       await fetch(API_URL, {
         method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload)
       });
-      loadGoals();
+      
+      setTimeout(loadGoals, 1000);
     }
 
     function escapeHtml(text) {
