@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rocks App</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 800px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .categories { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+    .cat-btn { padding: 10px 15px; border: 2px solid #ccc; border-radius: 8px; cursor: pointer; background: #f9f9f9; font-weight: bold; }
+    .cat-btn.active { border-color: #007bff; background: #e7f0ff; color: #007bff; }
+    .add-btn { padding: 10px 15px; border: 2px dashed #007bff; border-radius: 8px; cursor: pointer; color: #007bff; background: #fff; font-weight: bold; }
+    .section { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 12px; overflow: hidden; }
+    .section-title { background: #eee; padding: 10px; font-weight: bold; cursor: pointer; }
+    .section-content { padding: 15px; display: none; }
+    .section-content.open { display: block; }
+    .field-group { margin-bottom: 15px; }
+    .field-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+    textarea { width: 100%; height: 70px; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button.save-btn { margin-top: 5px; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>Rocks App</h2>
+    <div>
+      <label for="quarterSelect"><strong>Quarter:</strong> </label>
+      <select id="quarterSelect" onchange="loadGoals()">
+        <option value="Q1-2026">Q1 (Jan - Mar 2026)</option>
+        <option value="Q2-2026">Q2 (Apr - Jun 2026)</option>
+        <option value="Q3-2026">Q3 (Jul - Sep 2026)</option>
+        <option value="Q4-2026">Q4 (Oct - Dec 2026)</option>
+        <option value="Q1-2027">Q1 (Jan - Mar 2027)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="categories">
+    <button class="cat-btn active" onclick="selectCategory('Finance')">💼 Finance</button>
+    <button class="cat-btn" onclick="selectCategory('Workouts')">🏋️ Workouts</button>
+    <button class="cat-btn" onclick="selectCategory('Relationships')">❤️ Relationships</button>
+    <button class="cat-btn" onclick="selectCategory('Mental Health')">🧠 Mental Health</button>
+    <button class="add-btn" onclick="addNewGoal()">+ Add Field</button>
+  </div>
+
+  <div id="goalsContainer">Loading goals...</div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbx8UOGUuJ9M0Acu_Q0_nIjwpQ0zJtQQBMUsrjs2ksrvHrThyXJiguEWrawAsnUo2ap2eg/exec";
+    let currentCategory = "Finance";
+    let allQuarterData = [];
+
+    // Automatically detect current quarter on initial load
+    function setInitialQuarter() {
+      const now = new Date();
+      const month = now.getMonth(); // 0-indexed (0 = Jan, 9 = Oct)
+      const year = now.getFullYear();
+      let q = Math.floor(month / 3) + 1;
+      document.getElementById("quarterSelect").value = `Q${q}-${year}`;
+    }
+
+    async function loadGoals() {
+      const quarter = document.getElementById("quarterSelect").value;
+      document.getElementById("goalsContainer").innerHTML = "Loading...";
+      
+      try {
+        const response = await fetch(`${API_URL}?quarter=${quarter}`);
+        allQuarterData = await response.json();
+        renderCategoryData();
+      } catch (err) {
+        document.getElementById("goalsContainer").innerHTML = "Error loading data.";
+      }
+    }
+
+    function selectCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.includes(cat));
+      });
+      renderCategoryData();
+    }
+
+    function renderCategoryData() {
+      const filtered = allQuarterData.filter(item => item.category === currentCategory);
+      const container = document.getElementById("goalsContainer");
+      container.innerHTML = "";
+
+      if (filtered.length === 0) {
+        container.innerHTML = "<p>No goals found for this category and quarter.</p>";
+        return;
+      }
+
+      // Group fields by Section
+      const sections = {};
+      filtered.forEach(item => {
+        if (!sections[item.section]) sections[item.section] = [];
+        sections[item.section].push(item);
+      });
+
+      // Render collapsible sections
+      for (const sectionName in sections) {
+        const secDiv = document.createElement("div");
+        secDiv.className = "section";
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "section-title";
+        titleDiv.innerText = "▶ " + sectionName;
+        titleDiv.onclick = () => {
+          const content = secDiv.querySelector(".section-content");
+          const isOpen = content.classList.toggle("open");
+          titleDiv.innerText = (isOpen ? "▼ " : "▶ ") + sectionName;
+        };
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "section-content";
+
+        sections[sectionName].forEach(field => {
+          const fieldGroup = document.createElement("div");
+          fieldGroup.className = "field-group";
+          fieldGroup.innerHTML = `
+            <label>${field.fieldLabel}</label>
+            <textarea id="input-${field.row}">${field.value}</textarea>
+            <button class="save-btn" onclick="saveGoal(${field.row})">Save</button>
+          `;
+          contentDiv.appendChild(fieldGroup);
+        });
+
+        secDiv.appendChild(titleDiv);
+        secDiv.appendChild(contentDiv);
+        container.appendChild(secDiv);
+      }
+    }
+
+    async function saveGoal(rowId) {
+      const val = document.getElementById(`input-${rowId}`).value;
+      const payload = { action: "update", row: rowId, value: val };
+
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      alert("Updated successfully!");
+    }
+
+    async function addNewGoal() {
+      const section = prompt("Enter section name (e.g., Strategic Actions):");
+      const label = prompt("Enter field label (e.g., Action Item 1):");
+      if (!section || !label) return;
+
+      const quarter = document.getElementById("quarterSelect").value;
+      const payload = {
+        action: "add",
+        quarter: quarter,
+        category: currentCategory,
+        section: section,
+        fieldLabel: label,
+        value: ""
+      };
+
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      loadGoals();
+    }
+
+    // Initialize application
+    setInitialQuarter();
+    loadGoals();
+  </script>
+</body>
+</html>
