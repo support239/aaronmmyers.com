@@ -12,14 +12,12 @@
     :root {
       --primary: #2563eb;
       --primary-light: #eff6ff;
-      --primary-hover: #1d4ed8;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
       --success: #10b981;
-      --success-hover: #059669;
       --radius: 12px;
       --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }
@@ -96,11 +94,6 @@
       color: var(--text-main);
       outline: none;
       cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    select:focus {
-      border-color: var(--primary);
     }
 
     /* Category Navigation */
@@ -109,15 +102,6 @@
       padding-bottom: 8px;
       margin-bottom: 16px;
       -webkit-overflow-scrolling: touch;
-    }
-
-    .categories-wrapper::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    .categories-wrapper::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
     }
 
     .categories {
@@ -142,11 +126,6 @@
       box-shadow: var(--shadow);
     }
 
-    .cat-btn:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
     .cat-btn.active {
       background: var(--primary);
       color: white;
@@ -162,14 +141,9 @@
       border: 1px dashed var(--primary);
       border-radius: 30px;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .add-btn:hover {
-      background: #dbeafe;
-    }
-
-    /* Dynamic Content Container */
+    /* Container States */
     #goalsContainer {
       display: flex;
       flex-direction: column;
@@ -183,7 +157,6 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       color: var(--text-muted);
-      font-size: 0.95rem;
     }
 
     /* Collapsible Sections */
@@ -193,7 +166,6 @@
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       overflow: hidden;
-      transition: border-color 0.2s;
     }
 
     .section-title {
@@ -209,10 +181,6 @@
       user-select: none;
     }
 
-    .section-title:hover {
-      background: #f8fafc;
-    }
-
     .section-title .chevron {
       transition: transform 0.2s ease;
       color: var(--text-muted);
@@ -225,7 +193,7 @@
 
     .section-content {
       display: none;
-      padding: 0 20px 20px 20px;
+      padding: 12px 20px 20px 20px;
       border-top: 1px solid var(--border);
       background: #fafafa;
     }
@@ -234,42 +202,77 @@
       display: block;
     }
 
-    /* Field Form Styling */
+    /* Field Group & Inline Edit Area */
     .field-group {
-      margin-top: 16px;
+      margin-top: 12px;
       display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Static view of editable text */
+    .inline-display {
+      min-height: 48px;
+      padding: 12px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      cursor: pointer;
+      white-space: pre-wrap;
+      word-break: break-word;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .inline-display:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .inline-display.placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Hidden input form until clicked */
+    .inline-edit-container {
+      display: none;
       flex-direction: column;
       gap: 8px;
     }
 
-    .field-group label {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-main);
+    .inline-edit-container.editing {
+      display: flex;
     }
 
     textarea {
       width: 100%;
-      min-height: 80px;
+      min-height: 90px;
       padding: 12px;
       font-size: 0.95rem;
-      line-height: 1.4;
-      border: 1px solid var(--border);
+      line-height: 1.5;
+      border: 1.5px solid var(--primary);
       border-radius: 8px;
       resize: vertical;
       outline: none;
       background: #fff;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    textarea:focus {
-      border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .field-actions {
       display: flex;
       justify-content: flex-end;
+      gap: 8px;
     }
 
     button.save-btn {
@@ -281,16 +284,17 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
 
-    button.save-btn:hover {
-      background: var(--success-hover);
-    }
-
-    button.save-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    button.cancel-btn {
+      padding: 8px 14px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -396,11 +400,20 @@
         sections[sectionName].forEach(field => {
           const fieldGroup = document.createElement("div");
           fieldGroup.className = "field-group";
+          
+          const hasVal = field.value && field.value.trim().length > 0;
+          
           fieldGroup.innerHTML = `
             <label>${field.fieldLabel}</label>
-            <textarea id="input-${field.row}">${field.value}</textarea>
-            <div class="field-actions">
-              <button class="save-btn" onclick="saveGoal(${field.row}, this)">Save</button>
+            <div id="display-${field.row}" class="inline-display ${hasVal ? '' : 'placeholder'}" onclick="enableEdit(${field.row})">
+              ${hasVal ? escapeHtml(field.value) : 'Click to enter details...'}
+            </div>
+            <div id="edit-container-${field.row}" class="inline-edit-container">
+              <textarea id="input-${field.row}">${field.value}</textarea>
+              <div class="field-actions">
+                <button class="cancel-btn" onclick="cancelEdit(${field.row})">Cancel</button>
+                <button class="save-btn" onclick="saveGoal(${field.row}, this)">Save</button>
+              </div>
             </div>
           `;
           contentDiv.appendChild(fieldGroup);
@@ -412,8 +425,23 @@
       }
     }
 
+    function enableEdit(rowId) {
+      document.getElementById(`display-${rowId}`).style.display = "none";
+      const editContainer = document.getElementById(`edit-container-${rowId}`);
+      editContainer.classList.add("editing");
+      
+      const textarea = document.getElementById(`input-${rowId}`);
+      textarea.focus();
+    }
+
+    function cancelEdit(rowId) {
+      document.getElementById(`edit-container-${rowId}`).classList.remove("editing");
+      document.getElementById(`display-${rowId}`).style.display = "block";
+    }
+
     async function saveGoal(rowId, buttonEl) {
-      const val = document.getElementById(`input-${rowId}`).value;
+      const textarea = document.getElementById(`input-${rowId}`);
+      const val = textarea.value;
       const payload = { action: "update", row: rowId, value: val };
 
       buttonEl.disabled = true;
@@ -424,11 +452,23 @@
           method: "POST",
           body: JSON.stringify(payload)
         });
-        buttonEl.innerText = "Saved!";
-        setTimeout(() => {
-          buttonEl.innerText = "Save";
-          buttonEl.disabled = false;
-        }, 2000);
+
+        // Update local state and UI elements
+        const item = allQuarterData.find(d => d.row === rowId);
+        if (item) item.value = val;
+
+        const displayEl = document.getElementById(`display-${rowId}`);
+        if (val.trim().length > 0) {
+          displayEl.innerText = val;
+          displayEl.classList.remove("placeholder");
+        } else {
+          displayEl.innerText = "Click to enter details...";
+          displayEl.classList.add("placeholder");
+        }
+
+        cancelEdit(rowId);
+        buttonEl.innerText = "Save";
+        buttonEl.disabled = false;
       } catch (e) {
         alert("Failed to save. Please try again.");
         buttonEl.innerText = "Save";
@@ -457,6 +497,15 @@
         body: JSON.stringify(payload)
       });
       loadGoals();
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     setInitialQuarter();
