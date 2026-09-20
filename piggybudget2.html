@@ -652,17 +652,16 @@
       window.scrollTo(0, 0);
     }
 
+    // SYNC ACTION VIA URL PARAMETER ?s
     function triggerSync() {
-      window.dispatchEvent(new CustomEvent("startSync"));
-      setTimeout(() => {
-        window.location.href = "https://www.lmcu.org/";
-      }, 100);
+      window.location.href = "https://www.lmcu.org/?s";
     }
 
     function openTransferModal() {
       document.getElementById('transferModal').classList.add('active');
     }
 
+    // TRANSFER ACTION VIA URL PARAMETERS ?t=lmcufam-lmcubiz&amt=XX
     function submitTransfer() {
       const fromBank = document.getElementById('transferFromBank').value;
       const toBank = document.getElementById('transferToBank').value;
@@ -675,18 +674,10 @@
 
       closeModal('transferModal');
 
-      const transferDetail = {
-        fromBank: fromBank,
-        toBank: toBank,
-        amount: amount
-      };
+      const cleanFrom = fromBank.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cleanTo = toBank.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Dispatches custom event for the content script
-      window.dispatchEvent(new CustomEvent("startTransfer", { detail: transferDetail }));
-
-      setTimeout(() => {
-        window.location.href = "https://www.lmcu.org/";
-      }, 200);
+      window.location.href = `https://www.lmcu.org/?t=${cleanFrom}-${cleanTo}&amt=${encodeURIComponent(amount)}`;
     }
 
     async function loadDashboard() {
