@@ -2,62 +2,338 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rocks App</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/piggybudget.png?v2">
   <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/piggybudget.png?v2">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; max-width: 800px; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .categories { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
-    .cat-btn { padding: 10px 15px; border: 2px solid #ccc; border-radius: 8px; cursor: pointer; background: #f9f9f9; font-weight: bold; }
-    .cat-btn.active { border-color: #007bff; background: #e7f0ff; color: #007bff; }
-    .add-btn { padding: 10px 15px; border: 2px dashed #007bff; border-radius: 8px; cursor: pointer; color: #007bff; background: #fff; font-weight: bold; }
-    .section { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 12px; overflow: hidden; }
-    .section-title { background: #eee; padding: 10px; font-weight: bold; cursor: pointer; }
-    .section-content { padding: 15px; display: none; }
-    .section-content.open { display: block; }
-    .field-group { margin-bottom: 15px; }
-    .field-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-    textarea { width: 100%; height: 70px; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-    button.save-btn { margin-top: 5px; padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --success-hover: #059669;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 768px;
+    }
+
+    /* Header & Controls */
+    .header {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .select-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .select-wrapper label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Category Navigation */
+    .categories-wrapper {
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .categories-wrapper::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .categories-wrapper::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      min-width: max-content;
+    }
+
+    .cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .cat-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .cat-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .add-btn {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px dashed var(--primary);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-btn:hover {
+      background: #dbeafe;
+    }
+
+    /* Dynamic Content Container */
+    #goalsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .loading-state, .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Collapsible Sections */
+    .section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .section-title {
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      user-select: none;
+    }
+
+    .section-title:hover {
+      background: #f8fafc;
+    }
+
+    .section-title .chevron {
+      transition: transform 0.2s ease;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .section-title.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .section-content {
+      display: none;
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    .section-content.open {
+      display: block;
+    }
+
+    /* Field Form Styling */
+    .field-group {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-group label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      resize: vertical;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .field-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button.save-btn {
+      padding: 8px 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button.save-btn:hover {
+      background: var(--success-hover);
+    }
+
+    button.save-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h2>Rocks App</h2>
-    <div>
-      <label for="quarterSelect"><strong>Quarter:</strong> </label>
-      <select id="quarterSelect" onchange="loadGoals()">
-        <option value="Q1-2026">Q1 (Jan - Mar 2026)</option>
-        <option value="Q2-2026">Q2 (Apr - Jun 2026)</option>
-        <option value="Q3-2026">Q3 (Jul - Sep 2026)</option>
-        <option value="Q4-2026">Q4 (Oct - Dec 2026)</option>
-        <option value="Q1-2027">Q1 (Jan - Mar 2027)</option>
-      </select>
+  <div class="app-container">
+    <div class="header">
+      <h1>🪨 Rocks App</h1>
+      <div class="select-wrapper">
+        <label for="quarterSelect">Quarter</label>
+        <select id="quarterSelect" onchange="loadGoals()">
+          <option value="Q1-2026">Q1 (Jan - Mar 2026)</option>
+          <option value="Q2-2026">Q2 (Apr - Jun 2026)</option>
+          <option value="Q3-2026">Q3 (Jul - Sep 2026)</option>
+          <option value="Q4-2026">Q4 (Oct - Dec 2026)</option>
+          <option value="Q1-2027">Q1 (Jan - Mar 2027)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="categories-wrapper">
+      <div class="categories">
+        <button class="cat-btn active" onclick="selectCategory('Finance')"><span>💼</span> Finance</button>
+        <button class="cat-btn" onclick="selectCategory('Workouts')"><span>🏋️</span> Workouts</button>
+        <button class="cat-btn" onclick="selectCategory('Relationships')"><span>❤️</span> Relationships</button>
+        <button class="cat-btn" onclick="selectCategory('Mental Health')"><span>🧠</span> Mental Health</button>
+        <button class="add-btn" onclick="addNewGoal()">+ Add Field</button>
+      </div>
+    </div>
+
+    <div id="goalsContainer">
+      <div class="loading-state">Loading goals...</div>
     </div>
   </div>
-
-  <div class="categories">
-    <button class="cat-btn active" onclick="selectCategory('Finance')">💼 Finance</button>
-    <button class="cat-btn" onclick="selectCategory('Workouts')">🏋️ Workouts</button>
-    <button class="cat-btn" onclick="selectCategory('Relationships')">❤️ Relationships</button>
-    <button class="cat-btn" onclick="selectCategory('Mental Health')">🧠 Mental Health</button>
-    <button class="add-btn" onclick="addNewGoal()">+ Add Field</button>
-  </div>
-
-  <div id="goalsContainer">Loading goals...</div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbx8UOGUuJ9M0Acu_Q0_nIjwpQ0zJtQQBMUsrjs2ksrvHrThyXJiguEWrawAsnUo2ap2eg/exec";
     let currentCategory = "Finance";
     let allQuarterData = [];
 
-    // Automatically detect current quarter on initial load
     function setInitialQuarter() {
       const now = new Date();
-      const month = now.getMonth(); // 0-indexed (0 = Jan, 9 = Oct)
+      const month = now.getMonth();
       const year = now.getFullYear();
       let q = Math.floor(month / 3) + 1;
       document.getElementById("quarterSelect").value = `Q${q}-${year}`;
@@ -65,14 +341,15 @@
 
     async function loadGoals() {
       const quarter = document.getElementById("quarterSelect").value;
-      document.getElementById("goalsContainer").innerHTML = "Loading...";
+      const container = document.getElementById("goalsContainer");
+      container.innerHTML = '<div class="loading-state">Loading goals...</div>';
       
       try {
         const response = await fetch(`${API_URL}?quarter=${quarter}`);
         allQuarterData = await response.json();
         renderCategoryData();
       } catch (err) {
-        document.getElementById("goalsContainer").innerHTML = "Error loading data.";
+        container.innerHTML = '<div class="empty-state">Unable to load data. Please try again.</div>';
       }
     }
 
@@ -90,33 +367,31 @@
       container.innerHTML = "";
 
       if (filtered.length === 0) {
-        container.innerHTML = "<p>No goals found for this category and quarter.</p>";
+        container.innerHTML = '<div class="empty-state">No goals found for this category and quarter.</div>';
         return;
       }
 
-      // Group fields by Section
       const sections = {};
       filtered.forEach(item => {
         if (!sections[item.section]) sections[item.section] = [];
         sections[item.section].push(item);
       });
 
-      // Render collapsible sections
       for (const sectionName in sections) {
         const secDiv = document.createElement("div");
         secDiv.className = "section";
 
         const titleDiv = document.createElement("div");
         titleDiv.className = "section-title";
-        titleDiv.innerText = "▶ " + sectionName;
-        titleDiv.onclick = () => {
-          const content = secDiv.querySelector(".section-content");
-          const isOpen = content.classList.toggle("open");
-          titleDiv.innerText = (isOpen ? "▼ " : "▶ ") + sectionName;
-        };
-
+        titleDiv.innerHTML = `<span>${sectionName}</span><span class="chevron">▼</span>`;
+        
         const contentDiv = document.createElement("div");
         contentDiv.className = "section-content";
+
+        titleDiv.onclick = () => {
+          const isOpen = contentDiv.classList.toggle("open");
+          titleDiv.classList.toggle("open", isOpen);
+        };
 
         sections[sectionName].forEach(field => {
           const fieldGroup = document.createElement("div");
@@ -124,7 +399,9 @@
           fieldGroup.innerHTML = `
             <label>${field.fieldLabel}</label>
             <textarea id="input-${field.row}">${field.value}</textarea>
-            <button class="save-btn" onclick="saveGoal(${field.row})">Save</button>
+            <div class="field-actions">
+              <button class="save-btn" onclick="saveGoal(${field.row}, this)">Save</button>
+            </div>
           `;
           contentDiv.appendChild(fieldGroup);
         });
@@ -135,21 +412,35 @@
       }
     }
 
-    async function saveGoal(rowId) {
+    async function saveGoal(rowId, buttonEl) {
       const val = document.getElementById(`input-${rowId}`).value;
       const payload = { action: "update", row: rowId, value: val };
 
-      await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      alert("Updated successfully!");
+      buttonEl.disabled = true;
+      buttonEl.innerText = "Saving...";
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        buttonEl.innerText = "Saved!";
+        setTimeout(() => {
+          buttonEl.innerText = "Save";
+          buttonEl.disabled = false;
+        }, 2000);
+      } catch (e) {
+        alert("Failed to save. Please try again.");
+        buttonEl.innerText = "Save";
+        buttonEl.disabled = false;
+      }
     }
 
     async function addNewGoal() {
       const section = prompt("Enter section name (e.g., Strategic Actions):");
+      if (!section) return;
       const label = prompt("Enter field label (e.g., Action Item 1):");
-      if (!section || !label) return;
+      if (!label) return;
 
       const quarter = document.getElementById("quarterSelect").value;
       const payload = {
@@ -168,7 +459,6 @@
       loadGoals();
     }
 
-    // Initialize application
     setInitialQuarter();
     loadGoals();
   </script>
