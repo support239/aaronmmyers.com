@@ -687,7 +687,8 @@
         categoriesList = data.categories || [];
         currentTransactions = data.transactions || [];
 
-        calculateTopHeaderTotals(currentTransactions, categoriesList);
+        // Pass the explicit availableBalance returned from Account_Balances!B2
+        calculateTopHeaderTotals(data.availableBalance, categoriesList);
 
         if (currentTransactions.length > 0) {
           currentTransactions.sort((a, b) => {
@@ -704,19 +705,11 @@
       }
     }
 
-    function calculateTopHeaderTotals(transactions, categories) {
-      let latestBalance = 0;
-      if (transactions && transactions.length > 0) {
-        let recentTx = transactions[0];
-        for (let i = 0; i < transactions.length; i++) {
-          const rawBal = transactions[i].balance !== undefined ? transactions[i].balance : transactions[i].Balance;
-          if (rawBal !== undefined && rawBal !== null && rawBal !== "") {
-            recentTx = transactions[i];
-          }
-        }
-        const finalBal = recentTx.balance !== undefined ? recentTx.balance : recentTx.Balance;
-        latestBalance = parseFloat(String(finalBal || 0).replace(/[^0-9.-]+/g, "")) || 0;
-      }
+    function calculateTopHeaderTotals(availableBalance, categories) {
+      // Clean and format the balance coming directly from Account_Balances!B2
+      const rawBal = availableBalance !== undefined && availableBalance !== null ? availableBalance : 0;
+      const latestBalance = parseFloat(String(rawBal).replace(/[^0-9.-]+/g, "")) || 0;
+
       document.getElementById("availableBalance").innerText = `$${latestBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
       const now = new Date();
