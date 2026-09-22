@@ -1,29 +1,416 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<!-- iPhone Home Screen icon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="https://aaronmmyers.com/screen-time-icon.png?v2">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="test" content="THIS IS THE RIGHT FILE">
+  <base target="_top">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://aaronmmyers.com/screen-time-icon.png?v2">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://entryexitpro.com/assets/images/screen-time-icon.png?v2">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://entryexitpro.com/assets/images/screen-time-icon.png?v2">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Screen Time">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f4f4f9; color: #333; }
+    .container { 
+      max-width: 400px; 
+      margin: auto; 
+      background: white; 
+      padding: 15px; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      position: relative;
+    }
+    
+    .cog-icon {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease-in-out;
+    }
+    .cog-icon:hover {
+      transform: rotate(45deg);
+    }
 
-<!-- <script>
-setTimeout(function(){
-  window.location.href = "https://script.google.com/macros/s/AKfycbygeOnl-VOu6Myyco3jjrB4xrN5Ixed9uo_Ngslb5nSX9rixQ1RY7FKbmiYCZUqrB_IIg/exec?view=readonly";
-}, 40000);
-</script> -->
+    h2, h3 { text-align: center; color: #4A90E2; margin: 10px 0; }
+    .balance-box { background: #e3faf2; border: 1px solid #2ecc71; padding: 12px; text-align: center; font-size: 22px; font-weight: bold; border-radius: 8px; margin-bottom: 15px; }
+    
+    .task-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 8px 0; 
+      border-bottom: 1px solid #eee; 
+      gap: 6px; 
+    }
+    .task-name {
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .task-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    input[type="number"] { width: 40px; padding: 4px; text-align: center; font-size: 13px; }
+    input[type="text"] { width: 100%; padding: 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    button { background: #4A90E2; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+    button:hover { background: #357ABD; }
+    .use-time-section { margin-top: 25px; border-top: 2px dashed #ccc; padding-top: 15px; text-align: center; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 300px;
+      width: 80%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .modal-box button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 15px;
+    }
+    .close-modal-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none !important;
+      border: none !important;
+      font-size: 20px !important;
+      font-weight: bold;
+      color: #888 !important;
+      cursor: pointer;
+      width: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1;
+    }
+    .close-modal-btn:hover {
+      color: #333 !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <span class="cog-icon" onclick="openTokenModal()" title="Settings">⚙️</span>
+  <h2>⏳ Screen Time Bank</h2>
+  <label for="childSelect">Select Child: </label>
+<select id="childSelect" onchange="updateChild()">
+  <option value="Nate">Nate</option>
+  <option value="Aylee">Aylee</option>
+  <option value="Lexi">Lexi</option>
+  <option value="Dash">Dash</option>
+</select>
+<br><br>
+  <div class="balance-box">
+    Balance: <span id="balanceDisplay">0</span> mins
+  </div>
+
+  <h3>Complete Tasks</h3>
+  <div id="taskList">Loading tasks...</div>
+
+  <div class="use-time-section">
+    <h3>Use Screen Time</h3>
+    <a id="shortcutLink" style="display:none;"></a>
+    <input type="number" id="useMinutes" value="15" min="1"> Mins <br><br>
+    <button onclick="promptDeviceSelection()">🚀 Start Screen Time & Timer</button>
+  </div>
+</div>
+
+<!-- Device Selection Modal -->
+<div id="deviceModal" class="modal-overlay" onclick="closeDeviceModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="close-modal-btn" onclick="cancelDeviceSelection()">✕</button>
+    <h3 style="margin-top: 10px;">Apply time to which device?</h3>
+    <button onclick="handleDeviceChoice('Family phone')">📱 Family phone</button>
+    <button onclick="handleDeviceChoice('Roku')" style="background: #662d91;">📺 Roku</button>
+    <button onclick="handleDeviceChoice('Other')" style="background: #e67e22;">⚙️ Other</button>
+  </div>
+</div>
+
+<!-- Token Settings Modal -->
+<div id="tokenModal" class="modal-overlay" onclick="closeTokenModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="close-modal-btn" onclick="cancelTokenModal()">✕</button>
+    <h3 style="margin-top: 10px;">Settings</h3>
+    <button onclick="window.open('https://account.smartthings.com/tokens', '_blank')">Get Token</button>
+    <div style="margin-top: 15px; text-align: left;">
+      <label for="tokenInput" style="font-size: 13px; font-weight: bold; color: #555;">SmartThings Token:</label>
+      <input type="text" id="tokenInput" placeholder="Loading token..." style="margin-top: 5px;">
+      <button onclick="saveToken()" style="background: #2ecc71; margin-top: 10px;">Update</button>
+    </div>
+  </div>
+</div>
 
 <script>
-window.location.href = "https://script.google.com/macros/s/AKfycbygeOnl-VOu6Myyco3jjrB4xrN5Ixed9uo_Ngslb5nSX9rixQ1RY7FKbmiYCZUqrB_IIg/exec"; 
-</script> 
+  // REST API Endpoint URL from Apps Script deployment
+  const SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
 
-</head>
+  let CHILD_NAME = document.getElementById("childSelect").value; 
 
-<body>
+  window.onload = function() {
+    refreshApp();
+  };
+
+  async function apiGet(action, params = {}) {
+    let url = new URL(SCRIPT_URL);
+    url.searchParams.append('action', action);
+    for (let k in params) {
+      url.searchParams.append(k, params[k]);
+    }
+    let res = await fetch(url);
+    return await res.json();
+  }
+
+  async function apiPost(action, body = {}) {
+    body.action = action;
+    let res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return await res.json();
+  }
+
+  async function refreshApp() {
+    updateBalanceDisplay();
+    try {
+      let tasks = await apiGet('getTasks');
+      let completedMap = await apiGet('getCompletedTasksForRound', { childName: CHILD_NAME });
+      renderTasks(tasks, completedMap);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function updateBalanceDisplay() {
+    try {
+      let bal = await apiGet('getBalance', { childName: CHILD_NAME });
+      document.getElementById('balanceDisplay').innerText = bal;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function updateChild() {
+    CHILD_NAME = document.getElementById("childSelect").value;
+    refreshApp(); 
+  }
+
+  function renderTasks(tasks, completedMap) {
+    let html = '';
+    tasks.forEach((task, index) => {
+      let currentCount = completedMap[task.name] || 0;
+      let isFamilyTask = task.name.toLowerCase().includes("family");
+      
+      let statusHtml = '';
+      
+      if (isFamilyTask) {
+        if (currentCount >= 5) {
+          statusHtml = `<span style="color: #e74c3c; font-weight: bold; font-size: 13px;">(5/5 Maxed out)</span>`;
+        } else {
+          statusHtml = `
+            <span style="color: #27ae60; font-size: 13px; font-weight: bold;">(${currentCount}/5)</span>
+            <input type="number" id="min-${index}" value="${task.minutes}">
+            <button onclick="claimTask('${task.name}', ${index})">✓</button>
+          `;
+        }
+      } else {
+        if (currentCount >= 1) {
+          statusHtml = `<span style="color: #7f8c8d; font-style: italic; font-weight: bold; font-size: 13px;">✓ Completed</span>`;
+        } else {
+          statusHtml = `
+            <input type="number" id="min-${index}" value="${task.minutes}">
+            <button onclick="claimTask('${task.name}', ${index})">✓</button>
+          `;
+        }
+      }
+
+      html += `
+        <div class="task-item">
+          <span class="task-name" style="${currentCount >= 1 && !isFamilyTask ? 'text-decoration: line-through; color: #aaa;' : ''}">${task.name}</span>
+          <div class="task-controls">
+            ${statusHtml}
+          </div>
+        </div>`;
+    });
+    document.getElementById('taskList').innerHTML = html;
+  }
+
+  async function claimTask(taskName, index) {
+    let mins = parseInt(document.getElementById(`min-${index}`).value);
+    
+    try {
+      let response = await apiPost('logAction', {
+        childName: CHILD_NAME,
+        taskName: taskName,
+        minutes: mins
+      });
+      if (response.success) {
+        alert(`Earned ${mins} minutes!`);
+        refreshApp();
+      } else {
+        alert(response.error || "Action failed.");
+      }
+    } catch (err) {
+      alert("Error processing request.");
+    }
+  }
+
+  function promptDeviceSelection() {
+    let minsToUse = parseInt(document.getElementById('useMinutes').value);
+    let currentBal = parseInt(document.getElementById('balanceDisplay').innerText);
+
+    if (minsToUse > currentBal) {
+      alert("You don't have enough banked time!");
+      return;
+    }
+
+    document.getElementById("deviceModal").style.display = "flex";
+  }
+
+  function cancelDeviceSelection() {
+    document.getElementById("deviceModal").style.display = "none";
+  }
+
+  function closeDeviceModal(event) {
+    if (event.target.id === "deviceModal") {
+      document.getElementById("deviceModal").style.display = "none";
+    }
+  }
+
+  /* Token Modal Functions */
+  async function openTokenModal() {
+    document.getElementById("tokenModal").style.display = "flex";
+    try {
+      let token = await apiGet('getSmartThingsToken');
+      document.getElementById("tokenInput").value = token || "";
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function cancelTokenModal() {
+    document.getElementById("tokenModal").style.display = "none";
+  }
+
+  function closeTokenModal(event) {
+    if (event.target.id === "tokenModal") {
+      document.getElementById("tokenModal").style.display = "none";
+    }
+  }
+
+  async function saveToken() {
+    let newToken = document.getElementById("tokenInput").value.trim();
+    if (!newToken) {
+      alert("Please enter a valid token.");
+      return;
+    }
+    
+    try {
+      let response = await apiPost('updateSmartThingsToken', { newToken: newToken });
+      if (response.success) {
+        alert("Token updated successfully!");
+        cancelTokenModal();
+      } else {
+        alert("Failed to update token.");
+      }
+    } catch (err) {
+      alert("Error saving token.");
+    }
+  }
+
+  async function handleDeviceChoice(device) {
+    document.getElementById("deviceModal").style.display = "none";
+    let minsToUse = parseInt(document.getElementById('useMinutes').value);
+
+    if (device === 'Roku') {
+      apiGet('setRokuStatusTemporary', { minutes: minsToUse });
+
+      let link = document.getElementById("shortcutLink");
+      link.href = "shortcuts://run-shortcut?name=tvtimer&input=" + minsToUse;
+      link.click();
+
+      try {
+        let response = await apiPost('logAction', {
+          childName: CHILD_NAME,
+          taskName: "Used Screen Time (Roku)",
+          minutes: -minsToUse
+        });
+        if (response.success) {
+          document.getElementById('balanceDisplay').innerText = response.balance;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+    } else if (device === 'Other') {
+      let link = document.getElementById("shortcutLink");
+      link.href = "shortcuts://run-shortcut?name=tvtimer&input=" + minsToUse;
+      link.click();
+
+      try {
+        let response = await apiPost('logAction', {
+          childName: CHILD_NAME,
+          taskName: "Used Screen Time (Other)",
+          minutes: -minsToUse
+        });
+        if (response.success) {
+          document.getElementById('balanceDisplay').innerText = response.balance;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+    } else {
+      startTimerAndDeplete();
+    }
+  }
+
+  async function startTimerAndDeplete() {
+    let minsToUse = parseInt(document.getElementById('useMinutes').value);
+    let link = document.getElementById("shortcutLink");
+
+    link.href = "shortcuts://run-shortcut?name=StartScreenTime&input=" + minsToUse;
+    link.click();
+
+    try {
+      let response = await apiPost('logAction', {
+        childName: CHILD_NAME,
+        taskName: "Used Screen Time",
+        minutes: -minsToUse
+      });
+      if (response.success) {
+        document.getElementById('balanceDisplay').innerText = response.balance;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+
 </body>
 </html>
