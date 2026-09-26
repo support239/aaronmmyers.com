@@ -497,6 +497,38 @@
       border-radius: 4px;
       text-align: right;
     }
+
+    /* Floating Action Button */
+	.fab-add-btn {
+	  position: fixed;
+	  bottom: 75px; /* Sits right above the 60px bottom nav */
+	  right: 18px;
+	  width: 50px;
+	  height: 50px;
+	  border-radius: 25px;
+	  background-color: #3bb2e6; /* Matches the light blue date badge */
+	  color: #ffffff;
+	  border: none;
+	  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  cursor: pointer;
+	  z-index: 999;
+	  transition: transform 0.2s, background-color 0.2s;
+	}
+
+	.fab-add-btn:hover {
+	  background-color: #2da1d3;
+	  transform: scale(1.05);
+	}
+
+	.fab-add-btn svg {
+	  width: 26px;
+	  height: 26px;
+	  fill: currentColor;
+	}
+
   </style>
 </head>
 <body>
@@ -636,6 +668,14 @@
       </div>
     </div>
   </div>
+
+  <!-- FLOATING ADD TRANSACTION BUTTON -->
+  <button class="fab-add-btn" title="Add Transaction" onclick="openAddModal()">
+  <svg viewBox="0 0 24 24">
+    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+  </svg>
+  </button>
+
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxUDByX9C8rH9UD4XD-jdRZ1FFSbgHtsYmnvlZnRmn0FxDAcJ8GV-6v2v_kmrF1cXJU/exec"; 
