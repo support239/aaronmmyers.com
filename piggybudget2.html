@@ -555,6 +555,36 @@
         </button>
       </div>
 
+      <!-- ADD TRANSACTION MODAL -->
+	<div id="addModal" class="modal-overlay">
+	  <div class="modal-box">
+	    <h3 class="modal-title">Add New Transaction</h3>
+	    <div class="form-group">
+	      <label for="addDate">Date</label>
+	      <input type="text" id="addDate" placeholder="MM/DD/YYYY">
+	    </div>
+	    <div class="form-group">
+	      <label for="addDesc">Description</label>
+	      <input type="text" id="addDesc" placeholder="e.g. Grocery Store">
+	    </div>
+	    <div class="form-group">
+	      <label for="addAmount">Amount ($)</label>
+	      <input type="number" step="0.01" id="addAmount" placeholder="-25.00 for spend, 50.00 for income">
+	    </div>
+	    <div class="form-group">
+	      <label for="addCategory">Category</label>
+	      <select id="addCategory">
+	        <option value="">Select Category...</option>
+	      </select>
+	    </div>
+	    <div class="modal-actions">
+	      <button class="btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+	      <button class="btn-primary" onclick="submitAdd()">Add Transaction</button>
+	    </div>
+	  </div>
+	</div>
+
+
       <div class="account-title">Max Checking</div>
       <div class="account-sub">x5967 S01</div>
       <div class="main-balance" id="availableBalance">$0.00</div>
@@ -853,6 +883,51 @@
 
       container.innerHTML = html;
     }
+
+    function openAddModal() {
+	  // Set today's date as default
+	  const today = new Date().toLocaleDateString('en-US');
+	  document.getElementById('addDate').value = today;
+	  document.getElementById('addDesc').value = '';
+	  document.getElementById('addAmount').value = '';
+
+	  // Populate category options dynamically
+	  const select = document.getElementById('addCategory');
+	  select.innerHTML = '<option value="">Select Category...</option>' + 
+	    categoriesList.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+	  document.getElementById('addModal').classList.add('active');
+	}
+
+	async function submitAdd() {
+	  const date = document.getElementById('addDate').value;
+	  const description = document.getElementById('addDesc').value;
+	  const amount = parseFloat(document.getElementById('addAmount').value) || 0;
+	  const category = document.getElementById('addCategory').value;
+
+	  if (!description || amount === 0) {
+	    alert("Please provide a valid description and amount.");
+	    return;
+	  }
+
+	  closeModal('addModal');
+
+	  await fetch(API_URL, {
+	    method: "POST",
+	    mode: "no-cors",
+	    headers: { "Content-Type": "application/json" },
+	    body: JSON.stringify({
+	      action: "addTransaction",
+	      date: date,
+	      description: description,
+	      amount: amount,
+	      category: category
+	    })
+	  });
+
+	  loadDashboard();
+	}
+
 
     function renderCategories(categories, transactions) {
       const container = document.getElementById("budgetGrid");
