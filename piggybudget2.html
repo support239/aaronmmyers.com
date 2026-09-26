@@ -849,8 +849,11 @@
           });
         }
 
-        const isOverdueMissing = !hasTransactionThisMonth && (todayDate >= dueDay || daysPastDue > 3);
-        const notificationCount = isOverdueMissing ? 1 : 0;
+        const rawBudget = parseFloat(String(c.budget).replace(/[^0-9.-]+/g, "")) || 0;
+
+		// Notification active ONLY if budget > 0 AND missing transaction by due date (or >3 days after)
+		const isOverdueMissing = (rawBudget > 0) && !hasTransactionThisMonth && (todayDate >= dueDay || daysPastDue > 3);
+		const notificationCount = isOverdueMissing ? 1 : 0;
         totalTabNotifications += notificationCount;
 
         const rawBudget = parseFloat(String(c.budget).replace(/[^0-9.-]+/g, "")) || 0;
