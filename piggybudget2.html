@@ -855,7 +855,7 @@
 
         const rawBudget = parseFloat(String(c.budget).replace(/[^0-9.-]+/g, "")) || 0;
         const rawSpent = parseFloat(String(c.spent).replace(/[^0-9.-]+/g, "")) || 0;
-        const rawLeft = parseFloat(String(c.left).replace(/[^0-9.-]+/g, "")) || (rawBudget - rawSpent);
+        const rawLeft = parseFloat(String(c.left).replace(/[^0-9.-]+/g, "")) || (rawBudget - Math.abs(rawSpent));
 
         return `
           <div class="banner-wrapper">
