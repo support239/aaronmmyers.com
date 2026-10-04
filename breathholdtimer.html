@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breath Hold Trainer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        hold: {
+                            light: '#38bdf8',
+                            DEFAULT: '#0284c7',
+                            dark: '#0369a1',
+                            glow: 'rgba(56, 189, 248, 0.3)'
+                        },
+                        rest: {
+                            light: '#34d399',
+                            DEFAULT: '#059669',
+                            dark: '#047857',
+                            glow: 'rgba(52, 211, 153, 0.3)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Smooth circle progress transition */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.3s linear, stroke 0.5s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Ambient glow animation */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.03); }
+        }
+
+        .ambient-glow {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        /* Hide scrollbars for clean look */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom input styling */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-4 sm:p-6 bg-slate-950 text-slate-100">
+
+    <!-- Header -->
+    <header class="w-full max-w-md flex justify-between items-center py-2">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                <i class="fa-solid fa-lungs text-lg"></i>
+            </div>
+            <h1 class="text-xl font-semibold tracking-wide bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                Apnea Flow
+            </h1>
+        </div>
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" onclick="toggleSound()" class="p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all duration-200 hover:bg-slate-800" title="Toggle Sound">
+            <i id="soundIcon" class="fa-solid fa-volume-high text-base"></i>
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-md flex flex-col items-center justify-center flex-1 my-4 space-y-8">
+        
+        <!-- Editable Inputs Section (The main requested fields) -->
+        <div id="inputsContainer" class="w-full grid grid-cols-2 gap-4 bg-slate-900/80 backdrop-blur-md p-4 rounded-3xl border border-slate-800/80 shadow-2xl transition-all duration-300">
+            <!-- Breath Hold Duration Input -->
+            <div class="flex flex-col items-center p-3 rounded-2xl bg-slate-950/60 border border-slate-800 focus-within:border-cyan-500/50 transition-colors">
+                <span class="text-xs uppercase tracking-wider text-cyan-400 font-medium mb-1">
+                    <i class="fa-solid fa-pause text-[10px] mr-1"></i> Hold Time
+                </span>
+                <div class="flex items-baseline space-x-1">
+                    <input type="number" id="holdSecInput" value="60" min="5" max="3600" onchange="updateSettings()"
+                        class="w-16 bg-transparent text-center text-2xl font-bold text-white focus:outline-none">
+                    <span class="text-xs text-slate-500 font-medium">sec</span>
+                </div>
+            </div>
+
+            <!-- Rest Duration Input -->
+            <div class="flex flex-col items-center p-3 rounded-2xl bg-slate-950/60 border border-slate-800 focus-within:border-emerald-500/50 transition-colors">
+                <span class="text-xs uppercase tracking-wider text-emerald-400 font-medium mb-1">
+                    <i class="fa-solid fa-wind text-[10px] mr-1"></i> Rest Time
+                </span>
+                <div class="flex items-baseline space-x-1">
+                    <input type="number" id="restSecInput" value="90" min="5" max="3600" onchange="updateSettings()"
+                        class="w-16 bg-transparent text-center text-2xl font-bold text-white focus:outline-none">
+                    <span class="text-xs text-slate-500 font-medium">sec</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Timer Circle Display -->
+        <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+            
+            <!-- Dynamic Background Glow -->
+            <div id="ambientGlow" class="absolute inset-0 rounded-full bg-cyan-500/10 filter blur-3xl transition-all duration-700 ambient-glow"></div>
+
+            <!-- SVG Ring Progress -->
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <!-- Outer Background Track -->
+                <circle
+                    cx="50" cy="50" r="44"
+                    stroke-width="4"
+                    class="text-slate-900 stroke-current"
+                    fill="transparent"
+                />
+                <!-- Inner Track Glow Baseline -->
+                <circle
+                    cx="50" cy="50" r="44"
+                    stroke-width="1.5"
+                    class="text-slate-800/50 stroke-current"
+                    fill="transparent"
+                />
+                <!-- Animated Dynamic Progress Ring -->
+                <circle
+                    id="progressRing"
+                    cx="50" cy="50" r="44"
+                    stroke-width="5"
+                    stroke-linecap="round"
+                    class="progress-ring__circle text-cyan-400 stroke-current"
+                    fill="transparent"
+                    stroke-dasharray="276.46"
+                    stroke-dashoffset="0"
+                />
+            </svg>
+
+            <!-- Center Content Overlay -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 select-none">
+                <!-- Current Phase Label -->
+                <span id="phaseLabel" class="text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-2 transition-all duration-500">
+                    Ready
+                </span>
+
+                <!-- Time Countdown Display -->
+                <div id="timeDisplay" class="text-5xl sm:text-6xl font-extrabold tracking-tight font-mono text-slate-50 my-1">
+                    01:00
+                </div>
+
+                <!-- Phase Hint / Sub-text -->
+                <p id="phaseHint" class="text-xs text-slate-400 font-light max-w-[180px] h-4 mt-1 transition-opacity duration-300">
+                    Prepare your breath
+                </p>
+            </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="flex items-center justify-center space-x-6 w-full pt-2">
+            <!-- Reset Button -->
+            <button id="resetBtn" onclick="resetTimer()" class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-all duration-200 active:scale-95 shadow-lg" title="Reset Session">
+                <i class="fa-solid fa-rotate-left text-base"></i>
+            </button>
+
+            <!-- Play / Pause Main Button -->
+            <button id="mainBtn" onclick="toggleTimer()" class="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-400 text-slate-950 font-bold flex items-center justify-center shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-200">
+                <i id="mainIcon" class="fa-solid fa-play text-2xl ml-1"></i>
+            </button>
+
+            <!-- Skip Phase Button -->
+            <button id="skipBtn" onclick="skipPhase()" class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition-all duration-200 active:scale-95 shadow-lg" title="Skip to next phase">
+                <i class="fa-solid fa-forward-step text-base"></i>
+            </button>
+        </div>
+
+        <!-- Session Statistics Tracker -->
+        <div class="w-full bg-slate-900/50 rounded-2xl border border-slate-800/60 p-4 grid grid-cols-3 gap-2 text-center">
+            <div class="flex flex-col items-center">
+                <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Completed</span>
+                <span id="statCycles" class="text-xl font-bold text-slate-100 mt-0.5">0</span>
+                <span class="text-[10px] text-slate-400">cycles</span>
+            </div>
+            <div class="flex flex-col items-center border-x border-slate-800/80">
+                <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Hold Time</span>
+                <span id="statTotalHold" class="text-xl font-bold text-cyan-400 mt-0.5">0m</span>
+                <span class="text-[10px] text-slate-400">total</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Total Time</span>
+                <span id="statTotalSession" class="text-xl font-bold text-slate-100 mt-0.5">0m</span>
+                <span class="text-[10px] text-slate-400">elapsed</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-md text-center py-2">
+        <p class="text-xs text-slate-400">Relax your shoulders and breathe naturally during rest phases.</p>
+    </footer>
+
+    <script>
+        // App State Variables
+        let state = 'IDLE'; // 'IDLE', 'HOLD', 'REST'
+        let isRunning = false;
+        let soundEnabled = true;
+
+        // Configurable Times (in seconds)
+        let holdTime = 60;
+        let restTime = 90;
+
+        // Current phase state
+        let currentDuration = 60;
+        let timeRemaining = 60;
+        let timerInterval = null;
+
+        // Stats tracking
+        let completedCycles = 0;
+        let totalHoldSeconds = 0;
+        let totalSessionSeconds = 0;
+        let sessionTimerInterval = null;
+
+        // DOM Elements
+        const holdSecInput = document.getElementById('holdSecInput');
+        const restSecInput = document.getElementById('restSecInput');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const phaseLabel = document.getElementById('phaseLabel');
+        const phaseHint = document.getElementById('phaseHint');
+        const mainBtn = document.getElementById('mainBtn');
+        const mainIcon = document.getElementById('mainIcon');
+        const progressRing = document.getElementById('progressRing');
+        const ambientGlow = document.getElementById('ambientGlow');
+        const inputsContainer = document.getElementById('inputsContainer');
+
+        // Stats DOM Elements
+        const statCycles = document.getElementById('statCycles');
+        const statTotalHold = document.getElementById('statTotalHold');
+        const statTotalSession = document.getElementById('statTotalSession');
+
+        // Circle Circumference Calculation
+        const RADIUS = 44;
+        const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+        // Audio Context Setup for Web Audio API Beeps (No external files needed)
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playBeep(freq = 600, duration = 0.15, type = 'sine') {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function playPhaseTransitionSound(toPhase) {
+            if (!soundEnabled) return;
+            if (toPhase === 'HOLD') {
+                // Double ascending beep for Hold
+                playBeep(520, 0.12);
+                setTimeout(() => playBeep(780, 0.25), 150);
+            } else if (toPhase === 'REST') {
+                // Descending smooth note for Rest
+                playBeep(650, 0.12);
+                setTimeout(() => playBeep(440, 0.3), 150);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const soundIcon = document.getElementById('soundIcon');
+            const soundToggleBtn = document.getElementById('soundToggleBtn');
+            
+            if (soundEnabled) {
+                soundIcon.className = "fa-solid fa-volume-high text-base";
+                soundToggleBtn.classList.remove('text-slate-600');
+                soundToggleBtn.classList.add('text-slate-400');
+                playBeep(800, 0.1);
+            } else {
+                soundIcon.className = "fa-solid fa-volume-xmark text-base";
+                soundToggleBtn.classList.add('text-slate-600');
+                soundToggleBtn.classList.remove('text-slate-400');
+            }
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function formatMinutes(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            if (mins === 0) return `${secs}s`;
+            return `${mins}m ${secs}s`;
+        }
+
+        function setCircleProgress(percent) {
+            const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
+            progressRing.style.strokeDashoffset = offset;
+        }
+
+        function updateSettings() {
+            let h = parseInt(holdSecInput.value) || 10;
+            let r = parseInt(restSecInput.value) || 10;
+
+            // Clamp values
+            h = Math.max(5, Math.min(3600, h));
+            r = Math.max(5, Math.min(3600, r));
+
+            holdTime = h;
+            restTime = r;
+
+            holdSecInput.value = holdTime;
+            restSecInput.value = restTime;
+
+            if (state === 'IDLE') {
+                currentDuration = holdTime;
+                timeRemaining = holdTime;
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            timeDisplay.textContent = formatTime(timeRemaining);
+            const percent = (timeRemaining / currentDuration) * 100;
+            setCircleProgress(percent);
+        }
+
+        function setUITheme(phase) {
+            if (phase === 'HOLD') {
+                phaseLabel.textContent = "Breath Hold";
+                phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 mb-2 transition-all duration-500";
+                phaseHint.textContent = "Hold breath calmly";
+                
+                progressRing.className.baseVal = "progress-ring__circle text-cyan-400 stroke-current";
+                ambientGlow.className = "absolute inset-0 rounded-full bg-cyan-500/15 filter blur-3xl transition-all duration-700 ambient-glow";
+                
+                mainBtn.className = "w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-400 text-slate-950 font-bold flex items-center justify-center shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-200";
+            } else if (phase === 'REST') {
+                phaseLabel.textContent = "Rest & Recovery";
+                phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-2 transition-all duration-500";
+                phaseHint.textContent = "Breathe naturally and recover";
+                
+                progressRing.className.baseVal = "progress-ring__circle text-emerald-400 stroke-current";
+                ambientGlow.className = "absolute inset-0 rounded-full bg-emerald-500/15 filter blur-3xl transition-all duration-700 ambient-glow";
+                
+                mainBtn.className = "w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-emerald-400 text-slate-950 font-bold flex items-center justify-center shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-105 active:scale-95 transition-all duration-200";
+            } else { // IDLE
+                phaseLabel.textContent = "Ready";
+                phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 mb-2 transition-all duration-500";
+                phaseHint.textContent = "Press start to begin";
+                
+                progressRing.className.baseVal = "progress-ring__circle text-cyan-400 stroke-current";
+                ambientGlow.className = "absolute inset-0 rounded-full bg-cyan-500/10 filter blur-3xl transition-all duration-700";
+                
+                mainBtn.className = "w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-cyan-400 text-slate-950 font-bold flex items-center justify-center shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-200";
+            }
+        }
+
+        function startPhase(newPhase) {
+            state = newPhase;
+            if (state === 'HOLD') {
+                currentDuration = holdTime;
+                timeRemaining = holdTime;
+                setUITheme('HOLD');
+                playPhaseTransitionSound('HOLD');
+            } else if (state === 'REST') {
+                currentDuration = restTime;
+                timeRemaining = restTime;
+                setUITheme('REST');
+                playPhaseTransitionSound('REST');
+            }
+            updateDisplay();
+        }
+
+        function tick() {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                
+                // Track hold total
+                if (state === 'HOLD') {
+                    totalHoldSeconds++;
+                    statTotalHold.textContent = formatMinutes(totalHoldSeconds);
+                }
+
+                // Countdown beeps for final 3 seconds
+                if (timeRemaining <= 3 && timeRemaining > 0) {
+                    playBeep(440, 0.08);
+                }
+
+                updateDisplay();
+            } else {
+                // Phase Completed
+                if (state === 'HOLD') {
+                    // Transition to REST
+                    startPhase('REST');
+                } else if (state === 'REST') {
+                    // Completed 1 full cycle
+                    completedCycles++;
+                    statCycles.textContent = completedCycles;
+                    // Loop back to HOLD
+                    startPhase('HOLD');
+                }
+            }
+        }
+
+        function toggleTimer() {
+            getAudioContext(); // Ensure web audio context is active
+            
+            if (!isRunning) {
+                // START / RESUME
+                isRunning = true;
+                mainIcon.className = "fa-solid fa-pause text-2xl";
+                
+                // Lock inputs while running to avoid mid-cycle glitches
+                holdSecInput.disabled = true;
+                restSecInput.disabled = true;
+                inputsContainer.classList.add('opacity-75');
+
+                if (state === 'IDLE') {
+                    startPhase('HOLD');
+                }
+
+                timerInterval = setInterval(tick, 1000);
+                
+                if (!sessionTimerInterval) {
+                    sessionTimerInterval = setInterval(() => {
+                        totalSessionSeconds++;
+                        statTotalSession.textContent = formatMinutes(totalSessionSeconds);
+                    }, 1000);
+                }
+            } else {
+                // PAUSE
+                isRunning = false;
+                mainIcon.className = "fa-solid fa-play text-2xl ml-1";
+                clearInterval(timerInterval);
+                timerInterval = null;
+                phaseHint.textContent = "Paused";
+            }
+        }
+
+        function skipPhase() {
+            if (state === 'IDLE') return;
+            
+            if (state === 'HOLD') {
+                startPhase('REST');
+            } else if (state === 'REST') {
+                completedCycles++;
+                statCycles.textContent = completedCycles;
+                startPhase('HOLD');
+            }
+        }
+
+        function resetTimer() {
+            // Stop timers
+            clearInterval(timerInterval);
+            clearInterval(sessionTimerInterval);
+            timerInterval = null;
+            sessionTimerInterval = null;
+
+            // Reset state
+            state = 'IDLE';
+            isRunning = false;
+
+            // Unlock inputs
+            holdSecInput.disabled = false;
+            restSecInput.disabled = false;
+            inputsContainer.classList.remove('opacity-75');
+
+            // Reset UI
+            mainIcon.className = "fa-solid fa-play text-2xl ml-1";
+            currentDuration = holdTime;
+            timeRemaining = holdTime;
+            setUITheme('IDLE');
+            updateDisplay();
+        }
+
+        // Initialize SVG ring dimensions
+        progressRing.style.strokeDasharray = `${CIRCUMFERENCE} ${CIRCUMFERENCE}`;
+        progressRing.style.strokeDashoffset = 0;
+
+        // Initialize on Load
+        window.onload = function() {
+            updateSettings();
+        };
+    </script>
+</body>
+</html>
