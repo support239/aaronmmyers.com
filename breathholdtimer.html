@@ -115,7 +115,7 @@
                     <i class="fa-solid fa-pause text-[10px] mr-1"></i> Hold Time
                 </span>
                 <div class="flex items-baseline space-x-1">
-                    <input type="number" id="holdSecInput" value="60" min="5" max="3600" onchange="updateSettings()"
+                    <input type="number" id="holdSecInput" value="60" min="5" max="3600" inputmode="numeric" pattern="[0-9]*" onchange="updateSettings()"
                         class="w-16 bg-transparent text-center text-2xl font-bold text-white focus:outline-none">
                     <span class="text-xs text-slate-500 font-medium">sec</span>
                 </div>
@@ -127,7 +127,7 @@
                     <i class="fa-solid fa-wind text-[10px] mr-1"></i> Rest Time
                 </span>
                 <div class="flex items-baseline space-x-1">
-                    <input type="number" id="restSecInput" value="90" min="0" max="3600" onchange="updateSettings()"
+                    <input type="number" id="restSecInput" value="90" min="0" max="3600" inputmode="numeric" pattern="[0-9]*" onchange="updateSettings()"
                         class="w-16 bg-transparent text-center text-2xl font-bold text-white focus:outline-none">
                     <span class="text-xs text-slate-500 font-medium">sec</span>
                 </div>
