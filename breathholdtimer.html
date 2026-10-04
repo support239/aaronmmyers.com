@@ -121,7 +121,7 @@
                     <i class="fa-solid fa-wind text-[10px] mr-1"></i> Rest Time
                 </span>
                 <div class="flex items-baseline space-x-1">
-                    <input type="number" id="restSecInput" value="90" min="5" max="3600" onchange="updateSettings()"
+                    <input type="number" id="restSecInput" value="90" min="0" max="3600" onchange="updateSettings()"
                         class="w-16 bg-transparent text-center text-2xl font-bold text-white focus:outline-none">
                     <span class="text-xs text-slate-500 font-medium">sec</span>
                 </div>
@@ -129,7 +129,7 @@
         </div>
 
         <!-- Interactive Timer Circle Display -->
-        <div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+        <div id="timerContainer" class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center cursor-pointer select-none">
             
             <!-- Dynamic Background Glow -->
             <div id="ambientGlow" class="absolute inset-0 rounded-full bg-cyan-500/10 filter blur-3xl transition-all duration-700 ambient-glow"></div>
@@ -176,7 +176,7 @@
                 </div>
 
                 <!-- Phase Hint / Sub-text -->
-                <p id="phaseHint" class="text-xs text-slate-400 font-light max-w-[180px] h-4 mt-1 transition-opacity duration-300">
+                <p id="phaseHint" class="text-xs text-slate-400 font-light max-w-[200px] h-8 mt-1 flex items-center justify-center transition-all duration-300">
                     Prepare your breath
                 </p>
             </div>
@@ -222,7 +222,7 @@
 
     <!-- Footer -->
     <footer class="w-full max-w-md text-center py-2">
-        <p class="text-xs text-slate-400">Relax your shoulders and breathe naturally during rest phases.</p>
+        <p id="footerHint" class="text-xs text-slate-400">Relax your shoulders and breathe naturally during rest phases.</p>
     </footer>
 
     <script>
@@ -252,6 +252,7 @@
         const timeDisplay = document.getElementById('timeDisplay');
         const phaseLabel = document.getElementById('phaseLabel');
         const phaseHint = document.getElementById('phaseHint');
+        const footerHint = document.getElementById('footerHint');
         const mainBtn = document.getElementById('mainBtn');
         const mainIcon = document.getElementById('mainIcon');
         const progressRing = document.getElementById('progressRing');
@@ -267,7 +268,7 @@
         const RADIUS = 44;
         const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-        // Audio Context Setup for Web Audio API Beeps (No external files needed)
+        // Audio Context Setup for Web Audio API Beeps
         let audioCtx = null;
 
         function getAudioContext() {
@@ -311,11 +312,9 @@
         function playPhaseTransitionSound(toPhase) {
             if (!soundEnabled) return;
             if (toPhase === 'HOLD') {
-                // Double ascending beep for Hold
                 playBeep(520, 0.12);
                 setTimeout(() => playBeep(780, 0.25), 150);
             } else if (toPhase === 'REST') {
-                // Descending smooth note for Rest
                 playBeep(650, 0.12);
                 setTimeout(() => playBeep(440, 0.3), 150);
             }
@@ -357,12 +356,15 @@
         }
 
         function updateSettings() {
-            let h = parseInt(holdSecInput.value) || 10;
-            let r = parseInt(restSecInput.value) || 10;
+            let h = parseInt(holdSecInput.value);
+            let r = parseInt(restSecInput.value);
+
+            if (isNaN(h)) h = 10;
+            if (isNaN(r)) r = 0;
 
             // Clamp values
             h = Math.max(5, Math.min(3600, h));
-            r = Math.max(5, Math.min(3600, r));
+            r = Math.max(0, Math.min(3600, r));
 
             holdTime = h;
             restTime = r;
@@ -379,7 +381,7 @@
 
         function updateDisplay() {
             timeDisplay.textContent = formatTime(timeRemaining);
-            const percent = (timeRemaining / currentDuration) * 100;
+            const percent = currentDuration > 0 ? (timeRemaining / currentDuration) * 100 : 0;
             setCircleProgress(percent);
         }
 
@@ -388,6 +390,7 @@
                 phaseLabel.textContent = "Breath Hold";
                 phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 mb-2 transition-all duration-500";
                 phaseHint.textContent = "Hold breath calmly";
+                footerHint.textContent = "Relax your shoulders and stay focused on calm awareness.";
                 
                 progressRing.className.baseVal = "progress-ring__circle text-cyan-400 stroke-current";
                 ambientGlow.className = "absolute inset-0 rounded-full bg-cyan-500/15 filter blur-3xl transition-all duration-700 ambient-glow";
@@ -396,7 +399,14 @@
             } else if (phase === 'REST') {
                 phaseLabel.textContent = "Rest & Recovery";
                 phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-2 transition-all duration-500";
-                phaseHint.textContent = "Breathe naturally and recover";
+                
+                if (restTime === 0) {
+                    phaseHint.innerHTML = `<span class="animate-pulse text-emerald-400 font-medium"><i class="fa-solid fa-hand-pointer mr-1"></i> Tap anywhere for next hold</span>`;
+                    footerHint.textContent = "Rest Time is 0s. Tap anywhere on screen to start next breath hold!";
+                } else {
+                    phaseHint.textContent = "Breathe naturally and recover";
+                    footerHint.textContent = "Relax your shoulders and breathe naturally during rest phases.";
+                }
                 
                 progressRing.className.baseVal = "progress-ring__circle text-emerald-400 stroke-current";
                 ambientGlow.className = "absolute inset-0 rounded-full bg-emerald-500/15 filter blur-3xl transition-all duration-700 ambient-glow";
@@ -405,7 +415,13 @@
             } else { // IDLE
                 phaseLabel.textContent = "Ready";
                 phaseLabel.className = "text-xs sm:text-sm font-semibold tracking-widest uppercase px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 mb-2 transition-all duration-500";
-                phaseHint.textContent = "Press start to begin";
+                
+                if (restTime === 0) {
+                    phaseHint.textContent = "Press start or tap screen";
+                } else {
+                    phaseHint.textContent = "Press start to begin";
+                }
+                footerHint.textContent = "Relax your shoulders and breathe naturally during rest phases.";
                 
                 progressRing.className.baseVal = "progress-ring__circle text-cyan-400 stroke-current";
                 ambientGlow.className = "absolute inset-0 rounded-full bg-cyan-500/10 filter blur-3xl transition-all duration-700";
@@ -450,13 +466,20 @@
                 // Phase Completed
                 if (state === 'HOLD') {
                     // Transition to REST
-                    startPhase('REST');
+                    if (restTime === 0) {
+                        // Immediately shift to REST state awaiting manual tap
+                        startPhase('REST');
+                    } else {
+                        startPhase('REST');
+                    }
                 } else if (state === 'REST') {
-                    // Completed 1 full cycle
-                    completedCycles++;
-                    statCycles.textContent = completedCycles;
-                    // Loop back to HOLD
-                    startPhase('HOLD');
+                    if (restTime > 0) {
+                        // Completed 1 full timed rest cycle -> back to HOLD
+                        completedCycles++;
+                        statCycles.textContent = completedCycles;
+                        startPhase('HOLD');
+                    }
+                    // If restTime === 0, stay in REST phase (at 00:00) until tapped!
                 }
             }
         }
@@ -478,7 +501,9 @@
                     startPhase('HOLD');
                 }
 
-                timerInterval = setInterval(tick, 1000);
+                if (!timerInterval) {
+                    timerInterval = setInterval(tick, 1000);
+                }
                 
                 if (!sessionTimerInterval) {
                     sessionTimerInterval = setInterval(() => {
@@ -496,15 +521,23 @@
             }
         }
 
+        function advanceToNextHold() {
+            completedCycles++;
+            statCycles.textContent = completedCycles;
+            startPhase('HOLD');
+            
+            if (!isRunning) {
+                toggleTimer();
+            }
+        }
+
         function skipPhase() {
             if (state === 'IDLE') return;
             
             if (state === 'HOLD') {
                 startPhase('REST');
             } else if (state === 'REST') {
-                completedCycles++;
-                statCycles.textContent = completedCycles;
-                startPhase('HOLD');
+                advanceToNextHold();
             }
         }
 
@@ -531,6 +564,26 @@
             setUITheme('IDLE');
             updateDisplay();
         }
+
+        // Global Tap-to-Start Next Hold Listener for Rest Time = 0
+        document.body.addEventListener('click', (e) => {
+            // Only trigger if restTime is set to 0
+            if (restTime !== 0) return;
+
+            // Ignore clicks on control elements, inputs, and buttons
+            if (e.target.closest('button') || 
+                e.target.closest('input') || 
+                e.target.closest('#inputsContainer') ||
+                e.target.closest('#soundToggleBtn')) {
+                return;
+            }
+
+            // Trigger advance when in REST phase or IDLE
+            if (state === 'REST' || state === 'IDLE') {
+                getAudioContext();
+                advanceToNextHold();
+            }
+        });
 
         // Initialize SVG ring dimensions
         progressRing.style.strokeDasharray = `${CIRCUMFERENCE} ${CIRCUMFERENCE}`;
