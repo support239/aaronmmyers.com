@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Conative Assessment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            ff: '#2563eb', // Fact Finder - Royal Blue
+                            ft: '#059669', // Follow Thru - Emerald Green
+                            qs: '#d97706', // Quick Start - Amber
+                            imp: '#dc2626', // Implementer - Red
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        .option-card.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            .card-shadow { box-shadow: none !important; border: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetAssessment()">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <i data-lucide="compass" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Conative Assessment</span>
+                    <span class="text-xs text-slate-400 font-medium">Instinctual Action Modes</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="resetAssessment()" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-800 transition">
+                    Restart Test
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- INTRO SCREEN -->
+        <section id="intro-screen" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="p-8 sm:p-12 text-center gradient-header text-white relative">
+                <div class="inline-flex p-3 bg-white/10 backdrop-blur-md rounded-2xl mb-4 text-blue-400">
+                    <i data-lucide="brain-circuit" class="w-10 h-10"></i>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">Discover Your Natural Conation</h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Unlike IQ (cognition) or personality (affective), <strong>conation</strong> describes your innate, instinctive drive—how you naturally solve problems when left to your own devices.
+                </p>
+            </div>
+            
+            <div class="p-8 sm:p-10 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="search" class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Data & Details</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you gather and share information & details.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="git-branch" class="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Structure & Systems</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you organize, structure, and create systems.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="zap" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Innovation & Risk</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you deal with risk, innovation, and change.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="hammer" class="w-6 h-6 text-red-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Hands-On & Tangibles</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you interact with physical space & tangibles.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+                        <span>Instructions</span>
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-2 list-disc pl-5">
+                        <li>Answer based on your <strong>immediate instinct</strong>, not what you think is expected or "correct".</li>
+                        <li>Think about how you naturally act when given complete freedom to complete a task.</li>
+                        <li>There are 12 scenario questions in total (takes ~4 minutes).</li>
+                    </ul>
+                </div>
+
+                <button onclick="startAssessment()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center justify-center space-x-2 text-base">
+                    <span>Begin Assessment</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ASSESSMENT FORM SCREEN -->
+        <section id="quiz-screen" class="hidden max-w-3xl mx-auto">
+            <!-- Progress Bar -->
+            <div class="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
+                    <span id="progress-text">Question 1 of 12</span>
+                    <span id="progress-percent">8% Complete</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-300 ease-out" style="width: 8.33%;"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-10">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-3" id="question-category">
+                    Scenario 1
+                </span>
+                <h2 id="question-title" class="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-snug">
+                    Loading question...
+                </h2>
+
+                <!-- Options list -->
+                <div id="options-container" class="space-y-3 mb-8">
+                    <!-- Dynamic choices inserted here -->
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Previous</span>
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2 shadow-md">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS DASHBOARD SCREEN -->
+        <section id="results-screen" class="hidden space-y-8">
+            <!-- Header Summary Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                            Assessment Complete
+                        </span>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Your Conative Profile</h1>
+                        <p class="text-slate-500 text-sm mt-1">Here is your Unique 4-digit Conation based on your instinctive action modes.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-4 bg-slate-900 text-white p-4 sm:p-6 rounded-2xl w-full md:w-auto justify-center shadow-lg">
+                        <div class="text-center">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase tracking-wider">Your Conative Score</span>
+                            <span id="mo-digit-display" class="text-3xl sm:text-4xl font-black text-amber-400 tracking-widest font-mono">0-0-0-0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print & Export Bar -->
+                <div class="pt-4 flex flex-wrap justify-between items-center gap-4 no-print">
+                    <div class="flex items-center space-x-2 text-xs text-slate-500">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Self-reported instinctual preferences score</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print / Export PDF</span>
+                        </button>
+                        <button onclick="shareResults()" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Copy Summary</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scores Visualizer Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Bar Breakdown Card -->
+                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 space-y-6 card-shadow">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-600"></i>
+                        <span>Action Modes Scale (1 - 10)</span>
+                    </h3>
+
+                    <!-- Data & Details Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+                                <span>Data & Details</span>
+                            </span>
+                            <span id="score-ff" class="font-mono font-bold text-blue-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-ff" class="bg-blue-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ff" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Structure & Systems Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+                                <span>Structure & Systems</span>
+                            </span>
+                            <span id="score-ft" class="font-mono font-bold text-emerald-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-ft" class="bg-emerald-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ft" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Innovation & Risk Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span>
+                                <span>Innovation & Risk</span>
+                            </span>
+                            <span id="score-qs" class="font-mono font-bold text-amber-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-qs" class="bg-amber-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-qs" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Hands-On & Tangibles Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span>
+                                <span>Hands-On & Tangibles</span>
+                            </span>
+                            <span id="score-imp" class="font-mono font-bold text-red-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-imp" class="bg-red-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-imp" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Radar Chart Card -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center justify-center card-shadow">
+                    <h3 class="text-sm font-bold text-slate-700 mb-2 uppercase tracking-wider text-center">Conative Profile Distribution</h3>
+                    <div class="w-full max-w-[280px] h-[260px] relative">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Section -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-8 card-shadow">
+                <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-4 flex items-center space-x-2">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-amber-500"></i>
+                    <span>In-Depth Behavioral Breakdown</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="analysis-cards">
+                    <!-- Data & Details Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-blue-700 text-base">Data & Details Analysis</span>
+                            <span id="zone-tag-ff" class="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ff" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Structure & Systems Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-700 text-base">Structure & Systems Analysis</span>
+                            <span id="zone-tag-ft" class="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ft" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Innovation & Risk Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-amber-700 text-base">Innovation & Risk Analysis</span>
+                            <span id="zone-tag-qs" class="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-qs" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Hands-On & Tangibles Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-red-700 text-base">Hands-On & Tangibles Analysis</span>
+                            <span id="zone-tag-imp" class="text-xs px-2.5 py-1 rounded-full bg-red-100 text-red-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-imp" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+                </div>
+
+                <!-- Environment & Stress Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <div class="bg-blue-50/60 rounded-xl p-6 border border-blue-100 space-y-3">
+                        <h4 class="font-bold text-blue-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="sun" class="w-5 h-5 text-blue-600"></i>
+                            <span>Your Ideal Work Environment</span>
+                        </h4>
+                        <ul id="ideal-env-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+
+                    <div class="bg-rose-50/60 rounded-xl p-6 border border-rose-100 space-y-3">
+                        <h4 class="font-bold text-rose-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                            <span>Conative Stress Triggers</span>
+                        </h4>
+                        <ul id="stress-triggers-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Actionable Productivity Tips -->
+                <div class="bg-slate-900 text-white rounded-xl p-6 sm:p-8 space-y-4">
+                    <h3 class="text-lg font-bold flex items-center space-x-2 text-amber-400">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        <span>Customized Productivity Strategy</span>
+                    </h3>
+                    <div id="productivity-tips" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-300">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>This Conative Assessment evaluates innate behavioral tendencies across four primary action modes to help identify natural problem-solving instincts.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Scenario Questions Database
+        const questions = [
+            {
+                id: 1,
+                title: "You are assigned to launch a new project with minimal guidance. What is your very first instinct?",
+                options: [
+                    { text: "Research thoroughly, gather historical data, and ask detailed questions before moving.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Create an outline, establish a step-by-step workflow, and build a schedule.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Brainstorm bold ideas, jump right in, and figure out details as you go.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Build a physical model, mock-up, or tangible diagram of how it works.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 2,
+                title: "When presenting your ideas or results to a team, you naturally tend to:",
+                options: [
+                    { text: "Provide extensive documentation, metrics, citations, and complete background.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Present a clean, categorized, sequential slide deck following a strict logical order.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Spontaneously pitch the vision, improvise, and focus on exciting possibilities.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Show real physical samples, demonstrate hands-on gear, or use 3D visual representations.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 3,
+                title: "How do you respond when a sudden, unexpected crisis disrupts your plan?",
+                options: [
+                    { text: "Immediately seek more facts and background to diagnose the root cause.", scores: { ff: 2, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Re-organize the schedule, update the system, and restore structured order.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Thrive under the pressure, pivot immediately, and improvise a quick workaround.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Roll up your sleeves and physically fix or adjust the components involved.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 4,
+                title: "When organizing your workspace or digital environment:",
+                options: [
+                    { text: "You maintain deep reference files, organized notes, and detailed archives.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Everything has a specific labeled place, standardized file structure, and routine.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "You keep things open and dynamic; rigid filing systems feel restrictive.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "You need physical tools, tangible materials, multi-monitor setups, or tactile gadgets.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 5,
+                title: "When faced with an unproven, risky opportunity:",
+                options: [
+                    { text: "You investigate risk factors thoroughly to ensure justification before committing.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "You assess how it fits into existing plans and check if procedures exist for it.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "You eagerly embrace the risk—trial and error is the best way to innovate!", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "You test the physical mechanics or real-world feasibility practically.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 6,
+                title: "If you buy a complex piece of equipment or furniture that requires assembly, you:",
+                options: [
+                    { text: "Read every word of the instruction manual and specs before opening parts.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Lay out every screw and component systematically in order step-by-step.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Skip the manual and start assembling immediately, figuring it out intuitively.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Feel right in your element handling the physical tools, materials, and hardware.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 7,
+                title: "What frustrates you most during meetings or team collaborations?",
+                options: [
+                    { text: "Superficial claims that lack data, specifics, or thorough research.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Disorganization, random tangents, and failing to follow an established agenda.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Endless debate, over-analysis, and reluctance to take immediate action.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Too much abstract talk without concrete, physical examples or tangible artifacts.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 8,
+                title: "When taking notes during a class or conference, you naturally:",
+                options: [
+                    { text: "Write comprehensive, detailed notes capturing specific facts, dates, and quotes.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Use structured outlines, bulleted hierarchies, and neat categories.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Jot down sudden breakthrough ideas, quick mind maps, or key inspirational points.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Sketch physical diagrams, spatial layouts, or physical mechanics.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 9,
+                title: "In terms of daily work routines, you work best when:",
+                options: [
+                    { text: "You have uninterrupted time to research and analyze complex information deeply.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "You have a predictable schedule, clear repeatable workflows, and checklist clarity.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Every day brings variety, new challenges, deadlines, and novel experiments.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "You are actively building, constructing, handling tools, or working in tangible space.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 10,
+                title: "When writing a report or document, your instinct is to:",
+                options: [
+                    { text: "Include background context, historical references, and exhaustive details.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Format with clear section headers, consistent templates, and table of contents.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Keep it short, punchy, persuasive, and focus on novel takeaways.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Incorporate physical diagrams, CAD drawings, flowcharts, or tactile media.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 11,
+                title: "When evaluating a new tool, software, or solution, you prioritize:",
+                options: [
+                    { text: "Its proven track record, detailed specs, and documented reliability.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "How seamlessly it integrates into existing organizational systems and workflows.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "How innovative, disruptive, or revolutionary the technology is.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Its physical build quality, tactile feel, ergonomics, or spatial design.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 12,
+                title: "If you are asked to solve a complex puzzle or problem, you tend to:",
+                options: [
+                    { text: "Gather all historical precedent data and analyze all variables first.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Establish a systematic process of elimination and methodically work through it.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Experiment rapidly with unconventional guesses until something clicks.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Manipulate physical elements or sketch 3D models to visualize the solution.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            }
+        ];
+
+        // State Tracking
+        let currentQuestion = 0;
+        let selectedAnswers = new Array(questions.length).fill(null);
+        let radarChartInstance = null;
+
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+
+        // Navigation Controllers
+        function startAssessment() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion(0);
+        }
+
+        function resetAssessment() {
+            currentQuestion = 0;
+            selectedAnswers = new Array(questions.length).fill(null);
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadQuestion(index) {
+            currentQuestion = index;
+            const q = questions[index];
+
+            // Update Progress
+            const progressPct = Math.round(((index + 1) / questions.length) * 100);
+            document.getElementById('progress-text').innerText = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').innerText = `${progressPct}% Complete`;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            // Update Content
+            document.getElementById('question-category').innerText = `Scenario ${index + 1}`;
+            document.getElementById('question-title').innerText = q.title;
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, optIndex) => {
+                const isSelected = selectedAnswers[index] === optIndex;
+                const optEl = document.createElement('div');
+                optEl.className = `option-card p-4 rounded-xl border-2 cursor-pointer flex items-start space-x-3 text-slate-700 bg-white hover:border-blue-300 ${isSelected ? 'selected' : 'border-slate-200'}`;
+                optEl.onclick = () => selectOption(optIndex);
+
+                optEl.innerHTML = `
+                    <div class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center ${isSelected ? 'border-blue-600 bg-blue-600' : ''}">
+                        ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                    </div>
+                    <span class="text-sm font-medium leading-relaxed">${opt.text}</span>
+                `;
+                container.appendChild(optEl);
+            });
+
+            // Button States
+            document.getElementById('prev-btn').disabled = index === 0;
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = selectedAnswers[index] === null;
+            
+            if (index === questions.length - 1) {
+                nextBtn.innerHTML = `<span>See Results</span><i data-lucide="check-circle" class="w-4 h-4"></i>`;
+            } else {
+                nextBtn.innerHTML = `<span>Next Question</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+        function selectOption(optIndex) {
+            selectedAnswers[currentQuestion] = optIndex;
+            loadQuestion(currentQuestion);
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                loadQuestion(currentQuestion - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (selectedAnswers[currentQuestion] === null) return;
+
+            if (currentQuestion < questions.length - 1) {
+                loadQuestion(currentQuestion + 1);
+            } else {
+                calculateResults();
+            }
+        }
+
+        // SCORING ENGINE & RESULTS CALCULATION
+        function calculateResults() {
+            let rawScores = { ff: 0, ft: 0, qs: 0, imp: 0 };
+
+            selectedAnswers.forEach((answerIndex, qIndex) => {
+                if (answerIndex !== null) {
+                    const optScores = questions[qIndex].options[answerIndex].scores;
+                    rawScores.ff += optScores.ff || 0;
+                    rawScores.ft += optScores.ft || 0;
+                    rawScores.qs += optScores.qs || 0;
+                    rawScores.imp += optScores.imp || 0;
+                }
+            });
+
+            // Map raw max scores (max 36 per mode) to Kolbe 1-10 scale
+            // Ensure scores land in standard range 1 to 10
+            const convertToTenScale = (raw) => {
+                const scaled = Math.round((raw / 9) * 9) + 1; // mapping 0-9 raw range nicely
+                return Math.min(10, Math.max(1, Math.round((raw / 9) * 2.5 + 1.5))); 
+            };
+
+            // Alternative standard scaling calculation for precise distribution:
+            const finalFF = Math.min(10, Math.max(1, Math.round((rawScores.ff / 9) * 3) + 1));
+            const finalFT = Math.min(10, Math.max(1, Math.round((rawScores.ft / 9) * 3) + 1));
+            const finalQS = Math.min(10, Math.max(1, Math.round((rawScores.qs / 9) * 3) + 1));
+            const finalIMP = Math.min(10, Math.max(1, Math.round((rawScores.imp / 9) * 3) + 1));
+
+            const scores = {
+                ff: finalFF,
+                ft: finalFT,
+                qs: finalQS,
+                imp: finalIMP
+            };
+
+            displayResults(scores);
+        }
+
+        // Zone helper (1-3: Prevent/Simplify, 4-6: Respond/Accommodate, 7-10: Initiate)
+        function getZoneInfo(score, mode) {
+            if (score >= 7) {
+                return { zone: "Initiate (Drive)", color: "text-emerald-700 bg-emerald-100", type: "Initiator" };
+            } else if (score >= 4) {
+                return { zone: "Respond (Accommodate)", color: "text-blue-700 bg-blue-100", type: "Responder" };
+            } else {
+                return { zone: "Prevent / Simplify", color: "text-amber-700 bg-amber-100", type: "Stabilizer" };
+            }
+        }
+
+        function displayResults(scores) {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+
+            const moString = `${scores.ff}-${scores.ft}-${scores.qs}-${scores.imp}`;
+            document.getElementById('mo-digit-display').innerText = moString;
+
+            // Bar updates
+            const modes = ['ff', 'ft', 'qs', 'imp'];
+            modes.forEach(m => {
+                const sc = scores[m];
+                const pct = (sc / 10) * 100;
+                document.getElementById(`score-${m}`).innerText = `${sc} / 10`;
+                document.getElementById(`bar-${m}`).style.width = `${pct}%`;
+                
+                const zInfo = getZoneInfo(sc, m);
+                document.getElementById(`label-${m}`).innerText = `Zone: ${zInfo.zone}`;
+                document.getElementById(`zone-tag-${m}`).innerText = zInfo.zone;
+                document.getElementById(`zone-tag-${m}`).className = `text-xs px-2.5 py-1 rounded-full font-semibold ${zInfo.color}`;
+            });
+
+            // Detailed Mode Descriptions
+            document.getElementById('desc-ff').innerText = getFFDescription(scores.ff);
+            document.getElementById('desc-ft').innerText = getFTDescription(scores.ft);
+            document.getElementById('desc-qs').innerText = getQSDescription(scores.qs);
+            document.getElementById('desc-imp').innerText = getIMPDescription(scores.imp);
+
+            // Environment & Stress Points
+            populateEnvironmentAndStress(scores);
+
+            // Productivity Tips
+            populateProductivityTips(scores);
+
+            // Render Radar Chart
+            renderChart(scores);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Descriptions Generator
+        function getFFDescription(score) {
+            if (score >= 7) return "High Data & Details (Initiate): You naturally insist on thorough research, detailed data, historical context, and precision before acting. You prevent mistakes by digging deep into specifics.";
+            if (score >= 4) return "Mid Data & Details (Respond): You comfortably accommodate requirements for detail. You ask necessary questions without getting bogged down in endless research.";
+            return "Low Data & Details (Simplify): You cut through complex clutter to pull out big-picture summaries. You prefer brief bullet points over long dossiers and act quickly on essential takeaways.";
+        }
+
+        function getFTDescription(score) {
+            if (score >= 7) return "High Structure & Systems (Initiate): You naturally construct systems, orderly workflows, schedules, and organized structures. You thrive when maintaining logical step-by-step continuity.";
+            if (score >= 4) return "Mid Structure & Systems (Respond): You can adapt to existing systems or work flexibly without rigid structure. You balance order with spontaneity as needed.";
+            return "Low Structure & Systems (Short-Cut): You excel at multitasking, remaining agile, and breaking out of rigid routines. You adapt instantly when circumstances shift and resist bureaucratic red tape.";
+        }
+
+        function getQSDescription(score) {
+            if (score >= 7) return "High Innovation & Risk (Initiate): You naturally drive innovation, take calculated risks, improvise solutions, and embrace change. Deadline pressure and uncertainty energize you.";
+            if (score >= 4) return "Mid Innovation & Risk (Respond): You are comfortable with innovation and change when initiated by others, acting as a flexible bridge between stability and risk.";
+            return "Low Innovation & Risk (Stabilize): You act as a vital stabilizing force. You minimize risk, protect proven methods, maintain consistency, and prevent chaotic pivot fatigue.";
+        }
+
+        function getIMPDescription(score) {
+            if (score >= 7) return "High Hands-On & Tangibles (Initiate): You process ideas tangibly through physical space, hands-on craft, spatial awareness, equipment, and solid prototypes.";
+            if (score >= 4) return "Mid Hands-On & Tangibles (Respond): You are comfortable working with physical materials or digital conceptual tools depending on project requirements.";
+            return "Low Hands-On & Tangibles (Envision): You operate effortlessly in abstract, conceptual, or digital realms without needing physical materials or spatial prototypes to visualize solutions.";
+        }
+
+        function getFTDescription(score) {
+            if (score >= 7) return "High Follow Thru (Initiate): You naturally construct systems, orderly workflows, schedules, and organized structures. You thrive when maintaining logical step-by-step continuity.";
+            if (score >= 4) return "Mid Follow Thru (Respond): You can adapt to existing systems or work flexibly without rigid structure. You balance order with spontaneity as needed.";
+            return "Low Follow Thru (Short-Cut): You excel at multitasking, remaining agile, and breaking out of rigid routines. You adapt instantly when circumstances shift and resist bureaucratic red tape.";
+        }
+
+        function getQSDescription(score) {
+            if (score >= 7) return "High Quick Start (Initiate): You naturally drive innovation, take calculated risks, improvise solutions, and embrace change. Deadline pressure and uncertainty energize you.";
+            if (score >= 4) return "Mid Quick Start (Respond): You are comfortable with innovation and change when initiated by others, acting as a flexible bridge between stability and risk.";
+            return "Low Quick Start (Stabilize): You act as a vital stabilizing force. You minimize risk, protect proven methods, maintain consistency, and prevent chaotic pivot fatigue.";
+        }
+
+        function getIMPDescription(score) {
+            if (score >= 7) return "High Implementer (Initiate): You process ideas tangibly through physical space, hands-on craft, spatial awareness, equipment, and solid prototypes.";
+            if (score >= 4) return "Mid Implementer (Respond): You are comfortable working with physical materials or digital conceptual tools depending on project requirements.";
+            return "Low Implementer (Envision): You operate effortlessly in abstract, conceptual, or digital realms without needing physical materials or spatial prototypes to visualize solutions.";
+        }
+
+        function populateEnvironmentAndStress(scores) {
+            const envList = document.getElementById('ideal-env-list');
+            const stressList = document.getElementById('stress-triggers-list');
+            envList.innerHTML = '';
+            stressList.innerHTML = '';
+
+            const envs = [];
+            const stresses = [];
+
+            // Data & Details
+            if (scores.ff >= 7) {
+                envs.push("Access to comprehensive data archives, clear documentation, and detailed background info.");
+                stresses.push("Being forced to make major decisions blindly without adequate data or time to research.");
+            } else if (scores.ff <= 3) {
+                envs.push("High-level summaries, concise briefs, and big-picture decision frameworks.");
+                stresses.push("Being buried in dense, 50-page reports and mandatory exhaustive documentation.");
+            }
+
+            // Structure & Systems
+            if (scores.ft >= 7) {
+                envs.push("Structured projects with clear objectives, established timelines, and predictable workflows.");
+                stresses.push("Constantly shifting priorities, lack of plan, and chaotic disorganized processes.");
+            } else if (scores.ft <= 3) {
+                envs.push("Dynamic fluid settings with minimal red tape and permission to pivot workflows on the fly.");
+                stresses.push("Rigid micro-management, strict procedural compliance, and tedious step-by-step routines.");
+            }
+
+            // Innovation & Risk
+            if (scores.qs >= 7) {
+                envs.push("Fast-paced environments with freedom to experiment, innovate, and test new ideas.");
+                stresses.push("Slow, bureaucratic approval loops and maintaining status-quo routines.");
+            } else if (scores.qs <= 3) {
+                envs.push("Stable, predictable environments with proven methodologies and minimal sudden pivots.");
+                stresses.push("Constant uncalculated risk-taking, unpredictable changes, and last-minute chaos.");
+            }
+
+            // Hands-On & Tangibles
+            if (scores.imp >= 7) {
+                envs.push("Hands-on, physical or tactile work environments with tangible tools and visual space.");
+                stresses.push("Purely abstract, theoretical discussions with no practical physical application.");
+            } else if (scores.imp <= 3) {
+                envs.push("Digital-first, conceptual, or strategy-focused work environments.");
+                stresses.push("Demands to build physical prototypes or work extensively with manual heavy equipment.");
+            }
+
+            envs.forEach(item => envList.innerHTML += `<li>${item}</li>`);
+            stresses.forEach(item => stressList.innerHTML += `<li>${item}</li>`);
+        }
+
+        function populateProductivityTips(scores) {
+            const container = document.getElementById('productivity-tips');
+            container.innerHTML = '';
+
+            const tips = [];
+
+            if (scores.ff >= 7) tips.push("<strong>Data & Details Strategy:</strong> Set time caps on research phase to avoid 'analysis paralysis'.");
+            if (scores.ff <= 3) tips.push("<strong>Data & Details Strategy:</strong> Partner with data-driven teammates to double-check details when high-stakes precision is needed.");
+
+            if (scores.ft >= 7) tips.push("<strong>Structure & Systems Strategy:</strong> Build visual kanban boards and automated checklists to channel your structuring power.");
+            if (scores.ft <= 3) tips.push("<strong>Structure & Systems Strategy:</strong> Use calendar blocking for core priorities to keep flexibility without losing track of deadlines.");
+
+            if (scores.qs >= 7) tips.push("<strong>Innovation & Risk Strategy:</strong> Capture wild ideas in a quick-notes buffer before launching them directly into production.");
+            if (scores.qs <= 3) tips.push("<strong>Innovation & Risk Strategy:</strong> Frame innovative shifts around risk mitigation to evaluate them comfortably.");
+
+            if (scores.imp >= 7) tips.push("<strong>Hands-On & Tangibles Strategy:</strong> Use whiteboards, physical sticky notes, or tangible mockups to solve abstract problems.");
+            if (scores.imp <= 3) tips.push("<strong>Hands-On & Tangibles Strategy:</strong> Leverage digital visualization software to map concepts cleanly without needing physical builds.");
+
+            tips.forEach(t => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-slate-800/80 rounded-lg border border-slate-700/60";
+                div.innerHTML = t;
+                container.appendChild(div);
+            });
+        }
+
+        // Radar Chart Renderer
+        function renderChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Data & Details', 'Structure & Systems', 'Innovation & Risk', 'Hands-On & Tangibles'],
+                    datasets: [{
+                        label: 'Action Mode Intensity',
+                        data: [scores.ff, scores.ft, scores.qs, scores.imp],
+                        backgroundColor: 'rgba(59, 130, 246, 0.25)',
+                        borderColor: '#2563eb',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: ['#2563eb', '#059669', '#d97706', '#dc2626'],
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Sharing Utilities
+        function shareResults() {
+            const mo = document.getElementById('mo-digit-display').innerText;
+            const text = `My Conative Score is ${mo}! Take the Conative Assessment to discover your natural action instincts.`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Profile summary copied to clipboard!');
+                }).catch(() => {
+                    document.execCommand('copy');
+                });
+            } else {
+                document.execCommand('copy');
+            }
+        }
+    </script>
+</body>
+</html>
