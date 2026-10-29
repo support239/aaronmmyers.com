@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="An original 16-question entrepreneurial-style assessment with personalized strengths, blind spots, and business recommendations.">
+<meta name="robots" content="noindex, nofollow">
+<title>Entrepreneurial Profile Assessment</title>
+<style>
+:root{
+  --ink:#182230;--muted:#667085;--paper:#f6f7fb;--card:#fff;--line:#e3e7ef;
+  --accent:#3659c9;--accent-dark:#2744a5;--soft:#eef2ff;--good:#16794b;
+  --shadow:0 14px 38px rgba(22,34,56,.08);--radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.wrap{width:min(980px,calc(100% - 32px));margin:0 auto}
+.hero{padding:52px 0 34px;background:linear-gradient(135deg,#edf1ff 0%,#f7f8fc 60%,#e9f6f2 100%);border-bottom:1px solid var(--line)}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800;color:var(--accent)}
+h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;letter-spacing:-.04em;margin:12px 0 16px}
+h2{font-size:clamp(1.4rem,3vw,2rem);line-height:1.2;letter-spacing:-.025em;margin:0 0 12px}
+h3{font-size:1.12rem;margin:0 0 8px}
+p{margin:0 0 12px}
+.lede{max-width:720px;font-size:1.1rem;color:#475467}
+.notice{margin-top:22px;padding:13px 16px;border:1px solid #d8def8;background:rgba(255,255,255,.72);border-radius:12px;color:#475467;font-size:.9rem}
+main{padding:30px 0 64px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(18px,4vw,30px);margin-bottom:22px}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+.counter{font-size:.9rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.progress{height:8px;border-radius:99px;background:#edf0f5;overflow:hidden;margin:0 0 26px}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:width .25s ease}
+.question-text{font-size:1.25rem;font-weight:750;line-height:1.35;margin-bottom:18px}
+.answers{display:grid;gap:10px}
+.answer{display:flex;gap:12px;align-items:flex-start;padding:14px 15px;border:1px solid var(--line);border-radius:13px;transition:border-color .15s,background .15s}
+.answer:hover{border-color:#aebaf2;background:#fafbff}
+.answer:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.answer input{margin-top:5px;accent-color:var(--accent);flex:0 0 auto}
+.answer strong{display:block;margin-bottom:2px}
+.answer span{color:#475467;font-size:.94rem}
+.actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:24px}
+.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:750}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-secondary{background:#f0f2f7;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.small{font-size:.88rem;color:var(--muted)}
+.hidden{display:none!important}
+.results-header{background:linear-gradient(135deg,#edf1ff,#f3fbf7);border:1px solid #dfe5f7;border-radius:16px;padding:24px;margin-bottom:22px}
+.results-header .primary-name{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:850;letter-spacing:-.04em;line-height:1.12;margin:5px 0 10px}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.score-card{border:1px solid var(--line);border-radius:15px;padding:16px;background:#fff}
+.score-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800}
+.score-num{font-size:1.1rem;color:var(--accent);white-space:nowrap}
+.bar{height:9px;background:#edf0f5;border-radius:99px;overflow:hidden;margin:12px 0 8px}
+.bar>span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.section{margin-top:26px}
+.section p,.section li{color:#475467}
+.bullet-list{padding-left:21px;margin:8px 0 0}
+.bullet-list li{margin:7px 0}
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.info-box{border:1px solid var(--line);border-radius:15px;padding:18px;background:#fff}
+.info-box h3{display:flex;gap:8px;align-items:center}
+.tag{display:inline-block;background:var(--soft);color:var(--accent-dark);padding:4px 9px;border-radius:99px;font-size:.78rem;font-weight:800}
+.profile-list{display:grid;gap:12px;margin-top:14px}
+.profile-row{display:grid;grid-template-columns:minmax(130px,180px) 1fr 50px;gap:12px;align-items:center}
+.profile-row .name{font-weight:750}
+.profile-row .bar{margin:0}
+.profile-row .count{text-align:right;color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.disclaimer{font-size:.87rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
+footer{padding:20px 0 40px;text-align:center;color:var(--muted);font-size:.85rem}
+@media(max-width:640px){
+ .hero{padding:36px 0 26px}.result-grid,.two-col{grid-template-columns:1fr}
+ .profile-row{grid-template-columns:115px 1fr 40px;gap:8px;font-size:.9rem}
+ .actions .btn{flex:1}.panel{border-radius:16px}
+}
+@media print{
+ body{background:white}.hero{background:white;padding:20px 0}.panel,.results-header{box-shadow:none}
+ #quiz,#start-panel,.actions,.no-print,footer{display:none!important}
+ #results{display:block!important}.panel{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">16-question self-assessment</div>
+    <h1>Discover Your Entrepreneurial Style</h1>
+    <p class="lede">Explore how you naturally create value, make decisions, grow a business, and build systems. Get a profile summary with likely strengths, blind spots, and practical ways to use your style.</p>
+    <div class="notice"><strong>Important:</strong> This is an original, informal assessment inspired by broad entrepreneurial archetypes. It is not the official Wealth Dynamics test, does not use its proprietary questionnaire or scoring, and is not a validated psychological instrument.</div>
+  </div>
+</header>
+<main class="wrap">
+  <section id="start-panel" class="panel">
+    <h2>How it works</h2>
+    <p>Answer 16 questions by choosing the option that best describes what you naturally do—not what you think an ideal business owner should do. Your results are based on the pattern of choices you make.</p>
+    <ul class="bullet-list">
+      <li>About 5–8 minutes to complete.</li>
+      <li>See all eight profile-style scores and your top two results.</li>
+      <li>Review strengths, potential blind spots, and business recommendations.</li>
+    </ul>
+    <div class="actions"><span class="small">Your answers stay in this webpage; they are not sent to a server.</span><button class="btn btn-primary" id="start-btn">Start assessment →</button></div>
+  </section>
+
+  <section id="quiz" class="panel hidden" aria-live="polite">
+    <div class="topline"><span class="tag">Assessment</span><span id="counter" class="counter">Question 1 of 16</span></div>
+    <div class="progress" aria-label="Assessment progress"><div id="progress-bar" class="progress-bar"></div></div>
+    <div id="question-text" class="question-text"></div>
+    <div id="answers" class="answers"></div>
+    <div class="actions">
+      <button class="btn btn-secondary" id="back-btn">← Back</button>
+      <button class="btn btn-primary" id="next-btn" disabled>Next question →</button>
+    </div>
+    <p class="small" style="margin-top:16px">There are no right or wrong answers. Choose the closest fit.</p>
+  </section>
+
+  <section id="results" class="hidden">
+    <div class="panel">
+      <div class="results-header">
+        <div class="eyebrow">Your results</div>
+        <div class="primary-name" id="result-title"></div>
+        <p id="result-summary"></p>
+        <p><strong>Secondary style:</strong> <span id="secondary-name"></span></p>
+      </div>
+      <div class="section">
+        <h2>Your score profile</h2>
+        <p class="small">Scores show how often you selected each style in this assessment. They are not percentiles or validated trait measurements.</p>
+        <div id="score-list" class="profile-list"></div>
+      </div>
+      <div class="section">
+        <h2>Your primary profile</h2>
+        <div class="two-col">
+          <div class="info-box"><h3>✓ Likely strengths</h3><ul id="strengths" class="bullet-list"></ul></div>
+          <div class="info-box"><h3>↗ Potential blind spots</h3><ul id="blindspots" class="bullet-list"></ul></div>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Your secondary profile</h2>
+        <div class="info-box">
+          <h3 id="secondary-heading"></h3>
+          <p id="secondary-description"></p>
+          <p><strong>How it can complement your primary style:</strong> <span id="complement"></span></p>
+        </div>
+      </div>
+      <div class="section">
+        <h2>How to apply your results</h2>
+        <div class="info-box"><ul id="recommendations" class="bullet-list"></ul></div>
+      </div>
+      <div class="section">
+        <h2>Your answer record</h2>
+        <p class="small">Use this record if you want to discuss or save your results.</p>
+        <div id="answer-record"></div>
+      </div>
+      <div class="actions no-print">
+        <button class="btn btn-secondary" id="review-btn">Review answers</button>
+        <button class="btn btn-secondary" id="print-btn">Print / Save as PDF</button>
+        <button class="btn btn-primary" id="restart-btn">Retake assessment</button>
+      </div>
+      <p class="disclaimer">Interpret these results as reflection prompts, not a diagnosis or prediction of success. People often use several styles, and skills can be learned. The score reflects your answers to these specific questions. This independent assessment is not affiliated with or endorsed by Wealth Dynamics or its creator.</p>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Entrepreneurial Style Assessment · Stand-alone webpage · No account required</div></footer>
+
+<script>
+const profiles = {
+ A:{name:"Creator", short:"The innovator", description:"You gravitate toward ideas, invention, and developing useful new solutions.", strengths:["Generating original ideas and concepts","Seeing possibilities others may overlook","Designing products, programs, or frameworks"], blindspots:["Continuing to invent instead of finishing and selling","Building before validating customer demand","Losing interest in routine delivery and operations"], complement:"Pair creativity with customer validation and a repeatable delivery process.", recommendations:["Choose one important customer problem and build a simple solution for it.","Test a small version with real customers before investing heavily.","Document the parts of your creative process that can be repeated."]},
+ B:{name:"Star", short:"The communicator", description:"You are drawn to visibility, communication, and rallying people around an idea.", strengths:["Explaining ideas and making them memorable","Building an audience and attracting attention","Creating energy around a mission or offer"], blindspots:["Relying on visibility without a strong offer or delivery system","Taking feedback personally or chasing attention","Becoming the bottleneck for every public-facing task"], complement:"Pair communication with a validated offer, clear metrics, and dependable delivery.", recommendations:["Create a consistent content or speaking rhythm around one audience problem.","Track qualified leads and sales, not just views or likes.","Build onboarding and fulfillment systems so attention turns into customer results."]},
+ C:{name:"Supporter", short:"The relationship builder", description:"You naturally focus on people, collaboration, trust, and helping a team succeed.", strengths:["Building trust and long-term relationships","Coaching, supporting, and coordinating people","Creating a collaborative client or team experience"], blindspots:["Avoiding difficult decisions to preserve harmony","Overcommitting to other people's needs","Relying on personal effort instead of clear processes"], complement:"Pair relationship skills with boundaries, measurable goals, and documented workflows.", recommendations:["Build a deliberate referral and follow-up process.","Set clear expectations and boundaries with clients and collaborators.","Use feedback and outcome measures to strengthen the service experience."]},
+ D:{name:"Deal Maker", short:"The connector and negotiator", description:"You are drawn to partnerships, negotiation, and connecting people or resources to create mutual value.", strengths:["Finding mutual benefit in complex situations","Building strategic relationships and partnerships","Negotiating terms and coordinating stakeholders"], blindspots:["Depending too heavily on other people's follow-through","Pursuing deals without checking the underlying economics","Spending too much time networking without a clear objective"], complement:"Pair partnerships with due diligence, clear agreements, and operating processes.", recommendations:["Identify a short list of partners who already serve your target customers.","Define the value, responsibilities, and success measures for each partnership.","Evaluate each opportunity against a clear financial and strategic checklist."]},
+ E:{name:"Trader", short:"The opportunity spotter", description:"You enjoy spotting market openings, responding to signals, and testing opportunities in motion.", strengths:["Recognizing shifts in demand and market timing","Learning through experiments and feedback","Adapting when circumstances change"], blindspots:["Switching direction too often","Acting before checking the downside","Leaving promising projects before results compound"], complement:"Pair speed with a few decision rules, risk limits, and a consistent review process.", recommendations:["Run small, time-limited experiments with clear success criteria.","Set a maximum acceptable loss or time investment before each test.","Review results on a schedule and avoid changing direction based on one data point."]},
+ F:{name:"Accumulator", short:"The evidence-driven strategist", description:"You prefer careful investigation, sound judgment, and decisions supported by reliable information.", strengths:["Researching deeply and comparing alternatives","Assessing risks before committing resources","Making deliberate, evidence-based decisions"], blindspots:["Over-researching when a small experiment would answer the question","Waiting for certainty that may never arrive","Focusing on analysis more than selling, shipping, or getting feedback"], complement:"Pair research with a decision deadline and small real-world tests; use systems to repeat what works.", recommendations:["Set a deadline and define the minimum evidence needed to make a decision.","Validate important assumptions with customer interviews or small paid tests.","Turn proven findings into a repeatable offer, process, or decision checklist."]},
+ G:{name:"Lord", short:"The resource manager", description:"You focus on resources, financial performance, asset value, and building sustainable returns.", strengths:["Thinking about cash flow and profitability","Allocating resources with financial discipline","Evaluating long-term value and sustainability"], blindspots:["Underinvesting in growth when returns are uncertain","Focusing on numbers without enough customer context","Avoiding worthwhile experiments because of short-term costs"], complement:"Pair financial discipline with customer insight and controlled growth experiments.", recommendations:["Track cash flow, margins, acquisition costs, and customer lifetime value where relevant.","Use a simple budget for experiments with defined limits.","Make sure financial measures are connected to customer outcomes and demand."]},
+ H:{name:"Mechanic", short:"The systems architect", description:"You enjoy designing processes, improving operations, and making results more consistent and scalable.", strengths:["Identifying process problems and root causes","Building repeatable workflows and quality controls","Improving efficiency and scalability"], blindspots:["Optimizing a process before confirming it solves a real customer problem","Overengineering early-stage operations","Preferring systems work to uncertain selling or customer conversations"], complement:"Pair systems thinking with evidence from customers and validate demand before scaling.", recommendations:["Map the current process and identify the biggest bottleneck.","Standardize only the parts that have demonstrated value.","Automate repetitive work after the process is stable and worth repeating."]}
+};
+const questions = [
+ {q:"When you have the opportunity to build a successful business, which activity naturally excites you most?",a:[
+ ["A","Creating","Developing new ideas, products, programs, or ways to solve problems."],["B","Promoting","Being the face of the business, sharing ideas, speaking, and building a personal brand."],["C","Leading people","Motivating people, building relationships, and helping a team succeed."],["D","Negotiating","Connecting people, forming partnerships, and putting deals together."],["E","Spotting opportunities","Recognizing market trends, finding openings, and knowing when to act."],["F","Building steadily","Researching carefully, making sound decisions, and growing over time."],["G","Managing resources","Controlling finances, organizing assets, and generating reliable cash flow."],["H","Improving systems","Refining processes, making things efficient, and building repeatable operations."]]},
+ {q:"When you encounter a new business opportunity, what do you naturally do first?",a:[
+ ["A","Imagine a new solution","Develop a product or service nobody has created yet."],["B","Generate excitement","Think about how to attract attention and build an audience."],["C","Talk to people","Build relationships and find out who might be interested."],["D","Connect people","Look for people or businesses to bring together in a beneficial deal."],["E","Look for an opening","Find a market opportunity others may have missed."],["F","Research it","Examine risks and gather evidence before committing."],["G","Run the numbers","Calculate financial potential and how to make the economics work."],["H","Design the process","Figure out how to make it repeatable and efficient."]]},
+ {q:"Which role would you most naturally take when working with a team to build a business?",a:[
+ ["A","The Creator","Develop the core idea, product, or solution."],["B","The Star","Become the public face and generate attention."],["C","The Supporter","Lead the team and maintain relationships."],["D","The Deal Maker","Negotiate agreements and create partnerships."],["E","The Trader","Find opportunities and recognize market signals."],["F","The Accumulator","Research facts, assess risk, and make informed decisions."],["G","The Lord","Oversee finances, resources, and financial stability."],["H","The Mechanic","Build the systems and processes that make the business work."]]},
+ {q:"Which result would give you the greatest satisfaction in your business?",a:[
+ ["A","Innovation","Creating something original that solves a problem."],["B","Recognition","Becoming known and sought out for your expertise."],["C","Impact through people","Seeing clients, employees, or a community thrive."],["D","Successful deals","Bringing people together and negotiating valuable agreements."],["E","Opportunity","Discovering an overlooked opening before others do."],["F","Security and growth","Building steadily through sound decisions and controlled risk."],["G","Financial independence","Owning valuable assets that produce dependable income."],["H","Operational excellence","Creating a business that runs smoothly and consistently."]]},
+ {q:"When you need to grow your business and attract more customers, which approach would you naturally prefer?",a:[
+ ["A","Create something remarkable","Develop a unique product, method, or program."],["B","Build a personal brand","Use videos, speaking, storytelling, or social media."],["C","Build relationships","Earn trust through referrals, community, and personal connections."],["D","Form partnerships","Collaborate with people who can reach your ideal customers."],["E","Find an overlooked opportunity","Identify an underserved market or promising trend."],["F","Research what works","Study customer behavior and compare marketing methods."],["G","Invest in dependable assets","Build recurring revenue and focus on financial returns."],["H","Build a repeatable marketing system","Create funnels, follow-up sequences, and reliable lead processes."]]},
+ {q:"When you face a complicated problem in your business, what do you instinctively do?",a:[
+ ["A","Invent","Imagine a completely new solution."],["B","Communicate","Rally people around a vision and inspire action."],["C","Collaborate","Gather perspectives and bring people together."],["D","Negotiate","Find an agreement that resolves competing interests."],["E","Experiment","Try approaches quickly and look for opportunities."],["F","Investigate","Gather facts, compare possibilities, and identify the likely answer."],["G","Allocate resources","Examine financial consequences and potential returns."],["H","Diagnose the system","Find the process failure and redesign it."]]},
+ {q:"If your business were successful and money were no longer the main concern, how would you most want to spend your working time?",a:[
+ ["A","Create","Develop new ideas, products, intellectual property, or teaching methods."],["B","Inspire","Speak, teach, publish, and become a recognized voice."],["C","Help people succeed","Coach clients, develop talent, and strengthen relationships."],["D","Make connections","Negotiate partnerships and create mutually beneficial deals."],["E","Pursue opportunities","Explore markets and act on emerging possibilities."],["F","Study and decide","Research deeply, evaluate evidence, and make strategic decisions."],["G","Manage wealth","Oversee investments, assets, and financial strategy."],["H","Optimize operations","Refine systems, automate tasks, and improve how the business runs."]]},
+ {q:"What would frustrate you most when running a business?",a:[
+ ["A","Stifled creativity","Being unable to create because others insist on old methods."],["B","Lack of attention","Having great ideas but not being able to communicate their value."],["C","Poor cooperation","Working with people who don't support or communicate well."],["D","Failed agreements","Missing opportunities because people can't negotiate effectively."],["E","Rigid plans","Being unable to respond when the market changes."],["F","Insufficient information","Making important decisions without reliable facts or enough analysis."],["G","Financial waste","Losing money through poor financial management or investments."],["H","Broken processes","Dealing with recurring mistakes and inefficient systems."]]},
+ {q:"When you discover a promising business idea, what is your most natural next move?",a:[
+ ["A","Create a prototype","Turn the idea into a product, program, or solution."],["B","Tell the world","Share the idea, generate excitement, and attract an audience."],["C","Find the people","Talk to potential customers and build relationships."],["D","Arrange a deal","Connect partners, negotiate terms, and secure agreements."],["E","Test the opportunity","Run a small experiment and see whether the market responds."],["F","Investigate first","Research the market, validate assumptions, and assess risk."],["G","Evaluate the economics","Calculate return, cash flow, and long-term financial value."],["H","Design the process","Map the steps and systems needed to make the idea repeatable."]]},
+ {q:"How do you naturally make important business decisions?",a:[
+ ["A","Creative vision","Look for an original solution others haven't seen."],["B","Communicated vision","Generate enthusiasm and persuade others to move forward."],["C","Trusted input","Consider other perspectives and the effect on relationships."],["D","Mutual agreement","Look for a beneficial deal and the people who need to be involved."],["E","Timely action","Recognize an opportunity and act while timing is right."],["F","Evidence and risk","Compare evidence, examine alternatives, and weigh risks."],["G","Financial return","Focus on resource allocation and long-term value."],["H","Process analysis","Identify constraints and choose an efficient way forward."]]},
+ {q:"Once your business is profitable, what would you most want to improve next?",a:[
+ ["A","Product innovation","Make your offer more original, valuable, and effective."],["B","Visibility and influence","Reach a larger audience and become a recognized authority."],["C","Client relationships","Improve trust, satisfaction, referrals, and client outcomes."],["D","Partnerships and deals","Create alliances that open up new markets."],["E","Market expansion","Find new opportunities and test customer segments."],["F","Strategic certainty","Gather data so you can choose the best direction."],["G","Financial performance","Improve margins, cash flow, and return on investment."],["H","Scalability","Standardize delivery, automate tasks, and reduce constant supervision."]]},
+ {q:"When you must decide with incomplete information, what do you naturally do?",a:[
+ ["A","Innovate","Imagine a solution and create something new."],["B","Lead with conviction","Communicate a clear vision and persuade others to move."],["C","Consult people","Gather perspectives and work toward agreement."],["D","Negotiate","Explore options until you find a workable agreement."],["E","Experiment quickly","Take a small, calculated action and learn from it."],["F","Investigate further","Identify missing facts and reduce uncertainty."],["G","Protect the downside","Evaluate financial exposure and potential loss."],["H","Create a framework","Establish rules or criteria to handle uncertainty systematically."]]},
+ {q:"Which business activity would you most willingly spend an entire day doing?",a:[
+ ["A","Creating","Design a new product, method, or original framework."],["B","Communicating","Record videos, teach, speak, or share ideas."],["C","Connecting","Coach people, strengthen relationships, and help a team."],["D","Negotiating","Work through deals, partnerships, and agreements."],["E","Exploring","Investigate markets, spot trends, and test opportunities."],["F","Analyzing","Study information, compare evidence, and reach supported conclusions."],["G","Managing finances","Review investments, cash flow, and capital allocation."],["H","Engineering systems","Build workflows, improve operations, and automate tasks."]]},
+ {q:"What would you most want other people to rely on you for in your business?",a:[
+ ["A","Original ideas","Create new concepts and solutions."],["B","Vision and influence","Inspire people and communicate compellingly."],["C","Leadership and support","Help people collaborate and achieve goals."],["D","Deals and connections","Bring the right people together and negotiate."],["E","Opportunity recognition","Spot promising openings and choose where to focus."],["F","Sound judgment","Research, evaluate risks, and make informed decisions."],["G","Financial stewardship","Manage resources and protect long-term value."],["H","Reliable execution","Create efficient systems and consistent results."]]},
+ {q:"When your business faces a major growth opportunity, what would you most naturally prioritize?",a:[
+ ["A","Develop a better offering","Make the product or service more valuable."],["B","Expand my reach","Build a larger audience and influence."],["C","Strengthen the team","Develop people and relationships."],["D","Secure partnerships","Negotiate deals that open new channels."],["E","Move quickly","Capture the opportunity and learn as you go."],["F","Validate the opportunity","Research the market, test assumptions, and assess risks."],["G","Protect returns","Ensure growth produces sustainable profits and cash flow."],["H","Build for scale","Strengthen processes and automation for more customers."]]},
+ {q:"Imagine designing your ideal long-term role in your business. Which would feel most effective and fulfilling?",a:[
+ ["A","The Inventor","Create new products, methods, and ideas."],["B","The Visionary","Teach, communicate, inspire, and become a recognized authority."],["C","The People Leader","Coach, mentor, and help others succeed."],["D","The Deal Maker","Negotiate, connect people, and create partnerships."],["E","The Opportunity Seeker","Explore markets, spot trends, and act on openings."],["F","The Strategic Analyst","Research deeply, evaluate evidence, assess risk, and decide where to invest effort."],["G","The Investor","Allocate capital, manage assets, and build long-term financial independence."],["H","The Systems Architect","Design processes, improve operations, and build consistent systems."]]}
+];
+let current=0;
+let answers=Array(questions.length).fill(null);
+const $=id=>document.getElementById(id);
+$("start-btn").addEventListener("click",()=>{ $("start-panel").classList.add("hidden"); $("quiz").classList.remove("hidden"); renderQuestion(); window.scrollTo({top:0,behavior:"smooth"});});
+function renderQuestion(){
+ const item=questions[current];
+ $("counter").textContent=`Question ${current+1} of ${questions.length}`;
+ $("progress-bar").style.width=`${(current/questions.length)*100}%`;
+ $("question-text").textContent=item.q;
+ $("answers").innerHTML="";
+ item.a.forEach((a)=>{
+  const label=document.createElement("label");label.className="answer";
+  const input=document.createElement("input");input.type="radio";input.name="answer";input.value=a[0];input.checked=answers[current]===a[0];
+  input.addEventListener("change",()=>{answers[current]=a[0];$("next-btn").disabled=false;});
+  const text=document.createElement("span");text.innerHTML=`<strong>${a[0]}. ${escapeHtml(a[1])}</strong>${escapeHtml(a[2])}`;
+  label.append(input,text);$("answers").append(label);
+ });
+ $("back-btn").disabled=current===0;
+ $("next-btn").disabled=!answers[current];
+ $("next-btn").textContent=current===questions.length-1?"See my results →":"Next question →";
+}
+$("back-btn").addEventListener("click",()=>{if(current>0){current--;renderQuestion();}});
+$("next-btn").addEventListener("click",()=>{
+ if(!answers[current])return;
+ if(current<questions.length-1){current++;renderQuestion();window.scrollTo({top:0,behavior:"smooth"});}
+ else showResults();
+});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function showResults(){
+ const scores={A:0,B:0,C:0,D:0,E:0,F:0,G:0,H:0};answers.forEach(a=>scores[a]++);
+ const ranking=Object.keys(scores).sort((a,b)=>scores[b]-scores[a]||"ABCDEFGH".indexOf(a)-"ABCDEFGH".indexOf(b));
+ const first=ranking[0],second=ranking[1],p=profiles[first],s=profiles[second];
+ $("quiz").classList.add("hidden");$("results").classList.remove("hidden");
+ $("result-title").textContent=`${p.name} — ${p.short}`;
+ $("result-summary").textContent=p.description;
+ $("secondary-name").textContent=`${s.name} — ${s.short}`;
+ $("secondary-heading").textContent=`${s.name}: ${s.short}`;
+ $("secondary-description").textContent=s.description;
+ $("complement").textContent=`${p.name} can help you ${p.strengths[0].toLowerCase()}, while ${s.name} can help you ${s.strengths[0].toLowerCase()}. ${s.complement}`;
+ $("strengths").innerHTML=p.strengths.map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+ $("blindspots").innerHTML=p.blindspots.map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+ $("recommendations").innerHTML=[...p.recommendations,...(first!==second?[`Use your ${s.name} style as a complement: ${s.complement}`]:[])].map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+ $("score-list").innerHTML=ranking.map(k=>`<div class="profile-row"><div class="name">${profiles[k].name}</div><div class="bar"><span style="width:${scores[k]/questions.length*100}%"></span></div><div class="count">${scores[k]}/16</div></div>`).join("");
+ $("answer-record").innerHTML=`<div class="info-box"><p><strong>Primary:</strong> ${p.name} (${scores[first]} selections)</p><p><strong>Secondary:</strong> ${s.name} (${scores[second]} selections)</p><p><strong>All answers:</strong> ${answers.map((a,i)=>`Q${i+1} ${a}`).join(" · ")}</p><button class="btn btn-secondary" id="copy-btn">Copy results summary</button></div>`;
+ $("copy-btn").addEventListener("click",async()=>{
+  const summary=`Entrepreneurial Style Assessment\\nPrimary: ${p.name} (${scores[first]}/16)\\nSecondary: ${s.name} (${scores[second]}/16)\\nScores: ${ranking.map(k=>`${profiles[k].name}: ${scores[k]}/16`).join("; ")}\\nAnswers: ${answers.map((a,i)=>`Q${i+1} ${a}`).join(", ")}\\n\\nPrimary strengths: ${p.strengths.join("; ")}\\nPotential blind spots: ${p.blindspots.join("; ")}\\nRecommendations: ${p.recommendations.join("; ")}\\n\\nInformal original assessment; not the official Wealth Dynamics test.`;
+  try{await navigator.clipboard.writeText(summary);$("copy-btn").textContent="Copied!";}catch(e){const ta=document.createElement("textarea");ta.value=summary;document.body.append(ta);ta.select();document.execCommand("copy");ta.remove();$("copy-btn").textContent="Copied!";}
+ });
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+$("review-btn").addEventListener("click",()=>{current=0;$("results").classList.add("hidden");$("quiz").classList.remove("hidden");renderQuestion();window.scrollTo({top:0,behavior:"smooth"});});
+$("restart-btn").addEventListener("click",()=>{current=0;answers=Array(questions.length).fill(null);$("results").classList.add("hidden");$("quiz").classList.remove("hidden");renderQuestion();window.scrollTo({top:0,behavior:"smooth"});});
+$("print-btn").addEventListener("click",()=>window.print());
+</script>
+</body>
+</html>
