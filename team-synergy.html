@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Multi-Person Team Synergy</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            .card-shadow { box-shadow: none !important; border: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i data-lucide="users" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Team Synergy Analyzer</span>
+                    <span class="text-xs text-slate-400 font-medium">Multi-Person Conative Dynamics</span>
+                </div>
+            </div>
+            <button onclick="resetToDefault()" class="text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-800 transition">
+                Reset Team
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Intro Banner -->
+        <section class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden no-print">
+            <div class="p-6 sm:p-8 gradient-header text-white text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full text-xs text-indigo-300 font-medium">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>Dynamic Group Collaboration</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Multi-Person Team Synergy</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        Add as many people as you want! Compare everyone's Conative Scores to see how your team works together, where your group superpowers are, and how to avoid team friction.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="w-full sm:w-auto flex-shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 text-left space-y-2">
+                    <span class="text-xs font-bold uppercase text-slate-400 block tracking-wider">Try Example Teams</span>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button onclick="loadPreset('class_project_3')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            🎒 3-Person Project Group
+                        </button>
+                        <button onclick="loadPreset('family_squad_4')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            🏡 4-Person Family Squad
+                        </button>
+                        <button onclick="loadPreset('stem_club_5')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            🔬 5-Person STEM Team
+                        </button>
+                        <button onclick="loadPreset('all_innovators')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            🔥 All Innovators Group
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INPUT SECTION: DYNAMIC PEOPLE CARDS -->
+        <section class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 no-print space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
+                        <span>Team Members & Scores</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Adjust names and score sliders (1-10) for each person on your team.</p>
+                </div>
+
+                <button onclick="addPerson()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center space-x-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>Add Another Person</span>
+                </button>
+            </div>
+
+            <!-- Dynamic Grid Container -->
+            <div id="people-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Person cards rendered dynamically by JS -->
+            </div>
+        </section>
+
+        <!-- SYNERGY RESULTS SECTION -->
+        <div id="results-area" class="space-y-8">
+            
+            <!-- Summary Header & Radar Chart -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                            <span>Team Power Badge</span>
+                        </div>
+                        <h2 id="team-power-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900">Calculating Team Dynamic...</h2>
+                        <p id="team-power-sub" class="text-slate-500 text-xs sm:text-sm mt-1">Analyzing combined group strengths...</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3 no-print">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Analysis</span>
+                        </button>
+                        <button onclick="shareTeamResults()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Copy Summary</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Radar Chart + Member Breakdown -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-6">
+                    <!-- Radar Chart (Multi-Line Overlay) -->
+                    <div class="lg:col-span-7 flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Multi-Person Overlay Radar</span>
+                        <div class="w-full h-[320px] sm:h-[360px] relative">
+                            <canvas id="teamRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Member Score Cards Summary -->
+                    <div class="lg:col-span-5 space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Team Member Profiles</span>
+                        <div id="member-profile-list" class="space-y-2.5">
+                            <!-- Dynamic member badges -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAILED TEAM ANALYSIS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Shared Strengths Together -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-emerald-600">
+                        <div class="p-2 bg-emerald-50 rounded-lg">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Team Strengths & Superpowers</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Where your combined group energy and skills shine brightest.</p>
+                    <ul id="list-strengths" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Shared Blind Spots -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-amber-600">
+                        <div class="p-2 bg-amber-50 rounded-lg">
+                            <i data-lucide="eye-off" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Shared Team Blind Spots</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Important details or steps your whole group might accidentally skip or ignore.</p>
+                    <ul id="list-blindspots" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Friction Points & Annoyances -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-rose-600">
+                        <div class="p-2 bg-rose-50 rounded-lg">
+                            <i data-lucide="flame" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Potential Friction & Clashes</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Where big differences in habits might cause stress or annoyance between teammates.</p>
+                    <ul id="list-friction" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Actionable Teamwork Strategies -->
+                <div class="bg-slate-900 text-white rounded-2xl shadow-xl border border-slate-800 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-indigo-400">
+                        <div class="p-2 bg-indigo-950 rounded-lg border border-indigo-800">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-lg">Team Collaboration Strategies</h3>
+                    </div>
+                    <p class="text-xs text-slate-400">Smart tips on how to divide tasks and help your team succeed together.</p>
+                    <ul id="list-tips" class="space-y-3 text-xs sm:text-sm text-slate-300">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Generic Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>Conative Team Synergy Analyzer • Helps friends, families, and project groups work better together.</p>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Preset Palette for visual clarity
+        const COLOR_PALETTE = [
+            { main: '#2563eb', bg: 'rgba(37, 99, 235, 0.15)', border: '#2563eb', tagBg: 'bg-blue-100', text: 'text-blue-700' },
+            { main: '#d97706', bg: 'rgba(217, 119, 6, 0.15)', border: '#d97706', tagBg: 'bg-amber-100', text: 'text-amber-700' },
+            { main: '#059669', bg: 'rgba(5, 150, 105, 0.15)', border: '#059669', tagBg: 'bg-emerald-100', text: 'text-emerald-700' },
+            { main: '#dc2626', bg: 'rgba(220, 38, 38, 0.15)', border: '#dc2626', tagBg: 'bg-red-100', text: 'text-red-700' },
+            { main: '#7c3aed', bg: 'rgba(124, 58, 237, 0.15)', border: '#7c3aed', tagBg: 'bg-purple-100', text: 'text-purple-700' },
+            { main: '#0891b2', bg: 'rgba(8, 145, 178, 0.15)', border: '#0891b2', tagBg: 'bg-cyan-100', text: 'text-cyan-700' }
+        ];
+
+        let people = [
+            { id: 1, name: "Alex", ff: 8, ft: 7, qs: 3, imp: 4 },
+            { id: 2, name: "Jordan", ff: 3, ft: 2, qs: 9, imp: 8 },
+            { id: 3, name: "Taylor", ff: 5, ft: 8, qs: 4, imp: 3 }
+        ];
+
+        let nextId = 4;
+        let radarChartInstance = null;
+
+        // Presets
+        const PRESETS = {
+            class_project_3: [
+                { id: 1, name: "Alex (Planner)", ff: 8, ft: 8, qs: 3, imp: 3 },
+                { id: 2, name: "Jordan (Innovator)", ff: 3, ft: 2, qs: 9, imp: 7 },
+                { id: 3, name: "Taylor (Researcher)", ff: 9, ft: 4, qs: 3, imp: 2 }
+            ],
+            family_squad_4: [
+                { id: 1, name: "Mom", ff: 8, ft: 9, qs: 3, imp: 4 },
+                { id: 2, name: "Dad", ff: 4, ft: 3, qs: 8, imp: 9 },
+                { id: 3, name: "Sam (Kid 1)", ff: 2, ft: 3, qs: 9, imp: 5 },
+                { id: 4, name: "Maya (Kid 2)", ff: 7, ft: 6, qs: 4, imp: 8 }
+            ],
+            stem_club_5: [
+                { id: 1, name: "Chris", ff: 9, ft: 6, qs: 3, imp: 4 },
+                { id: 2, name: "Pat", ff: 4, ft: 9, qs: 3, imp: 3 },
+                { id: 3, name: "Morgan", ff: 3, ft: 2, qs: 9, imp: 6 },
+                { id: 4, name: "Riley", ff: 3, ft: 4, qs: 5, imp: 9 },
+                { id: 5, name: "Avery", ff: 6, ft: 5, qs: 7, imp: 5 }
+            ],
+            all_innovators: [
+                { id: 1, name: "Leo", ff: 3, ft: 2, qs: 9, imp: 4 },
+                { id: 2, name: "Mia", ff: 2, ft: 3, qs: 8, imp: 6 },
+                { id: 3, name: "Noah", ff: 4, ft: 2, qs: 9, imp: 3 }
+            ]
+        };
+
+        function loadPreset(key) {
+            const data = PRESETS[key];
+            if (!data) return;
+            people = JSON.parse(JSON.stringify(data));
+            nextId = people.length + 1;
+            renderPeopleInputs();
+            updateTeamAnalysis();
+        }
+
+        function resetToDefault() {
+            loadPreset('class_project_3');
+        }
+
+        function addPerson() {
+            const colorIdx = people.length % COLOR_PALETTE.length;
+            people.push({
+                id: nextId++,
+                name: `Person ${people.length + 1}`,
+                ff: 5, ft: 5, qs: 5, imp: 5
+            });
+            renderPeopleInputs();
+            updateTeamAnalysis();
+        }
+
+        function removePerson(id) {
+            if (people.length <= 2) {
+                alert("You need at least 2 people to analyze team synergy!");
+                return;
+            }
+            people = people.filter(p => p.id !== id);
+            renderPeopleInputs();
+            updateTeamAnalysis();
+        }
+
+        function updatePersonField(id, field, val) {
+            const person = people.find(p => p.id === id);
+            if (!person) return;
+
+            if (field === 'name') {
+                person.name = val;
+            } else {
+                person[field] = parseInt(val) || 1;
+                document.getElementById(`val-${field}-${id}`).innerText = person[field];
+            }
+            updateTeamAnalysis();
+        }
+
+        function renderPeopleInputs() {
+            const container = document.getElementById('people-container');
+            container.innerHTML = '';
+
+            people.forEach((p, index) => {
+                const color = COLOR_PALETTE[index % COLOR_PALETTE.length];
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl border bg-slate-50/60 border-slate-200 space-y-4 relative shadow-sm hover:shadow-md transition";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div class="flex items-center space-x-2 w-full pr-2">
+                            <span class="w-3.5 h-3.5 rounded-full flex-shrink-0" style="background-color: ${color.main}"></span>
+                            <input type="text" value="${p.name}" oninput="updatePersonField(${p.id}, 'name', this.value)" class="font-bold text-slate-800 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full" placeholder="Name">
+                        </div>
+                        <button onclick="removePerson(${p.id})" class="text-slate-400 hover:text-rose-600 transition p-1" title="Remove person">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Data & Details</span>
+                                <span id="val-ff-${p.id}" class="font-bold" style="color: ${color.main}">${p.ff}</span>
+                            </div>
+                            <input type="range" min="1" max="10" value="${p.ff}" oninput="updatePersonField(${p.id}, 'ff', this.value)" class="w-full cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Structure & Systems</span>
+                                <span id="val-ft-${p.id}" class="font-bold" style="color: ${color.main}">${p.ft}</span>
+                            </div>
+                            <input type="range" min="1" max="10" value="${p.ft}" oninput="updatePersonField(${p.id}, 'ft', this.value)" class="w-full cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Innovation & Risk</span>
+                                <span id="val-qs-${p.id}" class="font-bold" style="color: ${color.main}">${p.qs}</span>
+                            </div>
+                            <input type="range" min="1" max="10" value="${p.qs}" oninput="updatePersonField(${p.id}, 'qs', this.value)" class="w-full cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Hands-On & Tangibles</span>
+                                <span id="val-imp-${p.id}" class="font-bold" style="color: ${color.main}">${p.imp}</span>
+                            </div>
+                            <input type="range" min="1" max="10" value="${p.imp}" oninput="updatePersonField(${p.id}, 'imp', this.value)" class="w-full cursor-pointer accent-indigo-600">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function updateTeamAnalysis() {
+            renderMemberList();
+            renderRadarChart();
+            calculateTeamSynergy();
+        }
+
+        function renderMemberList() {
+            const container = document.getElementById('member-profile-list');
+            container.innerHTML = '';
+
+            people.forEach((p, idx) => {
+                const color = COLOR_PALETTE[idx % COLOR_PALETTE.length];
+                const div = document.createElement('div');
+                div.className = "p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between";
+
+                div.innerHTML = `
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-3 h-3 rounded-full" style="background-color: ${color.main}"></div>
+                        <span class="font-bold text-slate-800 text-xs sm:text-sm">${p.name || 'Unnamed'}</span>
+                    </div>
+                    <span class="font-mono text-xs font-extrabold px-2 py-1 rounded bg-white border border-slate-200 text-slate-700">
+                        ${p.ff}-${p.ft}-${p.qs}-${p.imp}
+                    </span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderRadarChart() {
+            const ctx = document.getElementById('teamRadarChart').getContext('2d');
+
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            const datasets = people.map((p, idx) => {
+                const color = COLOR_PALETTE[idx % COLOR_PALETTE.length];
+                return {
+                    label: p.name || `Person ${idx + 1}`,
+                    data: [p.ff, p.ft, p.qs, p.imp],
+                    backgroundColor: color.bg,
+                    borderColor: color.border,
+                    borderWidth: 2,
+                    pointBackgroundColor: color.main,
+                    pointRadius: 4
+                };
+            });
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Data & Details', 'Structure & Systems', 'Innovation & Risk', 'Hands-On & Tangibles'],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateTeamSynergy() {
+            const count = people.length;
+            const highFF = people.filter(p => p.ff >= 7);
+            const highFT = people.filter(p => p.ft >= 7);
+            const highQS = people.filter(p => p.qs >= 7);
+            const highIMP = people.filter(p => p.imp >= 7);
+
+            const lowFF = people.filter(p => p.ff <= 3);
+            const lowFT = people.filter(p => p.ft <= 3);
+            const lowQS = people.filter(p => p.qs <= 3);
+            const lowIMP = people.filter(p => p.imp <= 3);
+
+            // 1. Team Power Badge
+            let title = "Balanced Team Collaborators ⚖️";
+            let sub = `Your ${count}-person team covers a broad spectrum of problem-solving instincts.`;
+
+            if (highQS.length >= 2 && highIMP.length >= 1) {
+                title = "The High-Energy Builders & Innovators 🚀⚡";
+                sub = "Your team is fast-moving, full of new ideas, and loves building physical things quickly!";
+            } else if (highFF.length >= 2 && highFT.length >= 2) {
+                title = "The Precision & Organization Squad 📋🔍";
+                sub = "A super thorough team that will leave zero stone unturned and never miss a deadline!";
+            } else if (highQS.length >= Math.ceil(count / 2)) {
+                title = "The Spark & Idea Generator Team 🔥";
+                sub = "Brainstorming is your superpower! Your group will come up with endless creative solutions.";
+            } else if (highFT.length >= Math.ceil(count / 2)) {
+                title = "The System & Plan Executors ⚙️";
+                sub = "Your team excels at organizing messy tasks into clean, repeatable step-by-step schedules.";
+            }
+
+            document.getElementById('team-power-title').innerText = title;
+            document.getElementById('team-power-sub').innerText = sub;
+
+            // 2. Strengths
+            const strengths = [];
+            if (highFF.length > 0) {
+                const names = highFF.map(p => p.name).join(', ');
+                strengths.push(`<li><strong>Fact & Research Power:</strong> ${names} will make sure your team has accurate info and deep background facts.</li>`);
+            }
+            if (highFT.length > 0) {
+                const names = highFT.map(p => p.name).join(', ');
+                strengths.push(`<li><strong>Schedule & Planning Power:</strong> ${names} will keep tasks organized with clean checklists and timelines.</li>`);
+            }
+            if (highQS.length > 0) {
+                const names = highQS.map(p => p.name).join(', ');
+                strengths.push(`<li><strong>Creative Innovation:</strong> ${names} brings fast out-of-the-box ideas whenever your group gets stuck.</li>`);
+            }
+            if (highIMP.length > 0) {
+                const names = highIMP.map(p => p.name).join(', ');
+                strengths.push(`<li><strong>Hands-On Crafting:</strong> ${names} loves making physical models, posters, or hands-on prototypes.</li>`);
+            }
+            if (strengths.length === 0) {
+                strengths.push(`<li><strong>Well-Rounded Flexibility:</strong> Everyone on your team scores in the middle zones, making your group adaptable to any role!</li>`);
+            }
+
+            // 3. Shared Blind Spots
+            const blindspots = [];
+            if (lowFF.length === count) {
+                blindspots.push(`<li>⚠️ <strong>No Dedicated Researcher:</strong> Everyone on the team prefers quick summaries. You might skip reading important instructions unless someone steps up!</li>`);
+            }
+            if (lowFT.length === count) {
+                blindspots.push(`<li>⚠️ <strong>No Daily Planner:</strong> Nobody on the team naturally loves making schedules. Watch out for waiting until the night before a deadline!</li>`);
+            }
+            if (highQS.length === count) {
+                blindspots.push(`<li>⚠️ <strong>Idea Changing Rush:</strong> Everyone loves brand new ideas! You might keep changing your topic every day and forget to finish the first draft.</li>`);
+            }
+            if (lowIMP.length === count) {
+                blindspots.push(`<li>⚠️ <strong>Abstract Only:</strong> Nobody naturally gravitates toward building physical objects. Keep presentations simple or digital!</li>`);
+            }
+            if (blindspots.length === 0) {
+                blindspots.push(`<li>✅ <strong>Great Coverage:</strong> Your team has enough variety in scores that you don't have any major group blind spots!</li>`);
+            }
+
+            // 4. Friction Points
+            const friction = [];
+            // High QS vs Low QS
+            if (highQS.length > 0 && lowQS.length > 0) {
+                const hi = highQS.map(p => p.name).join(', ');
+                const lo = lowQS.map(p => p.name).join(', ');
+                friction.push(`<li>⚡ <strong>Risk & Surprise Gap:</strong> ${hi} will want to make sudden last-minute changes, while ${lo} will prefer staying calm and predictable.</li>`);
+            }
+            // High FT vs Low FT
+            if (highFT.length > 0 && lowFT.length > 0) {
+                const hi = highFT.map(p => p.name).join(', ');
+                const lo = lowFT.map(p => p.name).join(', ');
+                friction.push(`<li>⚡ <strong>Structure Gap:</strong> ${hi} wants strict checklists, while ${lo} prefers flexible multitasking. Give each other space!</li>`);
+            }
+            // High FF vs Low FF
+            if (highFF.length > 0 && lowFF.length > 0) {
+                const hi = highFF.map(p => p.name).join(', ');
+                const lo = lowFF.map(p => p.name).join(', ');
+                friction.push(`<li>⚡ <strong>Detail Gap:</strong> ${hi} will want to read all background facts, while ${lo} wants to jump right to the main point.</li>`);
+            }
+            if (friction.length === 0) {
+                friction.push(`<li>🤝 <strong>Low Friction:</strong> Your team members have fairly close habits! You should find it easy to agree on project pacing.</li>`);
+            }
+
+            // 5. Strategies
+            const tips = [];
+            tips.push(`<li><strong>1. Assign Roles By Instincts:</strong> Put your high <em>Structure & Systems</em> members in charge of schedules, and high <em>Data & Details</em> members in charge of research!</li>`);
+            tips.push(`<li><strong>2. Respect Brainstorming vs Execution Time:</strong> Let high <em>Innovation</em> members share wild ideas first, then let the rest of the team pick the most realistic plan.</li>`);
+            tips.push(`<li><strong>3. Set Clear Due Dates Early:</strong> Agree on explicit milestones so team members who like flexibility still hit final deadlines without stress.</li>`);
+
+            // Inject DOM
+            document.getElementById('list-strengths').innerHTML = strengths.join('');
+            document.getElementById('list-blindspots').innerHTML = blindspots.join('');
+            document.getElementById('list-friction').innerHTML = friction.join('');
+            document.getElementById('list-tips').innerHTML = tips.join('');
+        }
+
+        function shareTeamResults() {
+            const summary = people.map(p => `${p.name}: ${p.ff}-${p.ft}-${p.qs}-${p.imp}`).join(' | ');
+            const text = `Team Synergy Summary (${people.length} Members): ${summary}. Badge: ${document.getElementById('team-power-title').innerText}`;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Team analysis summary copied to clipboard!');
+                }).catch(() => {
+                    document.execCommand('copy');
+                });
+            } else {
+                document.execCommand('copy');
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            renderPeopleInputs();
+            updateTeamAnalysis();
+        };
+    </script>
+</body>
+</html>
