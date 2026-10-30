@@ -22,10 +22,10 @@
                     },
                     colors: {
                         brand: {
-                            ff: '#2563eb', // Fact Finder - Royal Blue
-                            ft: '#059669', // Follow Thru - Emerald Green
-                            qs: '#d97706', // Quick Start - Amber
-                            imp: '#dc2626', // Implementer - Red
+                            ff: '#2563eb', // Fact Finder / Data & Details - Blue
+                            ft: '#059669', // Follow Thru / Structure & Systems - Green
+                            qs: '#d97706', // Quick Start / Innovation & Risk - Amber
+                            imp: '#dc2626', // Implementer / Hands-On - Red
                         }
                     }
                 }
@@ -48,7 +48,7 @@
             transform: translateY(-2px);
         }
         .option-card.selected {
-            border-color: #3b82f6;
+            border-color: #2563eb;
             background-color: #eff6ff;
         }
         @media print {
@@ -140,7 +140,7 @@
                     </ul>
                 </div>
 
-                <button onclick="startAssessment()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center justify-center space-x-2 text-base">
+                <button id="start-btn" onclick="startAssessment()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center justify-center space-x-2 text-base cursor-pointer">
                     <span>Begin Assessment</span>
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
@@ -182,7 +182,7 @@
                     </button>
 
                     <button id="next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2 shadow-md">
-                        <span>Next Question</span>
+                        <span id="next-btn-text">Next Question</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -301,7 +301,7 @@
 
                 <!-- Radar Chart Card -->
                 <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center justify-center card-shadow">
-                    <h3 class="text-sm font-bold text-slate-700 mb-2 uppercase tracking-wider text-center">Conative Profile Distribution</h3>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Conative Profile Distribution</span>
                     <div class="w-full max-w-[280px] h-[260px] relative">
                         <canvas id="radarChart"></canvas>
                     </div>
@@ -316,7 +316,7 @@
                 </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="analysis-cards">
-                    <!-- Data & Details Detailed Box -->
+                    <!-- Data & Details Box -->
                     <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-blue-700 text-base">Data & Details Analysis</span>
@@ -325,7 +325,7 @@
                         <p id="desc-ff" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
                     </div>
 
-                    <!-- Structure & Systems Detailed Box -->
+                    <!-- Structure & Systems Box -->
                     <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-emerald-700 text-base">Structure & Systems Analysis</span>
@@ -334,7 +334,7 @@
                         <p id="desc-ft" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
                     </div>
 
-                    <!-- Innovation & Risk Detailed Box -->
+                    <!-- Innovation & Risk Box -->
                     <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-amber-700 text-base">Innovation & Risk Analysis</span>
@@ -343,7 +343,7 @@
                         <p id="desc-qs" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
                     </div>
 
-                    <!-- Hands-On & Tangibles Detailed Box -->
+                    <!-- Hands-On & Tangibles Box -->
                     <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-red-700 text-base">Hands-On & Tangibles Analysis</span>
@@ -507,7 +507,7 @@
                 options: [
                     { text: "One that is proven, well-tested, and has great reviews and info.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
                     { text: "One that helps you stay organized, set reminders, and manage your time.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
-                    { text: "Something totally new, fast-paced, and exciting to figure out on the fly.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } },
+                    { text: "Something totally new, fast-paced, and exciting to figure out on the fly.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
                     { text: "Something where you can build, craft, design, or control physical/3D things.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
                 ]
             },
@@ -523,19 +523,192 @@
             }
         ];
 
-        // State Tracking
-        // Zone helper simplified for 6-8 grade level
-        function getZoneInfo(score, mode) {
-            if (score >= 7) {
-                return { zone: "Leader (Drive)", color: "text-emerald-700 bg-emerald-100", type: "Initiator" };
-            } else if (score >= 4) {
-                return { zone: "Adapter (Helper)", color: "text-blue-700 bg-blue-100", type: "Responder" };
+        // State variables
+        let currentQuestionIndex = 0;
+        let selectedAnswers = new Array(questions.length).fill(null);
+        let radarChartInstance = null;
+
+        // Initialize Lucide Icons & Page State
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+
+        // Start Assessment transition
+        function startAssessment() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            currentQuestionIndex = 0;
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render current question & options
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            
+            // Progress Bar
+            const percent = Math.round(((currentQuestionIndex + 1) / questions.length) * 100);
+            document.getElementById('progress-text').innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').innerText = `${percent}% Complete`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            // Question Header
+            document.getElementById('question-category').innerText = `Scenario ${currentQuestionIndex + 1}`;
+            document.getElementById('question-title').innerText = q.title;
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = selectedAnswers[currentQuestionIndex] === idx;
+                const card = document.createElement('div');
+                card.className = `option-card p-4 sm:p-5 rounded-xl border-2 cursor-pointer flex items-center space-x-4 ${isSelected ? 'selected border-blue-600 bg-blue-50/70' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
+                card.onclick = () => selectOption(idx);
+
+                card.innerHTML = `
+                    <div class="w-6 h-6 rounded-full border-2 ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300'} flex items-center justify-center flex-shrink-0 transition">
+                        ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                    </div>
+                    <span class="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">${opt.text}</span>
+                `;
+                container.appendChild(card);
+            });
+
+            // Nav buttons state
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = selectedAnswers[currentQuestionIndex] === null;
+
+            const nextBtnText = document.getElementById('next-btn-text');
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtnText.innerText = "View Results";
             } else {
-                return { zone: "Keeper (Simplifier)", color: "text-amber-700 bg-amber-100", type: "Stabilizer" };
+                nextBtnText.innerText = "Next Question";
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Handle selecting an option
+        function selectOption(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            renderQuestion();
+        }
+
+        // Previous Question
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
             }
         }
 
-        // Descriptions Generator simplified for 6-8 grade reading level
+        // Next Question or Finish
+        function nextQuestion() {
+            if (selectedAnswers[currentQuestionIndex] === null) return;
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                calculateAndShowResults();
+            }
+        }
+
+        // Calculate Scores & Display Dashboard
+        function calculateAndShowResults() {
+            let total = { ff: 0, ft: 0, qs: 0, imp: 0 };
+
+            selectedAnswers.forEach((ansIdx, qIdx) => {
+                if (ansIdx !== null) {
+                    const optionScores = questions[qIdx].options[ansIdx].scores;
+                    total.ff += optionScores.ff;
+                    total.ft += optionScores.ft;
+                    total.qs += optionScores.qs;
+                    total.imp += optionScores.imp;
+                }
+            });
+
+            // Scale raw scores (max ~9 points each) into standard 1-10 scores
+            const scaleScore = (raw) => Math.min(10, Math.max(1, Math.round((raw / 9) * 9) + 1));
+
+            const finalScores = {
+                ff: scaleScore(total.ff),
+                ft: scaleScore(total.ft),
+                qs: scaleScore(total.qs),
+                imp: scaleScore(total.imp)
+            };
+
+            // Display Digital M.O. Score String
+            const moString = `${finalScores.ff}-${finalScores.ft}-${finalScores.qs}-${finalScores.imp}`;
+            document.getElementById('mo-digit-display').innerText = moString;
+
+            // Update Progress Bars & Values
+            document.getElementById('score-ff').innerText = `${finalScores.ff} / 10`;
+            document.getElementById('bar-ff').style.width = `${finalScores.ff * 10}%`;
+
+            document.getElementById('score-ft').innerText = `${finalScores.ft} / 10`;
+            document.getElementById('bar-ft').style.width = `${finalScores.ft * 10}%`;
+
+            document.getElementById('score-qs').innerText = `${finalScores.qs} / 10`;
+            document.getElementById('bar-qs').style.width = `${finalScores.qs * 10}%`;
+
+            document.getElementById('score-imp').innerText = `${finalScores.imp} / 10`;
+            document.getElementById('bar-imp').style.width = `${finalScores.imp * 10}%`;
+
+            // Update Zone Labels
+            const zoneFF = getZoneInfo(finalScores.ff);
+            const zoneFT = getZoneInfo(finalScores.ft);
+            const zoneQS = getZoneInfo(finalScores.qs);
+            const zoneIMP = getZoneInfo(finalScores.imp);
+
+            document.getElementById('label-ff').innerText = `Zone: ${zoneFF.zone}`;
+            document.getElementById('label-ft').innerText = `Zone: ${zoneFT.zone}`;
+            document.getElementById('label-qs').innerText = `Zone: ${zoneQS.zone}`;
+            document.getElementById('label-imp').innerText = `Zone: ${zoneIMP.zone}`;
+
+            document.getElementById('zone-tag-ff').innerText = zoneFF.zone;
+            document.getElementById('zone-tag-ft').innerText = zoneFT.zone;
+            document.getElementById('zone-tag-qs').innerText = zoneQS.zone;
+            document.getElementById('zone-tag-imp').innerText = zoneIMP.zone;
+
+            // Set Detailed Descriptions
+            document.getElementById('desc-ff').innerText = getFFDescription(finalScores.ff);
+            document.getElementById('desc-ft').innerText = getFTDescription(finalScores.ft);
+            document.getElementById('desc-qs').innerText = getQSDescription(finalScores.qs);
+            document.getElementById('desc-imp').innerText = getIMPDescription(finalScores.imp);
+
+            // Populate Environment & Tips
+            populateEnvironmentAndStress(finalScores);
+            populateProductivityTips(finalScores);
+
+            // Render Radar Chart
+            renderChart(finalScores);
+
+            // Show Results View
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Zone helper simplified for 6-8 grade level
+        function getZoneInfo(score) {
+            if (score >= 7) {
+                return { zone: "Driver (7-10)", color: "text-emerald-700 bg-emerald-100" };
+            } else if (score >= 4) {
+                return { zone: "Helper (4-6)", color: "text-blue-700 bg-blue-100" };
+            } else {
+                return { zone: "Anchor (1-3)", color: "text-amber-700 bg-amber-100" };
+            }
+        }
+
+        // Descriptions simplified for 6-8 grade reading level
         function getFFDescription(score) {
             if (score >= 7) return "High Data & Details: You love learning all the details! Before starting a task, you like to research, ask questions, and make sure you have all the facts so you don't make mistakes.";
             if (score >= 4) return "Mid Data & Details: You like having enough facts to understand what to do, but you don't need to read an entire encyclopedia before getting started.";
@@ -576,6 +749,9 @@
             } else if (scores.ff <= 3) {
                 envs.push("Short, clear directions with quick bullet points.");
                 stresses.push("Being handed a giant stack of boring papers full of small text to read.");
+            } else {
+                envs.push("A good balance of clear directions and quick action.");
+                stresses.push("Having too little information or way too much clutter.");
             }
 
             // Structure & Systems
@@ -585,6 +761,9 @@
             } else if (scores.ft <= 3) {
                 envs.push("Flexible projects where you can choose your own path and multitask.");
                 stresses.push("Being forced to follow strict step-by-step rules that slow you down.");
+            } else {
+                envs.push("Structured projects that still leave room for your own style.");
+                stresses.push("Complete chaos or overly rigid micromanagement.");
             }
 
             // Innovation & Risk
@@ -594,6 +773,9 @@
             } else if (scores.qs <= 3) {
                 envs.push("Calm, steady environments where you know exactly what to expect.");
                 stresses.push("Sudden unexpected surprises or people making reckless choices.");
+            } else {
+                envs.push("Creative tasks with a safe safety net.");
+                stresses.push("High-pressure environments with zero room for error.");
             }
 
             // Hands-On & Tangibles
@@ -603,6 +785,9 @@
             } else if (scores.imp <= 3) {
                 envs.push("Digital tools, computers, and quiet spaces for thinking.");
                 stresses.push("Being forced to build heavy physical models when you'd rather use an app.");
+            } else {
+                envs.push("Mix of visual materials and hands-on activities.");
+                stresses.push("Purely abstract concepts without any visual or practical examples.");
             }
 
             envs.forEach(item => envList.innerHTML += `<li>${item}</li>`);
@@ -650,7 +835,7 @@
                     datasets: [{
                         label: 'Action Mode Intensity',
                         data: [scores.ff, scores.ft, scores.qs, scores.imp],
-                        backgroundColor: 'rgba(59, 130, 246, 0.25)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.25)',
                         borderColor: '#2563eb',
                         borderWidth: 2.5,
                         pointBackgroundColor: ['#2563eb', '#059669', '#d97706', '#dc2626'],
@@ -674,6 +859,16 @@
                     }
                 }
             });
+        }
+
+        // Reset Assessment
+        function resetAssessment() {
+            currentQuestionIndex = 0;
+            selectedAnswers = new Array(questions.length).fill(null);
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Sharing Utilities
