@@ -145,7 +145,7 @@
                     </div>
                 </div>
 
-                <!-- Print & Export Bar -->
+                <!-- Print Bar -->
                 <div class="pt-4 flex justify-between items-center no-print">
                     <span class="text-xs text-slate-500 flex items-center space-x-1">
                         <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
@@ -186,7 +186,7 @@
                     </ul>
                 </div>
 
-                <!-- Friction Points & Preferences Clashes -->
+                <!-- Clashes & Unmet Preferences -->
                 <div class="bg-rose-50/70 border border-rose-200 rounded-2xl p-6 space-y-4">
                     <h3 class="text-base font-bold text-rose-950 flex items-center space-x-2">
                         <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
@@ -210,7 +210,7 @@
                     </ul>
                 </div>
 
-                <!-- Actionable Teamwork Strategies -->
+                <!-- Actionable Strategies -->
                 <div class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-6 space-y-4">
                     <h3 class="text-base font-bold text-indigo-950 flex items-center space-x-2">
                         <i data-lucide="heart-handshake" class="w-5 h-5 text-indigo-600"></i>
@@ -235,16 +235,14 @@
 
     <!-- JS Logic -->
     <script>
-        // Color palettes for radar datasets
         const colorPalette = [
-            { bg: 'rgba(225, 29, 72, 0.25)', border: '#e11d48' },   // Rose
-            { bg: 'rgba(37, 99, 235, 0.25)', border: '#2563eb' },   // Blue
-            { bg: 'rgba(5, 150, 105, 0.25)', border: '#059669' },   // Emerald
-            { bg: 'rgba(217, 119, 6, 0.25)', border: '#d97706' },   // Amber
-            { bg: 'rgba(147, 51, 234, 0.25)', border: '#9333ea' }    // Purple
+            { bg: 'rgba(225, 29, 72, 0.25)', border: '#e11d48' },
+            { bg: 'rgba(37, 99, 235, 0.25)', border: '#2563eb' },
+            { bg: 'rgba(5, 150, 105, 0.25)', border: '#059669' },
+            { bg: 'rgba(217, 119, 6, 0.25)', border: '#d97706' },
+            { bg: 'rgba(147, 51, 234, 0.25)', border: '#9333ea' }
         ];
 
-        // 10-Question Love Languages Quiz
         const quizQuestions = [
             {
                 title: "Your best friend wants to show you they care after a hard day. What means the most to you?",
@@ -348,20 +346,17 @@
             }
         ];
 
-        // Active State
         let people = [];
         let teamChartInstance = null;
         let activeQuizPersonIndex = null;
         let activeQuizQuestionIndex = 0;
         let quizAnswers = [];
 
-        // Initializer
         document.addEventListener('DOMContentLoaded', () => {
             loadPreset('bestFriends');
             if (window.lucide) lucide.createIcons();
         });
 
-        // Add Person
         function addPerson(name = "", scores = { words: 5, time: 5, gifts: 5, service: 5, touch: 5 }) {
             const id = Date.now() + Math.random();
             const personName = name || `Person ${people.length + 1}`;
@@ -370,7 +365,6 @@
             updateAnalysis();
         }
 
-        // Remove Person
         function removePerson(id) {
             if (people.length <= 2) {
                 alert("You need at least 2 people to compare synergy!");
@@ -381,7 +375,6 @@
             updateAnalysis();
         }
 
-        // Render Inputs Grid
         function renderPeopleInputs() {
             const container = document.getElementById('people-container');
             container.innerHTML = '';
@@ -443,7 +436,6 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        // Update score from range slider
         function updateScore(id, lang, val) {
             const person = people.find(p => p.id === id);
             if (person) {
@@ -453,7 +445,6 @@
             }
         }
 
-        // Update name
         function updateName(id, val) {
             const person = people.find(p => p.id === id);
             if (person) {
@@ -462,7 +453,6 @@
             }
         }
 
-        // Quiz Modal Controls
         function openQuizModal(personIdx) {
             activeQuizPersonIndex = personIdx;
             activeQuizQuestionIndex = 0;
@@ -535,7 +525,6 @@
             updateAnalysis();
         }
 
-        // Load Presets
         function loadPreset(key) {
             if (key === 'bestFriends') {
                 people = [
@@ -562,11 +551,9 @@
             loadPreset('bestFriends');
         }
 
-        // Update Dashboard Analysis & Radar Chart
         function updateAnalysis() {
             renderRadarChart();
 
-            // Calculate Superpowers & Overlaps
             const connectorsList = document.getElementById('super-connectors-list');
             const clashesList = document.getElementById('clashes-list');
             const blindspotsList = document.getElementById('blindspots-list');
@@ -578,36 +565,61 @@
             tipsContainer.innerHTML = '';
 
             const langs = [
-                { key: 'words', label: 'Words of Affirmation', desc: 'feeling appreciated, noticed, and recognized out loud' },
-                { key: 'time', label: 'Quality Time', desc: 'undivided attention and full presence' },
-                { key: 'gifts', label: 'Receiving Gifts', desc: 'thoughtful tokens and visual symbols of care' },
-                { key: 'service', label: 'Acts of Service', desc: 'helpful hands and thoughtful actions' },
-                { key: 'touch', label: 'Physical Touch', desc: 'friendly high-fives, hugs, and close presence' }
+                { 
+                    key: 'words', 
+                    label: 'Words of Affirmation', 
+                    connectorDesc: 'feeling appreciated, noticed, and recognized out loud',
+                    unmetFeelings: 'feels unappreciated, invisible, criticized, or doubted when their hard work goes unnoticed'
+                },
+                { 
+                    key: 'time', 
+                    label: 'Quality Time', 
+                    connectorDesc: 'undivided attention and full presence',
+                    unmetFeelings: 'feels lonely, ignored, or secondary to phones, screens, and outside distractions'
+                },
+                { 
+                    key: 'gifts', 
+                    label: 'Receiving Gifts', 
+                    connectorDesc: 'thoughtful tokens and visual symbols of care',
+                    unmetFeelings: 'feels forgotten, unthought-of, or like an afterthought during special moments or celebrations'
+                },
+                { 
+                    key: 'service', 
+                    label: 'Acts of Service', 
+                    connectorDesc: 'helpful hands and thoughtful actions',
+                    unmetFeelings: 'feels overwhelmed, uncared for, or exhausted carrying all the load alone without help'
+                },
+                { 
+                    key: 'touch', 
+                    label: 'Physical Touch', 
+                    connectorDesc: 'friendly high-fives, hugs, and close presence',
+                    unmetFeelings: 'feels emotionally distant, isolated, or disconnected from the group or relationship'
+                }
             ];
 
             let foundConnector = false;
             let foundClash = false;
 
-            // Check Super-Connectors (Where multiple people score 7+)
+            // Check Super-Connectors
             langs.forEach(l => {
                 const highScorers = people.filter(p => p.scores[l.key] >= 7);
                 if (highScorers.length >= 2) {
                     foundConnector = true;
                     const names = highScorers.map(p => p.name).join(" & ");
-                    connectorsList.innerHTML += `<li><strong>${names}</strong> both score high in <strong>${l.label}</strong>! They naturally connect through ${l.desc}.</li>`;
+                    connectorsList.innerHTML += `<li><strong>${names}</strong> both score high in <strong>${l.label}</strong>! They naturally connect through ${l.connectorDesc}.</li>`;
                 }
             });
             if (!foundConnector) {
                 connectorsList.innerHTML = `<li>No shared high scores (7+) across the team yet. Everyone brings a different primary love language!</li>`;
             }
 
-            // Check Clashes (High vs Low)
+            // Check Clashes & Emotional Impact
             langs.forEach(l => {
                 people.forEach(p1 => {
                     people.forEach(p2 => {
                         if (p1.id !== p2.id && p1.scores[l.key] >= 7 && p2.scores[l.key] <= 3) {
                             foundClash = true;
-                            clashesList.innerHTML += `<li><strong>${p1.name}</strong> scores high in <strong>${l.label}</strong> (${p1.scores[l.key]}/10) and deeply values ${l.desc}, but <strong>${p2.name}</strong> scores low (${p2.scores[l.key]}/10) and might naturally overlook it!</li>`;
+                            clashesList.innerHTML += `<li><strong>${p1.name}</strong> scores high in <strong>${l.label}</strong> (${p1.scores[l.key]}/10) and <em>${l.unmetFeelings}</em> if ignored, but <strong>${p2.name}</strong> scores low (${p2.scores[l.key]}/10) and might naturally miss it!</li>`;
                         }
                     });
                 });
@@ -616,21 +628,21 @@
                 clashesList.innerHTML = `<li>No major clashes! Nobody has opposite high (7+) vs low (1–3) gaps in the same love language.</li>`;
             }
 
-            // Check Shared Group Blind Spots (Everyone <= 3)
+            // Check Blind Spots
             let foundBlind = false;
             langs.forEach(l => {
                 const allLow = people.every(p => p.scores[l.key] <= 3);
                 if (allLow) {
                     foundBlind = true;
-                    blindspotsList.innerHTML += `<li><strong>${l.label}:</strong> Everyone in the group scored low here (1–3). Nobody in the group naturally gives support through ${l.desc}, so watch out for missing this area!</li>`;
+                    blindspotsList.innerHTML += `<li><strong>${l.label}:</strong> Everyone in the group scored low here (1–3). Nobody in the group naturally gives support through ${l.connectorDesc}, so watch out for missing this area!</li>`;
                 }
             });
             if (!foundBlind) {
                 blindspotsList.innerHTML = `<li>Great coverage! At least one person in the group scores above a 3 in every love language.</li>`;
             }
 
-            // Individual Appreciation Tips
-            people.forEach((p, idx) => {
+            // Individual Tips
+            people.forEach((p) => {
                 const topLangKey = Object.keys(p.scores).reduce((a, b) => p.scores[a] > p.scores[b] ? a : b);
                 const topLang = langs.find(l => l.key === topLangKey);
 
@@ -661,7 +673,6 @@
             }
         }
 
-        // Render Radar Chart with Chart.js
         function renderRadarChart() {
             const ctx = document.getElementById('teamRadarChart').getContext('2d');
 
