@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Love Languages Synergy Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetAll()">
+                <div class="bg-rose-600 p-2 rounded-lg">
+                    <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Love Languages Analyzer</span>
+                    <span class="text-xs text-rose-300 font-medium">Team & Pair Connection Tool</span>
+                </div>
+            </div>
+            <button onclick="resetAll()" class="text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-700 transition">
+                Reset All
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Intro Card -->
+        <section class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden no-print">
+            <div class="p-8 gradient-header text-white text-center">
+                <div class="inline-flex p-3 bg-white/10 backdrop-blur-md rounded-2xl mb-3 text-rose-400">
+                    <i data-lucide="sparkles" class="w-8 h-8"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Compare Love Languages & Find Synergy</h1>
+                <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+                    Add 2 or more people, enter their scores (or take the quick quiz!), and instantly uncover where your love languages overlap, where you clash, and how to make everyone feel valued!
+                </p>
+            </div>
+
+            <!-- Preset Buttons -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold">
+                <span class="text-slate-500 mr-2">Try Preset Teams:</span>
+                <button onclick="loadPreset('bestFriends')" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-rose-50 hover:border-rose-300 text-slate-700 transition">
+                    👯 Best Friends Squad
+                </button>
+                <button onclick="loadPreset('studyBuddies')" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-rose-50 hover:border-rose-300 text-slate-700 transition">
+                    📚 Study Buddies
+                </button>
+                <button onclick="loadPreset('siblings')" class="px-3 py-1.5 bg-white border border-slate-300 rounded-lg hover:bg-rose-50 hover:border-rose-300 text-slate-700 transition">
+                    🏠 Sibling Duo
+                </button>
+            </div>
+        </section>
+
+        <!-- People Entry Grid -->
+        <section class="no-print space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+                    <i data-lucide="users" class="w-5 h-5 text-rose-600"></i>
+                    <span>Group Members & Scores</span>
+                </h2>
+                <button onclick="addPerson()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center space-x-1.5">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>Add Another Person</span>
+                </button>
+            </div>
+
+            <div id="people-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Person cards rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- Quiz Modal Container -->
+        <div id="quiz-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-2xl w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto relative">
+                <button onclick="closeQuizModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="text-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full" id="quiz-target-name">Taking Quiz For: Alex</span>
+                    <h2 class="text-xl font-bold text-slate-900 mt-2" id="quiz-question-title">Question Title</h2>
+                </div>
+
+                <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="quiz-progress-bar" class="bg-rose-600 h-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+
+                <div id="quiz-options-container" class="space-y-3">
+                    <!-- Options injected dynamically -->
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100 text-xs">
+                    <span id="quiz-progress-text" class="text-slate-500 font-semibold">Question 1 of 10</span>
+                    <button onclick="closeQuizModal()" class="text-slate-500 hover:text-slate-800 font-medium">Cancel Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Synergy Results Section -->
+        <section id="results-section" class="space-y-8">
+            <!-- Header Summary -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-rose-600 bg-rose-50 px-3 py-1 rounded-full">
+                            Dynamic Synergy Analysis
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Group Connection Dashboard</h2>
+                        <p class="text-slate-500 text-sm mt-1">Comparing scores across all 5 Love Languages.</p>
+                    </div>
+
+                    <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center space-x-3 shadow-lg">
+                        <i data-lucide="zap" class="w-8 h-8 text-amber-400"></i>
+                        <div>
+                            <span class="text-xs text-slate-400 font-semibold block uppercase">Team Connection Style</span>
+                            <span id="team-superpower-badge" class="font-bold text-amber-300 text-base">Calculating...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print & Export Bar -->
+                <div class="pt-4 flex justify-between items-center no-print">
+                    <span class="text-xs text-slate-500 flex items-center space-x-1">
+                        <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
+                        <span>Updates automatically as scores change</span>
+                    </span>
+                    <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-1.5">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Print Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visual Overlay Radar Chart -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center">
+                <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center space-x-2">
+                    <i data-lucide="pie-chart" class="w-5 h-5 text-rose-600"></i>
+                    <span>Overlapping Love Languages Profile</span>
+                </h3>
+                <p class="text-xs text-slate-500 mb-6 text-center">See where everyone's scores align and where distinct peaks emerge.</p>
+                
+                <div class="w-full max-w-lg h-[340px] relative">
+                    <canvas id="teamRadarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Synergy Breakdown Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Super-Connector Strengths -->
+                <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-6 space-y-4">
+                    <h3 class="text-base font-bold text-emerald-950 flex items-center space-x-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                        <span>Super-Connector Alignments</span>
+                    </h3>
+                    <p class="text-xs text-emerald-800">Where group members share high scores (7+) and naturally fulfill each other's love languages:</p>
+                    <ul id="super-connectors-list" class="space-y-2 text-xs sm:text-sm text-emerald-900 list-disc pl-5">
+                        <!-- Injected dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Friction Points & Preferences Clashes -->
+                <div class="bg-rose-50/70 border border-rose-200 rounded-2xl p-6 space-y-4">
+                    <h3 class="text-base font-bold text-rose-950 flex items-center space-x-2">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                        <span>Clashes & Unmet Preferences</span>
+                    </h3>
+                    <p class="text-xs text-rose-800">Specific gaps where one person scores high (7+) and another scores low (1–3):</p>
+                    <ul id="clashes-list" class="space-y-2 text-xs sm:text-sm text-rose-900 list-disc pl-5">
+                        <!-- Injected dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Group Blind Spots -->
+                <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-6 space-y-4">
+                    <h3 class="text-base font-bold text-amber-950 flex items-center space-x-2">
+                        <i data-lucide="eye-off" class="w-5 h-5 text-amber-600"></i>
+                        <span>Shared Group Blind Spots</span>
+                    </h3>
+                    <p class="text-xs text-amber-800">Languages where EVERYONE in the group scored low (1–3):</p>
+                    <ul id="blindspots-list" class="space-y-2 text-xs sm:text-sm text-amber-900 list-disc pl-5">
+                        <!-- Injected dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Actionable Teamwork Strategies -->
+                <div class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-6 space-y-4">
+                    <h3 class="text-base font-bold text-indigo-950 flex items-center space-x-2">
+                        <i data-lucide="heart-handshake" class="w-5 h-5 text-indigo-600"></i>
+                        <span>How To Make Each Person Feel Valued</span>
+                    </h3>
+                    <div id="action-tips-list" class="space-y-3 text-xs sm:text-sm text-indigo-950">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>Love Languages Synergy Analyzer • Designed for Team, Sibling, and Peer Connection</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // Color palettes for radar datasets
+        const colorPalette = [
+            { bg: 'rgba(225, 29, 72, 0.25)', border: '#e11d48' },   // Rose
+            { bg: 'rgba(37, 99, 235, 0.25)', border: '#2563eb' },   // Blue
+            { bg: 'rgba(5, 150, 105, 0.25)', border: '#059669' },   // Emerald
+            { bg: 'rgba(217, 119, 6, 0.25)', border: '#d97706' },   // Amber
+            { bg: 'rgba(147, 51, 234, 0.25)', border: '#9333ea' }    // Purple
+        ];
+
+        // 10-Question Love Languages Quiz
+        const quizQuestions = [
+            {
+                title: "Your best friend wants to show you they care after a hard day. What means the most to you?",
+                options: [
+                    { text: "Saying 'You did awesome today, I'm really proud of you!'", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Sitting down and giving you their undivided attention to talk about it.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Surprising you with your favorite snack or drink.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "Helping you finish up your homework or chores so you can relax.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "Giving you a big comforting hug or a friendly pat on the back.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "When working on a group project, when do you feel most appreciated?",
+                options: [
+                    { text: "When team members compliment your specific work and notice your efforts.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "When everyone stays focused together without distraction.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "When someone brings treats or small tokens for the whole team.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "When someone jumps in to do a tricky task for you to lighten your load.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "When everyone gives high-fives and celebrates togetherness after finishing.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "What naturally makes you feel closest to a friend or family member?",
+                options: [
+                    { text: "Receiving text messages or notes saying nice things about you.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Hanging out one-on-one with zero phones or distractions around.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "When they remember something small you liked and give it to you.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "When they quietly help you out when you are overwhelmed.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "Walking side-by-side, sitting close, or exchanging high-fives.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "If a friend forgets your birthday, what hurts your feelings the most?",
+                options: [
+                    { text: "They didn't say any kind or sweet words to you.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "They didn't spend any time hanging out with you.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "They didn't bring or make a card or small gift for you.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "They didn't offer to help with anything you needed.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "They didn't give you a warm greeting or high-five.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "How do you naturally express affection toward people you care about?",
+                options: [
+                    { text: "I tell them frequently how awesome, smart, or funny they are.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "I invite them to hang out and do activities together.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "I pick up little gifts, drawings, or crafts to hand to them.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "I do favors for them, like fixing something or helping carry stuff.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "I give lots of hugs, shoulder pats, or friendly nudges.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "You are feeling sick or stressed out. What gesture makes you feel better?",
+                options: [
+                    { text: "A sweet text message checking in on you.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "A friend staying by your side just keeping you company.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Someone bringing you a soup, book, or small comfort item.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "Someone doing your chores or organizing your books for you.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "A warm hug or pat on the arm.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "What makes a holiday or weekend feel most special?",
+                options: [
+                    { text: "Hearing heartfelt words of gratitude from people you love.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Having long, uninterrupted time to hang out together.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Exchanging wrapped gifts or fun souvenirs.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "Everyone pitching in to prepare meals or clean up together.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "Being close, laughing, and physical play like sports or high-fives.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "When you want to show someone you notice their effort, you:",
+                options: [
+                    { text: "Write them a nice note or send a sweet compliment.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Set aside time to go for a walk or play a game with them.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Buy or make them a small physical treat.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "Offer to do one of their tasks so they can take a break.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "Give them a fist bump, pat on the back, or high five.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "What kind of teacher or mentor do you like best?",
+                options: [
+                    { text: "One who praises your hard work with kind comments.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "One who takes extra time to sit with you individually.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "One who gives fun stickers, rewards, or tokens for progress.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "One who gives clear step-by-step help to make your work easier.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "One who has high energy and gives fist bumps at the door.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            },
+            {
+                title: "In short: you feel MOST loved when someone:",
+                options: [
+                    { text: "Tells you out loud how much you mean to them.", scores: { words: 3, time: 0, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Gives you their full, undivided presence.", scores: { words: 0, time: 3, gifts: 0, service: 0, touch: 0 } },
+                    { text: "Gives you something thoughtful they picked out just for you.", scores: { words: 0, time: 0, gifts: 3, service: 0, touch: 0 } },
+                    { text: "Helps you out without even being asked.", scores: { words: 0, time: 0, gifts: 0, service: 3, touch: 0 } },
+                    { text: "Gives you a hug or sits right next to you.", scores: { words: 0, time: 0, gifts: 0, service: 0, touch: 3 } }
+                ]
+            }
+        ];
+
+        // Active State
+        let people = [];
+        let teamChartInstance = null;
+        let activeQuizPersonIndex = null;
+        let activeQuizQuestionIndex = 0;
+        let quizAnswers = [];
+
+        // Initializer
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPreset('bestFriends');
+            if (window.lucide) lucide.createIcons();
+        });
+
+        // Add Person
+        function addPerson(name = "", scores = { words: 5, time: 5, gifts: 5, service: 5, touch: 5 }) {
+            const id = Date.now() + Math.random();
+            const personName = name || `Person ${people.length + 1}`;
+            people.push({ id, name: personName, scores });
+            renderPeopleInputs();
+            updateAnalysis();
+        }
+
+        // Remove Person
+        function removePerson(id) {
+            if (people.length <= 2) {
+                alert("You need at least 2 people to compare synergy!");
+                return;
+            }
+            people = people.filter(p => p.id !== id);
+            renderPeopleInputs();
+            updateAnalysis();
+        }
+
+        // Render Inputs Grid
+        function renderPeopleInputs() {
+            const container = document.getElementById('people-container');
+            container.innerHTML = '';
+
+            people.forEach((p, idx) => {
+                const color = colorPalette[idx % colorPalette.length];
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl shadow-md border border-slate-200 space-y-4 relative";
+                card.style.borderTop = `5px solid ${color.border}`;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <input type="text" value="${p.name}" onchange="updateName(${p.id}, this.value)" class="font-bold text-base text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-rose-500 outline-none px-1 py-0.5 rounded transition w-full mr-2">
+                        <button onclick="removePerson(${p.id})" class="text-slate-400 hover:text-rose-600 p-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <button onclick="openQuizModal(${idx})" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs rounded-lg transition flex items-center justify-center space-x-1.5 border border-rose-200">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                        <span>Take Quick Quiz for ${p.name}</span>
+                    </button>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Words of Affirmation</span>
+                            <span class="font-bold text-slate-900">${p.scores.words}</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="${p.scores.words}" oninput="updateScore(${p.id}, 'words', this.value)" class="w-full accent-rose-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Quality Time</span>
+                            <span class="font-bold text-slate-900">${p.scores.time}</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="${p.scores.time}" oninput="updateScore(${p.id}, 'time', this.value)" class="w-full accent-blue-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Receiving Gifts</span>
+                            <span class="font-bold text-slate-900">${p.scores.gifts}</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="${p.scores.gifts}" oninput="updateScore(${p.id}, 'gifts', this.value)" class="w-full accent-amber-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Acts of Service</span>
+                            <span class="font-bold text-slate-900">${p.scores.service}</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="${p.scores.service}" oninput="updateScore(${p.id}, 'service', this.value)" class="w-full accent-emerald-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-700">Physical Touch</span>
+                            <span class="font-bold text-slate-900">${p.scores.touch}</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="${p.scores.touch}" oninput="updateScore(${p.id}, 'touch', this.value)" class="w-full accent-purple-600 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Update score from range slider
+        function updateScore(id, lang, val) {
+            const person = people.find(p => p.id === id);
+            if (person) {
+                person.scores[lang] = parseInt(val);
+                renderPeopleInputs();
+                updateAnalysis();
+            }
+        }
+
+        // Update name
+        function updateName(id, val) {
+            const person = people.find(p => p.id === id);
+            if (person) {
+                person.name = val || "Unnamed";
+                updateAnalysis();
+            }
+        }
+
+        // Quiz Modal Controls
+        function openQuizModal(personIdx) {
+            activeQuizPersonIndex = personIdx;
+            activeQuizQuestionIndex = 0;
+            quizAnswers = [];
+            document.getElementById('quiz-modal').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quiz-modal').classList.add('hidden');
+        }
+
+        function renderQuizQuestion() {
+            const p = people[activeQuizPersonIndex];
+            const q = quizQuestions[activeQuizQuestionIndex];
+
+            document.getElementById('quiz-target-name').innerText = `Taking Quiz For: ${p.name}`;
+            document.getElementById('quiz-question-title').innerText = q.title;
+            document.getElementById('quiz-progress-text').innerText = `Question ${activeQuizQuestionIndex + 1} of 10`;
+            document.getElementById('quiz-progress-bar').style.width = `${((activeQuizQuestionIndex + 1) / 10) * 100}%`;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-4 rounded-xl border border-slate-200 hover:border-rose-400 hover:bg-rose-50/50 text-left text-xs sm:text-sm text-slate-800 font-medium transition flex items-center space-x-3";
+                btn.onclick = () => selectQuizOption(opt.scores);
+                btn.innerHTML = `
+                    <div class="w-4 h-4 rounded-full border border-slate-300 flex-shrink-0"></div>
+                    <span>${opt.text}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectQuizOption(scores) {
+            quizAnswers.push(scores);
+            if (activeQuizQuestionIndex < quizQuestions.length - 1) {
+                activeQuizQuestionIndex++;
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            let total = { words: 0, time: 0, gifts: 0, service: 0, touch: 0 };
+            quizAnswers.forEach(a => {
+                total.words += a.words;
+                total.time += a.time;
+                total.gifts += a.gifts;
+                total.service += a.service;
+                total.touch += a.touch;
+            });
+
+            const scale = (raw) => Math.min(10, Math.max(1, Math.round((raw / 6) * 9) + 1));
+            
+            const p = people[activeQuizPersonIndex];
+            p.scores = {
+                words: scale(total.words),
+                time: scale(total.time),
+                gifts: scale(total.gifts),
+                service: scale(total.service),
+                touch: scale(total.touch)
+            };
+
+            closeQuizModal();
+            renderPeopleInputs();
+            updateAnalysis();
+        }
+
+        // Load Presets
+        function loadPreset(key) {
+            if (key === 'bestFriends') {
+                people = [
+                    { id: 1, name: "Alex", scores: { words: 9, time: 8, gifts: 3, service: 4, touch: 2 } },
+                    { id: 2, name: "Jordan", scores: { words: 3, time: 9, gifts: 2, service: 8, touch: 4 } }
+                ];
+            } else if (key === 'studyBuddies') {
+                people = [
+                    { id: 1, name: "Taylor", scores: { words: 8, time: 9, gifts: 2, service: 8, touch: 1 } },
+                    { id: 2, name: "Morgan", scores: { words: 2, time: 3, gifts: 8, service: 9, touch: 2 } },
+                    { id: 3, name: "Sam", scores: { words: 9, time: 8, gifts: 3, service: 2, touch: 5 } }
+                ];
+            } else if (key === 'siblings') {
+                people = [
+                    { id: 1, name: "Maya", scores: { words: 9, time: 7, gifts: 8, service: 2, touch: 3 } },
+                    { id: 2, name: "Leo", scores: { words: 2, time: 4, gifts: 2, service: 9, touch: 8 } }
+                ];
+            }
+            renderPeopleInputs();
+            updateAnalysis();
+        }
+
+        function resetAll() {
+            loadPreset('bestFriends');
+        }
+
+        // Update Dashboard Analysis & Radar Chart
+        function updateAnalysis() {
+            renderRadarChart();
+
+            // Calculate Superpowers & Overlaps
+            const connectorsList = document.getElementById('super-connectors-list');
+            const clashesList = document.getElementById('clashes-list');
+            const blindspotsList = document.getElementById('blindspots-list');
+            const tipsContainer = document.getElementById('action-tips-list');
+
+            connectorsList.innerHTML = '';
+            clashesList.innerHTML = '';
+            blindspotsList.innerHTML = '';
+            tipsContainer.innerHTML = '';
+
+            const langs = [
+                { key: 'words', label: 'Words of Affirmation', desc: 'feeling appreciated, noticed, and recognized out loud' },
+                { key: 'time', label: 'Quality Time', desc: 'undivided attention and full presence' },
+                { key: 'gifts', label: 'Receiving Gifts', desc: 'thoughtful tokens and visual symbols of care' },
+                { key: 'service', label: 'Acts of Service', desc: 'helpful hands and thoughtful actions' },
+                { key: 'touch', label: 'Physical Touch', desc: 'friendly high-fives, hugs, and close presence' }
+            ];
+
+            let foundConnector = false;
+            let foundClash = false;
+
+            // Check Super-Connectors (Where multiple people score 7+)
+            langs.forEach(l => {
+                const highScorers = people.filter(p => p.scores[l.key] >= 7);
+                if (highScorers.length >= 2) {
+                    foundConnector = true;
+                    const names = highScorers.map(p => p.name).join(" & ");
+                    connectorsList.innerHTML += `<li><strong>${names}</strong> both score high in <strong>${l.label}</strong>! They naturally connect through ${l.desc}.</li>`;
+                }
+            });
+            if (!foundConnector) {
+                connectorsList.innerHTML = `<li>No shared high scores (7+) across the team yet. Everyone brings a different primary love language!</li>`;
+            }
+
+            // Check Clashes (High vs Low)
+            langs.forEach(l => {
+                people.forEach(p1 => {
+                    people.forEach(p2 => {
+                        if (p1.id !== p2.id && p1.scores[l.key] >= 7 && p2.scores[l.key] <= 3) {
+                            foundClash = true;
+                            clashesList.innerHTML += `<li><strong>${p1.name}</strong> scores high in <strong>${l.label}</strong> (${p1.scores[l.key]}/10) and deeply values ${l.desc}, but <strong>${p2.name}</strong> scores low (${p2.scores[l.key]}/10) and might naturally overlook it!</li>`;
+                        }
+                    });
+                });
+            });
+            if (!foundClash) {
+                clashesList.innerHTML = `<li>No major clashes! Nobody has opposite high (7+) vs low (1–3) gaps in the same love language.</li>`;
+            }
+
+            // Check Shared Group Blind Spots (Everyone <= 3)
+            let foundBlind = false;
+            langs.forEach(l => {
+                const allLow = people.every(p => p.scores[l.key] <= 3);
+                if (allLow) {
+                    foundBlind = true;
+                    blindspotsList.innerHTML += `<li><strong>${l.label}:</strong> Everyone in the group scored low here (1–3). Nobody in the group naturally gives support through ${l.desc}, so watch out for missing this area!</li>`;
+                }
+            });
+            if (!foundBlind) {
+                blindspotsList.innerHTML = `<li>Great coverage! At least one person in the group scores above a 3 in every love language.</li>`;
+            }
+
+            // Individual Appreciation Tips
+            people.forEach((p, idx) => {
+                const topLangKey = Object.keys(p.scores).reduce((a, b) => p.scores[a] > p.scores[b] ? a : b);
+                const topLang = langs.find(l => l.key === topLangKey);
+
+                let specificTip = "";
+                if (topLangKey === 'words') specificTip = "Say 'thank you', compliment their ideas out loud, or text them kind notes.";
+                if (topLangKey === 'time') specificTip = "Put away your phone, sit down, and give them your full, undivided attention.";
+                if (topLangKey === 'gifts') specificTip = "Bring them a small snack, hand-made drawing, or a fun sticker they like.";
+                if (topLangKey === 'service') specificTip = "Offer to help carry their books, organize notes, or help clean up without asking.";
+                if (topLangKey === 'touch') specificTip = "Greet them with high-fives, fist bumps, or a warm hug when seeing them.";
+
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white rounded-xl border border-indigo-100 shadow-sm space-y-1";
+                div.innerHTML = `
+                    <div class="font-bold text-slate-900 text-xs sm:text-sm">How to make <strong>${p.name}</strong> feel valued:</div>
+                    <div class="text-xs text-indigo-900">Their #1 language is <strong>${topLang.label}</strong> (${p.scores[topLangKey]}/10). ${specificTip}</div>
+                `;
+                tipsContainer.appendChild(div);
+            });
+
+            // Badge Update
+            const badge = document.getElementById('team-superpower-badge');
+            if (foundConnector) {
+                badge.innerText = "Highly Harmonious";
+            } else if (foundClash) {
+                badge.innerText = "Diverse & Complementary";
+            } else {
+                badge.innerText = "Balanced Connection";
+            }
+        }
+
+        // Render Radar Chart with Chart.js
+        function renderRadarChart() {
+            const ctx = document.getElementById('teamRadarChart').getContext('2d');
+
+            if (teamChartInstance) {
+                teamChartInstance.destroy();
+            }
+
+            const datasets = people.map((p, idx) => {
+                const color = colorPalette[idx % colorPalette.length];
+                return {
+                    label: p.name,
+                    data: [p.scores.words, p.scores.time, p.scores.gifts, p.scores.service, p.scores.touch],
+                    backgroundColor: color.bg,
+                    borderColor: color.border,
+                    borderWidth: 2,
+                    pointBackgroundColor: color.border,
+                    pointRadius: 4
+                };
+            });
+
+            teamChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Words of Affirmation', 'Quality Time', 'Receiving Gifts', 'Acts of Service', 'Physical Touch'],
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
