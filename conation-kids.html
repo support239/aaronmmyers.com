@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conative Assessment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            ff: '#2563eb', // Fact Finder - Royal Blue
+                            ft: '#059669', // Follow Thru - Emerald Green
+                            qs: '#d97706', // Quick Start - Amber
+                            imp: '#dc2626', // Implementer - Red
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        .option-card.selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            .card-shadow { box-shadow: none !important; border: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetAssessment()">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <i data-lucide="compass" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Conative Assessment</span>
+                    <span class="text-xs text-slate-400 font-medium">Instinctual Action Modes</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="resetAssessment()" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-800 transition">
+                    Restart Test
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- INTRO SCREEN -->
+        <section id="intro-screen" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="p-8 sm:p-12 text-center gradient-header text-white relative">
+                <div class="inline-flex p-3 bg-white/10 backdrop-blur-md rounded-2xl mb-4 text-blue-400">
+                    <i data-lucide="brain-circuit" class="w-10 h-10"></i>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">Discover Your Natural Conation</h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Everyone has a unique way they naturally like to solve problems and tackle projects. This test helps you find out <strong>how you naturally get things done</strong> when you are free to do it your own way!
+                </p>
+            </div>
+            
+            <div class="p-8 sm:p-10 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="search" class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Data & Details</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How much research and fact-checking you like to do.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="git-branch" class="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Structure & Systems</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How much you like plans, schedules, and checklists.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="zap" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Innovation & Risk</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How much you like trying new ideas and taking risks.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="hammer" class="w-6 h-6 text-red-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Hands-On & Tangibles</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How much you like building and working with real objects.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+                        <span>Easy Tips Before You Begin</span>
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-2 list-disc pl-5">
+                        <li>Pick the choice that feels <strong>most natural to you</strong>, not what you think a teacher or parent would want.</li>
+                        <li>There are no right or wrong answers! Every score is a good score.</li>
+                        <li>There are 12 quick questions (takes about 3 to 5 minutes).</li>
+                    </ul>
+                </div>
+
+                <button onclick="startAssessment()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition flex items-center justify-center space-x-2 text-base">
+                    <span>Begin Assessment</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ASSESSMENT FORM SCREEN -->
+        <section id="quiz-screen" class="hidden max-w-3xl mx-auto">
+            <!-- Progress Bar -->
+            <div class="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
+                    <span id="progress-text">Question 1 of 12</span>
+                    <span id="progress-percent">8% Complete</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-300 ease-out" style="width: 8.33%;"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-10">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-3" id="question-category">
+                    Scenario 1
+                </span>
+                <h2 id="question-title" class="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-snug">
+                    Loading question...
+                </h2>
+
+                <!-- Options list -->
+                <div id="options-container" class="space-y-3 mb-8">
+                    <!-- Dynamic choices inserted here -->
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Previous</span>
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2 shadow-md">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS DASHBOARD SCREEN -->
+        <section id="results-screen" class="hidden space-y-8">
+            <!-- Header Summary Card -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                            Assessment Complete
+                        </span>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Your Conative Profile</h1>
+                        <p class="text-slate-500 text-sm mt-1">Here is your Unique 4-digit Conation based on how you naturally like to work.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-4 bg-slate-900 text-white p-4 sm:p-6 rounded-2xl w-full md:w-auto justify-center shadow-lg">
+                        <div class="text-center">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase tracking-wider">Your Conative Score</span>
+                            <span id="mo-digit-display" class="text-3xl sm:text-4xl font-black text-amber-400 tracking-widest font-mono">0-0-0-0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print & Export Bar -->
+                <div class="pt-4 flex flex-wrap justify-between items-center gap-4 no-print">
+                    <div class="flex items-center space-x-2 text-xs text-slate-500">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Your four-part conative profile summary</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Results</span>
+                        </button>
+                        <button onclick="shareResults()" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Copy Summary</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scores Visualizer Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Bar Breakdown Card -->
+                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 space-y-6 card-shadow">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-600"></i>
+                        <span>Action Modes Scale (1 - 10)</span>
+                    </h3>
+
+                    <!-- Data & Details Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+                                <span>Data & Details</span>
+                            </span>
+                            <span id="score-ff" class="font-mono font-bold text-blue-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-ff" class="bg-blue-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ff" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Structure & Systems Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+                                <span>Structure & Systems</span>
+                            </span>
+                            <span id="score-ft" class="font-mono font-bold text-emerald-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-ft" class="bg-emerald-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ft" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Innovation & Risk Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span>
+                                <span>Innovation & Risk</span>
+                            </span>
+                            <span id="score-qs" class="font-mono font-bold text-amber-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-qs" class="bg-amber-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-qs" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Hands-On & Tangibles Bar -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-red-600 inline-block"></span>
+                                <span>Hands-On & Tangibles</span>
+                            </span>
+                            <span id="score-imp" class="font-mono font-bold text-red-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden relative">
+                            <div id="bar-imp" class="bg-red-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-imp" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Radar Chart Card -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center justify-center card-shadow">
+                    <h3 class="text-sm font-bold text-slate-700 mb-2 uppercase tracking-wider text-center">Conative Profile Distribution</h3>
+                    <div class="w-full max-w-[280px] h-[260px] relative">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Section -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-8 card-shadow">
+                <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-4 flex items-center space-x-2">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-amber-500"></i>
+                    <span>How Your Brain Works Best</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="analysis-cards">
+                    <!-- Data & Details Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-blue-700 text-base">Data & Details Analysis</span>
+                            <span id="zone-tag-ff" class="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ff" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Structure & Systems Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-700 text-base">Structure & Systems Analysis</span>
+                            <span id="zone-tag-ft" class="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ft" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Innovation & Risk Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-amber-700 text-base">Innovation & Risk Analysis</span>
+                            <span id="zone-tag-qs" class="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-qs" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Hands-On & Tangibles Detailed Box -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-red-700 text-base">Hands-On & Tangibles Analysis</span>
+                            <span id="zone-tag-imp" class="text-xs px-2.5 py-1 rounded-full bg-red-100 text-red-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-imp" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+                </div>
+
+                <!-- Environment & Stress Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <div class="bg-blue-50/60 rounded-xl p-6 border border-blue-100 space-y-3">
+                        <h4 class="font-bold text-blue-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="sun" class="w-5 h-5 text-blue-600"></i>
+                            <span>Your Ideal Study & Work Space</span>
+                        </h4>
+                        <ul id="ideal-env-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+
+                    <div class="bg-rose-50/60 rounded-xl p-6 border border-rose-100 space-y-3">
+                        <h4 class="font-bold text-rose-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
+                            <span>Things That Might Stress You Out</span>
+                        </h4>
+                        <ul id="stress-triggers-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Actionable Productivity Tips -->
+                <div class="bg-slate-900 text-white rounded-xl p-6 sm:p-8 space-y-4">
+                    <h3 class="text-lg font-bold flex items-center space-x-2 text-amber-400">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                        <span>Smart Study & Project Tips For You</span>
+                    </h3>
+                    <div id="productivity-tips" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-300">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>This Conative Assessment helps you understand how you naturally like to work, study, and solve problems.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Scenario Questions Database (6th to 8th Grade Level)
+        const questions = [
+            {
+                id: 1,
+                title: "Your teacher assigns a big group project, but lets you choose how to start. What is your first instinct?",
+                options: [
+                    { text: "Read all the instructions and search for extra facts online before doing anything else.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Make a task list, schedule who does what, and write out a step-by-step plan.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Brainstorm wild new ideas and jump straight into working without waiting.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Start building a physical model, 3D poster, or hands-on craft display.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 2,
+                title: "When presenting a project to your class, what do you naturally prefer to do?",
+                options: [
+                    { text: "Share lots of specific facts, real statistics, and deep research.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Use clean slides in exact order so everything follows a clear story.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Talk freely without a strict script and keep everyone excited with big ideas.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Bring in real objects, pass around samples, or demonstrate how something works.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 3,
+                title: "Your class project gets completely changed at the last minute! How do you react?",
+                options: [
+                    { text: "Ask lots of questions to make sure you fully understand the new details.", scores: { ff: 2, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Quickly rewrite your plan and schedule to get everything organized again.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "No problem! You love thinking on your feet and trying a totally new approach.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Grab your materials and tools to start building or reshaping the project by hand.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 4,
+                title: "How do you like to keep your desk or study space organized?",
+                options: [
+                    { text: "Full of detailed binders, organized research folders, and thorough notes.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Super neat, with color-coded folders, labeled drawers, and everything in its place.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "A bit messy or open; you prefer to move fast without worrying about strict filing.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Packed with real tools, art supplies, gadgets, craft paper, or hands-on gear.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 5,
+                title: "Your friends want to try a brand new game or activity nobody has done before. You:",
+                options: [
+                    { text: "Want to look up all the rules and watch a quick video to understand it first.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Make sure everyone understands the order of play and follows the setup steps.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Are the first to jump in and start playing immediately to see what happens!", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Focus on setting up the physical game board, pieces, or equipment.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 6,
+                title: "You open a new LEGO kit, complex model, or desk set that needs to be built. You:",
+                options: [
+                    { text: "Read through the instruction book carefully before touching any pieces.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Sort all the pieces into neat piles by color or size step-by-step first.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Skip the instructions and build whatever cool design pops into your head!", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Start snapping pieces together right away to feel how the structure holds up.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 7,
+                title: "What bothers you the most during group work with classmates?",
+                options: [
+                    { text: "When people make guesses without checking if the facts are actually true.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "When the group gets off topic, wastes time, and has no clear plan.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "When people spend way too much time talking instead of taking action.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "When you just talk about abstract ideas instead of making something real.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 8,
+                title: "When taking notes during class, you naturally tend to:",
+                options: [
+                    { text: "Write down as many facts, dates, definitions, and details as you can.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Use bullet points, neat sections, and clean numbered lists.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Jot down sudden cool ideas, quick star points, or fast doodles.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Draw diagrams, maps, physical shapes, or sketches of how things work.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 9,
+                title: "You feel most energized during a school day when you get to:",
+                options: [
+                    { text: "Spend quiet time researching a topic you find super interesting.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Follow a clear schedule where you can check tasks off your to-do list.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Try creative experiments, debate fun topics, or handle quick challenges.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Work in science lab, art class, shop, or build real hands-on projects.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 10,
+                title: "When writing an essay or report, your favorite part is:",
+                options: [
+                    { text: "Finding cool facts and background info to make your essay super detailed.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Organizing your paper with clear headings, an intro, and a conclusion.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Coming up with a unique topic or creative twist that nobody else thought of.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Adding charts, drawings, pictures, or physical poster board elements.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 11,
+                title: "If you get to pick a new app, game, or tool to use, you look for:",
+                options: [
+                    { text: "One that is proven, well-tested, and has great reviews and info.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "One that helps you stay organized, set reminders, and manage your time.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Something totally new, fast-paced, and exciting to figure out on the fly.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } },
+                    { text: "Something where you can build, craft, design, or control physical/3D things.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 12,
+                title: "When solving a tricky puzzle or brain teaser, you naturally:",
+                options: [
+                    { text: "Gather all the clues and analyze the details before making a guess.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Test options systematically one-by-one until you eliminate wrong answers.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Try quick creative guesses to see what happens until you hit the answer.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Use physical puzzle pieces or draw it out so you can see and feel it.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            }
+        ];
+
+        // State Tracking
+        // Zone helper simplified for 6-8 grade level
+        function getZoneInfo(score, mode) {
+            if (score >= 7) {
+                return { zone: "Leader (Drive)", color: "text-emerald-700 bg-emerald-100", type: "Initiator" };
+            } else if (score >= 4) {
+                return { zone: "Adapter (Helper)", color: "text-blue-700 bg-blue-100", type: "Responder" };
+            } else {
+                return { zone: "Keeper (Simplifier)", color: "text-amber-700 bg-amber-100", type: "Stabilizer" };
+            }
+        }
+
+        // Descriptions Generator simplified for 6-8 grade reading level
+        function getFFDescription(score) {
+            if (score >= 7) return "High Data & Details: You love learning all the details! Before starting a task, you like to research, ask questions, and make sure you have all the facts so you don't make mistakes.";
+            if (score >= 4) return "Mid Data & Details: You like having enough facts to understand what to do, but you don't need to read an entire encyclopedia before getting started.";
+            return "Low Data & Details: You like to keep things simple! You prefer quick summaries, big ideas, and main points rather than getting stuck reading endless details.";
+        }
+
+        function getFTDescription(score) {
+            if (score >= 7) return "High Structure & Systems: You are an awesome organizer! You love having a step-by-step plan, checklists, clear schedules, and keeping your work neat and tidy.";
+            if (score >= 4) return "Mid Structure & Systems: You can follow a plan when needed, but you are also fine if things change a little along the way.";
+            return "Low Structure & Systems: You are super flexible! You like to switch between tasks quickly, try shortcuts, and work best when you aren't forced into strict, boring routines.";
+        }
+
+        function getQSDescription(score) {
+            if (score >= 7) return "High Innovation & Risk: You are a creative risk-taker! You love trying new ideas, inventing fun ways to solve problems, and jump right into challenges without fear.";
+            if (score >= 4) return "Mid Innovation & Risk: You like a good balance. You enjoy fun new ideas, but you also make sure things stay safe and sensible.";
+            return "Low Innovation & Risk: You are a great anchor! You help keep things calm, stick to what works best, and protect your team from making crazy, untested mistakes.";
+        }
+
+        function getIMPDescription(score) {
+            if (score >= 7) return "High Hands-On & Tangibles: You are a natural builder! You learn best by touching, crafting, building 3D models, and using real tools and objects.";
+            if (score >= 4) return "Mid Hands-On & Tangibles: You are comfortable working on physical crafts or on a computer screen depending on what the project calls for.";
+            return "Low Hands-On & Tangibles: You are an abstract thinker! You prefer working with ideas, digital apps, or writing on screen without needing physical materials.";
+        }
+
+        function populateEnvironmentAndStress(scores) {
+            const envList = document.getElementById('ideal-env-list');
+            const stressList = document.getElementById('stress-triggers-list');
+            envList.innerHTML = '';
+            stressList.innerHTML = '';
+
+            const envs = [];
+            const stresses = [];
+
+            // Data & Details
+            if (scores.ff >= 7) {
+                envs.push("Places with access to books, search tools, and plenty of time to research.");
+                stresses.push("Being forced to make big choices fast without any time to look up the facts.");
+            } else if (scores.ff <= 3) {
+                envs.push("Short, clear directions with quick bullet points.");
+                stresses.push("Being handed a giant stack of boring papers full of small text to read.");
+            }
+
+            // Structure & Systems
+            if (scores.ft >= 7) {
+                envs.push("A clean study desk with clear deadlines, checklists, and daily plans.");
+                stresses.push("Working in messy spaces where people keep changing the rules every minute.");
+            } else if (scores.ft <= 3) {
+                envs.push("Flexible projects where you can choose your own path and multitask.");
+                stresses.push("Being forced to follow strict step-by-step rules that slow you down.");
+            }
+
+            // Innovation & Risk
+            if (scores.qs >= 7) {
+                envs.push("Fun, fast-paced projects where you can experiment and try bold new ideas.");
+                stresses.push("Having to do the exact same boring routine over and over again.");
+            } else if (scores.qs <= 3) {
+                envs.push("Calm, steady environments where you know exactly what to expect.");
+                stresses.push("Sudden unexpected surprises or people making reckless choices.");
+            }
+
+            // Hands-On & Tangibles
+            if (scores.imp >= 7) {
+                envs.push("Workshops, art rooms, or spaces where you can build real physical things.");
+                stresses.push("Sitting still for hours just listening to lectures without doing anything with your hands.");
+            } else if (scores.imp <= 3) {
+                envs.push("Digital tools, computers, and quiet spaces for thinking.");
+                stresses.push("Being forced to build heavy physical models when you'd rather use an app.");
+            }
+
+            envs.forEach(item => envList.innerHTML += `<li>${item}</li>`);
+            stresses.forEach(item => stressList.innerHTML += `<li>${item}</li>`);
+        }
+
+        function populateProductivityTips(scores) {
+            const container = document.getElementById('productivity-tips');
+            container.innerHTML = '';
+
+            const tips = [];
+
+            if (scores.ff >= 7) tips.push("<strong>Data & Details Tip:</strong> Set a timer for research so you don't spend all your time gathering facts without finishing the work!");
+            if (scores.ff <= 3) tips.push("<strong>Data & Details Tip:</strong> Team up with someone who loves details when you need to double-check important project facts.");
+
+            if (scores.ft >= 7) tips.push("<strong>Structure & Systems Tip:</strong> Use colorful daily planners or checklist apps to channel your organizational skills.");
+            if (scores.ft <= 3) tips.push("<strong>Structure & Systems Tip:</strong> Pick 2 main goals each day so you stay focused while keeping your freedom.");
+
+            if (scores.qs >= 7) tips.push("<strong>Innovation & Risk Tip:</strong> Write your wild ideas in an 'idea journal' first before jumping into action.");
+            if (scores.qs <= 3) tips.push("<strong>Innovation & Risk Tip:</strong> When trying new things, break them into small safe steps so you feel confident.");
+
+            if (scores.imp >= 7) tips.push("<strong>Hands-On & Tangibles Tip:</strong> Draw diagrams, use sticky notes, or build quick paper sketches to organize your ideas.");
+            if (scores.imp <= 3) tips.push("<strong>Hands-On & Tangibles Tip:</strong> Use mind-mapping apps and digital tools to visualize your school projects.");
+
+            tips.forEach(t => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-slate-800/80 rounded-lg border border-slate-700/60";
+                div.innerHTML = t;
+                container.appendChild(div);
+            });
+        }
+
+        // Radar Chart Renderer
+        function renderChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Data & Details', 'Structure & Systems', 'Innovation & Risk', 'Hands-On & Tangibles'],
+                    datasets: [{
+                        label: 'Action Mode Intensity',
+                        data: [scores.ff, scores.ft, scores.qs, scores.imp],
+                        backgroundColor: 'rgba(59, 130, 246, 0.25)',
+                        borderColor: '#2563eb',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: ['#2563eb', '#059669', '#d97706', '#dc2626'],
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Sharing Utilities
+        function shareResults() {
+            const mo = document.getElementById('mo-digit-display').innerText;
+            const text = `My Conative Score is ${mo}! Take the Conative Assessment to discover your natural action instincts.`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Profile summary copied to clipboard!');
+                }).catch(() => {
+                    document.execCommand('copy');
+                });
+            } else {
+                document.execCommand('copy');
+            }
+        }
+    </script>
+</body>
+</html>
