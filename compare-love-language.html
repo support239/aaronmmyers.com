@@ -125,45 +125,19 @@
 
         <!-- Synergy Results Section -->
         <section id="results-section" class="space-y-8">
-            <!-- Header Summary -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-6">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-rose-600 bg-rose-50 px-3 py-1 rounded-full">
-                            Dynamic Synergy Analysis
-                        </span>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">Group Connection Dashboard</h2>
-                        <p class="text-slate-500 text-sm mt-1">Comparing scores across all 5 Love Languages.</p>
-                    </div>
 
-                    <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center space-x-3 shadow-lg">
-                        <i data-lucide="zap" class="w-8 h-8 text-amber-400"></i>
-                        <div>
-                            <span class="text-xs text-slate-400 font-semibold block uppercase">Team Connection Style</span>
-                            <span id="team-superpower-badge" class="font-bold text-amber-300 text-base">Calculating...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Print Bar -->
-                <div class="pt-4 flex justify-between items-center no-print">
-                    <span class="text-xs text-slate-500 flex items-center space-x-1">
-                        <i data-lucide="info" class="w-4 h-4 text-slate-400"></i>
-                        <span>Updates automatically as scores change</span>
-                    </span>
-                    <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-1.5">
+            <!-- Visual Overlay Radar Chart -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center relative">
+                <div class="w-full flex justify-between items-center mb-4 no-print">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="pie-chart" class="w-5 h-5 text-rose-600"></i>
+                        <span>Overlapping Love Languages Profile</span>
+                    </h3>
+                    <button onclick="window.print()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-1.5">
                         <i data-lucide="printer" class="w-4 h-4"></i>
                         <span>Print Report</span>
                     </button>
                 </div>
-            </div>
-
-            <!-- Visual Overlay Radar Chart -->
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center">
-                <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center space-x-2">
-                    <i data-lucide="pie-chart" class="w-5 h-5 text-rose-600"></i>
-                    <span>Overlapping Love Languages Profile</span>
-                </h3>
                 <p class="text-xs text-slate-500 mb-6 text-center">See where everyone's scores align and where distinct peaks emerge.</p>
                 
                 <div class="w-full max-w-lg h-[340px] relative">
@@ -174,16 +148,16 @@
             <!-- Detailed Synergy Breakdown Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <!-- Super-Connector Strengths -->
+                <!-- Super-Connector Ideas -->
                 <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-6 space-y-4">
                     <h3 class="text-base font-bold text-emerald-950 flex items-center space-x-2">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
-                        <span>Super-Connector Alignments</span>
+                        <i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i>
+                        <span>Super-Connector Ideas</span>
                     </h3>
-                    <p class="text-xs text-emerald-800">Where group members share high scores (7+) and naturally fulfill each other's love languages:</p>
-                    <ul id="super-connectors-list" class="space-y-2 text-xs sm:text-sm text-emerald-900 list-disc pl-5">
+                    <p class="text-xs text-emerald-800">3–4 specific ideas to meet each person's highest love language:</p>
+                    <div id="super-connector-ideas-list" class="space-y-4 text-xs sm:text-sm text-emerald-950">
                         <!-- Injected dynamically -->
-                    </ul>
+                    </div>
                 </div>
 
                 <!-- Clashes & Unmet Preferences -->
@@ -198,25 +172,13 @@
                     </ul>
                 </div>
 
-                <!-- Group Blind Spots -->
-                <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-6 space-y-4">
-                    <h3 class="text-base font-bold text-amber-950 flex items-center space-x-2">
-                        <i data-lucide="eye-off" class="w-5 h-5 text-amber-600"></i>
-                        <span>Shared Group Blind Spots</span>
-                    </h3>
-                    <p class="text-xs text-amber-800">Languages where EVERYONE in the group scored low (1–3):</p>
-                    <ul id="blindspots-list" class="space-y-2 text-xs sm:text-sm text-amber-900 list-disc pl-5">
-                        <!-- Injected dynamically -->
-                    </ul>
-                </div>
-
                 <!-- Actionable Strategies -->
-                <div class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-6 space-y-4">
+                <div class="md:col-span-2 bg-indigo-50/70 border border-indigo-200 rounded-2xl p-6 space-y-4">
                     <h3 class="text-base font-bold text-indigo-950 flex items-center space-x-2">
                         <i data-lucide="heart-handshake" class="w-5 h-5 text-indigo-600"></i>
                         <span>How To Make Each Person Feel Valued</span>
                     </h3>
-                    <div id="action-tips-list" class="space-y-3 text-xs sm:text-sm text-indigo-950">
+                    <div id="action-tips-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-indigo-950">
                         <!-- Injected dynamically -->
                     </div>
                 </div>
@@ -554,64 +516,90 @@
         function updateAnalysis() {
             renderRadarChart();
 
-            const connectorsList = document.getElementById('super-connectors-list');
+            const connectorIdeasContainer = document.getElementById('super-connector-ideas-list');
             const clashesList = document.getElementById('clashes-list');
-            const blindspotsList = document.getElementById('blindspots-list');
             const tipsContainer = document.getElementById('action-tips-list');
 
-            connectorsList.innerHTML = '';
+            connectorIdeasContainer.innerHTML = '';
             clashesList.innerHTML = '';
-            blindspotsList.innerHTML = '';
             tipsContainer.innerHTML = '';
 
             const langs = [
                 { 
                     key: 'words', 
                     label: 'Words of Affirmation', 
-                    connectorDesc: 'feeling appreciated, noticed, and recognized out loud',
+                    ideas: [
+                        "Leave a sticky note with a specific compliment on their desk or locker.",
+                        "Text them a surprise message thanking them for being a great friend.",
+                        "Praise their effort or smart idea out loud in front of others.",
+                        "Send an encouraging voice note before a big test or presentation."
+                    ],
                     unmetFeelings: 'feels unappreciated, invisible, criticized, or doubted when their hard work goes unnoticed'
                 },
                 { 
                     key: 'time', 
                     label: 'Quality Time', 
-                    connectorDesc: 'undivided attention and full presence',
+                    ideas: [
+                        "Plan a one-on-one hangout with phones completely put away.",
+                        "Walk together between classes or during lunch without distractions.",
+                        "Cook or bake something together while talking.",
+                        "Play a two-player board game or video game together."
+                    ],
                     unmetFeelings: 'feels lonely, ignored, or secondary to phones, screens, and outside distractions'
                 },
                 { 
                     key: 'gifts', 
                     label: 'Receiving Gifts', 
-                    connectorDesc: 'thoughtful tokens and visual symbols of care',
+                    ideas: [
+                        "Bring them their favorite snack or drink unexpectedly.",
+                        "Make a hand-drawn doodle, card, or craft just because.",
+                        "Pick up a cool sticker or souvenir when you're out.",
+                        "Share a sweet treat or piece of candy during study time."
+                    ],
                     unmetFeelings: 'feels forgotten, unthought-of, or like an afterthought during special moments or celebrations'
                 },
                 { 
                     key: 'service', 
                     label: 'Acts of Service', 
-                    connectorDesc: 'helpful hands and thoughtful actions',
+                    ideas: [
+                        "Help them clean up their workspace or pack their backpack without being asked.",
+                        "Take on half of their shared chores or group project tasks.",
+                        "Sharpen their pencils or set up their materials ahead of time.",
+                        "Offer to carry heavy books or gear for them."
+                    ],
                     unmetFeelings: 'feels overwhelmed, uncared for, or exhausted carrying all the load alone without help'
                 },
                 { 
                     key: 'touch', 
                     label: 'Physical Touch', 
-                    connectorDesc: 'friendly high-fives, hugs, and close presence',
+                    ideas: [
+                        "Greet them with a warm hug or an enthusiastic high-five.",
+                        "Sit right next to them on the couch or at lunch.",
+                        "Give a friendly pat on the back or shoulder when they do well.",
+                        "Do a celebratory fist bump after finishing a hard task together."
+                    ],
                     unmetFeelings: 'feels emotionally distant, isolated, or disconnected from the group or relationship'
                 }
             ];
 
-            let foundConnector = false;
-            let foundClash = false;
+            // Render Super-Connector Ideas for each person based on their highest love language
+            people.forEach(p => {
+                const topLangKey = Object.keys(p.scores).reduce((a, b) => p.scores[a] > p.scores[b] ? a : b);
+                const topLang = langs.find(l => l.key === topLangKey);
 
-            // Check Super-Connectors
-            langs.forEach(l => {
-                const highScorers = people.filter(p => p.scores[l.key] >= 7);
-                if (highScorers.length >= 2) {
-                    foundConnector = true;
-                    const names = highScorers.map(p => p.name).join(" & ");
-                    connectorsList.innerHTML += `<li><strong>${names}</strong> both score high in <strong>${l.label}</strong>! They naturally connect through ${l.connectorDesc}.</li>`;
-                }
+                const div = document.createElement('div');
+                div.className = "bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm space-y-2";
+                
+                let ideasHtml = topLang.ideas.map(idea => `<li class="text-xs text-emerald-900">${idea}</li>`).join('');
+                
+                div.innerHTML = `
+                    <div class="font-bold text-slate-900 text-xs sm:text-sm"><strong>${p.name}</strong> (Top: ${topLang.label} - ${p.scores[topLangKey]}/10):</div>
+                    <ul class="list-disc pl-4 space-y-1">${ideasHtml}</ul>
+                `;
+                connectorIdeasContainer.appendChild(div);
             });
-            if (!foundConnector) {
-                connectorsList.innerHTML = `<li>No shared high scores (7+) across the team yet. Everyone brings a different primary love language!</li>`;
-            }
+
+            let foundClash = false;
 
             // Check Clashes & Emotional Impact
             langs.forEach(l => {
@@ -626,19 +614,6 @@
             });
             if (!foundClash) {
                 clashesList.innerHTML = `<li>No major clashes! Nobody has opposite high (7+) vs low (1–3) gaps in the same love language.</li>`;
-            }
-
-            // Check Blind Spots
-            let foundBlind = false;
-            langs.forEach(l => {
-                const allLow = people.every(p => p.scores[l.key] <= 3);
-                if (allLow) {
-                    foundBlind = true;
-                    blindspotsList.innerHTML += `<li><strong>${l.label}:</strong> Everyone in the group scored low here (1–3). Nobody in the group naturally gives support through ${l.connectorDesc}, so watch out for missing this area!</li>`;
-                }
-            });
-            if (!foundBlind) {
-                blindspotsList.innerHTML = `<li>Great coverage! At least one person in the group scores above a 3 in every love language.</li>`;
             }
 
             // Individual Tips
@@ -661,16 +636,6 @@
                 `;
                 tipsContainer.appendChild(div);
             });
-
-            // Badge Update
-            const badge = document.getElementById('team-superpower-badge');
-            if (foundConnector) {
-                badge.innerText = "Highly Harmonious";
-            } else if (foundClash) {
-                badge.innerText = "Diverse & Complementary";
-            } else {
-                badge.innerText = "Balanced Connection";
-            }
         }
 
         function renderRadarChart() {
