@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conative Pair Synergy Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        p1: { DEFAULT: '#2563eb', light: '#dbeafe', border: '#93c5fd' }, // Blue
+                        p2: { DEFAULT: '#d97706', light: '#fef3c7', border: '#fde68a' }, // Amber
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            .card-shadow { box-shadow: none !important; border: 1px solid #e2e8f0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i data-lucide="users" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Conative Pair Synergy Analyzer</span>
+                    <span class="text-xs text-slate-400 font-medium">Compare Workstyles & Team Strengths</span>
+                </div>
+            </div>
+            <button onclick="resetForm()" class="text-xs sm:text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-800 transition">
+                Reset Scores
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+        <!-- Intro Banner -->
+        <section class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden no-print">
+            <div class="p-6 sm:p-8 gradient-header text-white text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full text-xs text-indigo-300 font-medium">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>Team Dynamics & Collaboration</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">How Well Will You Two Work Together?</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        Enter two people's 4-digit Conative Scores below to see where your natural habits overlap, where your superpower strengths are, and what might cause friction during team projects!
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="w-full sm:w-auto flex-shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 text-left space-y-2">
+                    <span class="text-xs font-bold uppercase text-slate-400 block tracking-wider">Try Quick Example Pairs</span>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button onclick="loadPreset('visionary_builder')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            ⚡ Visionary & Builder
+                        </button>
+                        <button onclick="loadPreset('double_innovator')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            🔥 Double Innovators
+                        </button>
+                        <button onclick="loadPreset('detail_planner')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            📋 Researcher & Organizer
+                        </button>
+                        <button onclick="loadPreset('opposite_attract')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-indigo-600 rounded text-slate-200 transition font-medium text-left">
+                            ☯️ Complete Opposites
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INPUT FORM CARD -->
+        <section class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 no-print">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center space-x-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
+                <span>Enter Scores (Scale 1 to 10)</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Person 1 Inputs -->
+                <div class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100 space-y-4">
+                    <div class="flex items-center space-x-2 border-b border-blue-200 pb-3">
+                        <div class="w-4 h-4 rounded-full bg-blue-600"></div>
+                        <label for="p1-name" class="font-bold text-blue-900 text-sm uppercase tracking-wide">Person 1</label>
+                        <input type="text" id="p1-name" value="Alex" class="ml-auto font-bold text-slate-800 bg-white border border-blue-200 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-32 sm:w-40" placeholder="Name">
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Data & Details</span>
+                                <span id="p1-ff-val" class="text-blue-600 font-bold">8</span>
+                            </div>
+                            <input type="range" id="p1-ff" min="1" max="10" value="8" oninput="updatePairAnalysis()" class="w-full accent-blue-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Structure & Systems</span>
+                                <span id="p1-ft-val" class="text-blue-600 font-bold">7</span>
+                            </div>
+                            <input type="range" id="p1-ft" min="1" max="10" value="7" oninput="updatePairAnalysis()" class="w-full accent-blue-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Innovation & Risk</span>
+                                <span id="p1-qs-val" class="text-blue-600 font-bold">3</span>
+                            </div>
+                            <input type="range" id="p1-qs" min="1" max="10" value="3" oninput="updatePairAnalysis()" class="w-full accent-blue-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Hands-On & Tangibles</span>
+                                <span id="p1-imp-val" class="text-blue-600 font-bold">4</span>
+                            </div>
+                            <input type="range" id="p1-imp" min="1" max="10" value="4" oninput="updatePairAnalysis()" class="w-full accent-blue-600 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Person 2 Inputs -->
+                <div class="bg-amber-50/50 p-6 rounded-2xl border border-amber-100 space-y-4">
+                    <div class="flex items-center space-x-2 border-b border-amber-200 pb-3">
+                        <div class="w-4 h-4 rounded-full bg-amber-600"></div>
+                        <label for="p2-name" class="font-bold text-amber-900 text-sm uppercase tracking-wide">Person 2</label>
+                        <input type="text" id="p2-name" value="Jordan" class="ml-auto font-bold text-slate-800 bg-white border border-amber-200 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 w-32 sm:w-40" placeholder="Name">
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Data & Details</span>
+                                <span id="p2-ff-val" class="text-amber-600 font-bold">3</span>
+                            </div>
+                            <input type="range" id="p2-ff" min="1" max="10" value="3" oninput="updatePairAnalysis()" class="w-full accent-amber-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Structure & Systems</span>
+                                <span id="p2-ft-val" class="text-amber-600 font-bold">2</span>
+                            </div>
+                            <input type="range" id="p2-ft" min="1" max="10" value="2" oninput="updatePairAnalysis()" class="w-full accent-amber-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Innovation & Risk</span>
+                                <span id="p2-qs-val" class="text-amber-600 font-bold">9</span>
+                            </div>
+                            <input type="range" id="p2-qs" min="1" max="10" value="9" oninput="updatePairAnalysis()" class="w-full accent-amber-600 cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                <span>Hands-On & Tangibles</span>
+                                <span id="p2-imp-val" class="text-amber-600 font-bold">8</span>
+                            </div>
+                            <input type="range" id="p2-imp" min="1" max="10" value="8" oninput="updatePairAnalysis()" class="w-full accent-amber-600 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SYNERGY RESULTS SECTION -->
+        <div id="results-area" class="space-y-8">
+            
+            <!-- Summary Header & Radar Chart -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                            <span>Team Power Badge</span>
+                        </div>
+                        <h2 id="team-power-title" class="text-3xl font-extrabold text-slate-900">Calculated Team Dynamic...</h2>
+                        <p id="team-power-sub" class="text-slate-500 text-sm mt-1">Analyzing pair strengths...</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3 no-print">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Analysis</span>
+                        </button>
+                        <button onclick="sharePairResults()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Copy Summary</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Radar Chart + Bar Comparison -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-6">
+                    <!-- Radar Chart -->
+                    <div class="lg:col-span-6 flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Visual Overlap Comparison</span>
+                        <div class="w-full max-w-[320px] h-[300px] relative">
+                            <canvas id="pairRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Side by Side Bar Display -->
+                    <div class="lg:col-span-6 space-y-4">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block">Scores Side-By-Side</span>
+                        
+                        <!-- Data & Details -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1.5">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-800">Data & Details</span>
+                                <span class="text-slate-500"><span class="text-blue-600" id="stat-p1-ff">8</span> vs <span class="text-amber-600" id="stat-p2-ff">3</span></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 h-2.5">
+                                <div class="bg-blue-100 rounded-full overflow-hidden">
+                                    <div id="bar-p1-ff" class="bg-blue-600 h-full transition-all" style="width: 80%;"></div>
+                                </div>
+                                <div class="bg-amber-100 rounded-full overflow-hidden">
+                                    <div id="bar-p2-ff" class="bg-amber-600 h-full transition-all" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Structure & Systems -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1.5">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-800">Structure & Systems</span>
+                                <span class="text-slate-500"><span class="text-blue-600" id="stat-p1-ft">7</span> vs <span class="text-amber-600" id="stat-p2-ft">2</span></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 h-2.5">
+                                <div class="bg-blue-100 rounded-full overflow-hidden">
+                                    <div id="bar-p1-ft" class="bg-blue-600 h-full transition-all" style="width: 70%;"></div>
+                                </div>
+                                <div class="bg-amber-100 rounded-full overflow-hidden">
+                                    <div id="bar-p2-ft" class="bg-amber-600 h-full transition-all" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Innovation & Risk -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1.5">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-800">Innovation & Risk</span>
+                                <span class="text-slate-500"><span class="text-blue-600" id="stat-p1-qs">3</span> vs <span class="text-amber-600" id="stat-p2-qs">9</span></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 h-2.5">
+                                <div class="bg-blue-100 rounded-full overflow-hidden">
+                                    <div id="bar-p1-qs" class="bg-blue-600 h-full transition-all" style="width: 30%;"></div>
+                                </div>
+                                <div class="bg-amber-100 rounded-full overflow-hidden">
+                                    <div id="bar-p2-qs" class="bg-amber-600 h-full transition-all" style="width: 90%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hands-On & Tangibles -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1.5">
+                            <div class="flex justify-between text-xs font-bold">
+                                <span class="text-slate-800">Hands-On & Tangibles</span>
+                                <span class="text-slate-500"><span class="text-blue-600" id="stat-p1-imp">4</span> vs <span class="text-amber-600" id="stat-p2-imp">8</span></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 h-2.5">
+                                <div class="bg-blue-100 rounded-full overflow-hidden">
+                                    <div id="bar-p1-imp" class="bg-blue-600 h-full transition-all" style="width: 40%;"></div>
+                                </div>
+                                <div class="bg-amber-100 rounded-full overflow-hidden">
+                                    <div id="bar-p2-imp" class="bg-amber-600 h-full transition-all" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAILED BREAKDOWN GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Core Strengths Together -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-emerald-600">
+                        <div class="p-2 bg-emerald-50 rounded-lg">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Core Strengths & Superpowers Together</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Where your combined scores align or complement each other to create an unstoppable team.</p>
+                    <ul id="list-strengths" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Shared Blind Spots -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-amber-600">
+                        <div class="p-2 bg-amber-50 rounded-lg">
+                            <i data-lucide="eye-off" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Shared Blind Spots & Warning Flags</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Things both of you might forget or avoid because you both score low or high in the same area.</p>
+                    <ul id="list-blindspots" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Friction Points & What Might Annoy Each Other -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-rose-600">
+                        <div class="p-2 bg-rose-50 rounded-lg">
+                            <i data-lucide="flame" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">Potential Friction Points</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Where your big score differences might cause misunderstandings during stressful moments.</p>
+                    <ul id="list-friction" class="space-y-3 text-xs sm:text-sm text-slate-700">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+                <!-- Actionable Teamwork Tips -->
+                <div class="bg-slate-900 text-white rounded-2xl shadow-xl border border-slate-800 p-6 sm:p-8 card-shadow space-y-4">
+                    <div class="flex items-center space-x-3 text-indigo-400">
+                        <div class="p-2 bg-indigo-950 rounded-lg border border-indigo-800">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-lg">How You Can Work Best Together</h3>
+                    </div>
+                    <p class="text-xs text-slate-400">Practical tips for dividing tasks on class projects, team assignments, or gaming.</p>
+                    <ul id="list-tips" class="space-y-3 text-xs sm:text-sm text-slate-300">
+                        <!-- Dynamic list -->
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Generic Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>Conative Pair Synergy Analyzer • A tool to help friends and teammates collaborate better based on natural work instincts.</p>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        let pairChartInstance = null;
+
+        // Preset Scenarios
+        const PRESETS = {
+            visionary_builder: {
+                p1Name: "Sam", p1: [8, 7, 3, 3], // Researcher & Planner
+                p2Name: "Riley", p2: [3, 2, 9, 8] // Innovator & Builder
+            },
+            double_innovator: {
+                p1Name: "Taylor", p1: [3, 2, 9, 4],
+                p2Name: "Morgan", p2: [2, 3, 8, 5]
+            },
+            detail_planner: {
+                p1Name: "Chris", p1: [9, 8, 2, 3],
+                p2Name: "Jordan", p2: [8, 9, 3, 2]
+            },
+            opposite_attract: {
+                p1Name: "Alex", p1: [9, 9, 2, 2],
+                p2Name: "Casey", p2: [2, 2, 9, 9]
+            }
+        };
+
+        function loadPreset(key) {
+            const data = PRESETS[key];
+            if (!data) return;
+
+            document.getElementById('p1-name').value = data.p1Name;
+            document.getElementById('p2-name').value = data.p2Name;
+
+            document.getElementById('p1-ff').value = data.p1[0];
+            document.getElementById('p1-ft').value = data.p1[1];
+            document.getElementById('p1-qs').value = data.p1[2];
+            document.getElementById('p1-imp').value = data.p1[3];
+
+            document.getElementById('p2-ff').value = data.p2[0];
+            document.getElementById('p2-ft').value = data.p2[1];
+            document.getElementById('p2-qs').value = data.p2[2];
+            document.getElementById('p2-imp').value = data.p2[3];
+
+            updatePairAnalysis();
+        }
+
+        function resetForm() {
+            document.getElementById('p1-name').value = "Alex";
+            document.getElementById('p2-name').value = "Jordan";
+            document.getElementById('p1-ff').value = 5;
+            document.getElementById('p1-ft').value = 5;
+            document.getElementById('p1-qs').value = 5;
+            document.getElementById('p1-imp').value = 5;
+            document.getElementById('p2-ff').value = 5;
+            document.getElementById('p2-ft').value = 5;
+            document.getElementById('p2-qs').value = 5;
+            document.getElementById('p2-imp').value = 5;
+            updatePairAnalysis();
+        }
+
+        function getInputs() {
+            return {
+                p1Name: document.getElementById('p1-name').value || "Person 1",
+                p2Name: document.getElementById('p2-name').value || "Person 2",
+                p1: [
+                    parseInt(document.getElementById('p1-ff').value),
+                    parseInt(document.getElementById('p1-ft').value),
+                    parseInt(document.getElementById('p1-qs').value),
+                    parseInt(document.getElementById('p1-imp').value)
+                ],
+                p2: [
+                    parseInt(document.getElementById('p2-ff').value),
+                    parseInt(document.getElementById('p2-ft').value),
+                    parseInt(document.getElementById('p2-qs').value),
+                    parseInt(document.getElementById('p2-imp').value)
+                ]
+            };
+        }
+
+        function updatePairAnalysis() {
+            const data = getInputs();
+
+            // Sync visual numeric labels
+            document.getElementById('p1-ff-val').innerText = data.p1[0];
+            document.getElementById('p1-ft-val').innerText = data.p1[1];
+            document.getElementById('p1-qs-val').innerText = data.p1[2];
+            document.getElementById('p1-imp-val').innerText = data.p1[3];
+
+            document.getElementById('p2-ff-val').innerText = data.p2[0];
+            document.getElementById('p2-ft-val').innerText = data.p2[1];
+            document.getElementById('p2-qs-val').innerText = data.p2[2];
+            document.getElementById('p2-imp-val').innerText = data.p2[3];
+
+            // Sync side-by-side bar stats
+            document.getElementById('stat-p1-ff').innerText = data.p1[0];
+            document.getElementById('stat-p2-ff').innerText = data.p2[0];
+            document.getElementById('bar-p1-ff').style.width = (data.p1[0] * 10) + '%';
+            document.getElementById('bar-p2-ff').style.width = (data.p2[0] * 10) + '%';
+
+            document.getElementById('stat-p1-ft').innerText = data.p1[1];
+            document.getElementById('stat-p2-ft').innerText = data.p2[1];
+            document.getElementById('bar-p1-ft').style.width = (data.p1[1] * 10) + '%';
+            document.getElementById('bar-p2-ft').style.width = (data.p2[1] * 10) + '%';
+
+            document.getElementById('stat-p1-qs').innerText = data.p1[2];
+            document.getElementById('stat-p2-qs').innerText = data.p2[2];
+            document.getElementById('bar-p1-qs').style.width = (data.p1[2] * 10) + '%';
+            document.getElementById('bar-p2-qs').style.width = (data.p2[2] * 10) + '%';
+
+            document.getElementById('stat-p1-imp').innerText = data.p1[3];
+            document.getElementById('stat-p2-imp').innerText = data.p2[3];
+            document.getElementById('bar-p1-imp').style.width = (data.p1[3] * 10) + '%';
+            document.getElementById('bar-p2-imp').style.width = (data.p2[3] * 10) + '%';
+
+            // Generate Radar Chart
+            renderRadar(data);
+
+            // Calculate Synergy Analysis Content
+            analyzeSynergy(data);
+
+            // Refresh icons
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderRadar(data) {
+            const ctx = document.getElementById('pairRadarChart').getContext('2d');
+            
+            if (pairChartInstance) {
+                pairChartInstance.destroy();
+            }
+
+            pairChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Data & Details', 'Structure & Systems', 'Innovation & Risk', 'Hands-On & Tangibles'],
+                    datasets: [
+                        {
+                            label: data.p1Name,
+                            data: data.p1,
+                            backgroundColor: 'rgba(37, 99, 235, 0.25)',
+                            borderColor: '#2563eb',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#2563eb',
+                            pointRadius: 4
+                        },
+                        {
+                            label: data.p2Name,
+                            data: data.p2,
+                            backgroundColor: 'rgba(217, 119, 6, 0.25)',
+                            borderColor: '#d97706',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#d97706',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function analyzeSynergy(data) {
+            const p1 = data.p1;
+            const p2 = data.p2;
+            const n1 = data.p1Name;
+            const n2 = data.p2Name;
+
+            const strengths = [];
+            const blindspots = [];
+            const friction = [];
+            const tips = [];
+
+            // 1. Calculate Team Power Title
+            let teamTitle = "Balanced Collaborators";
+            let teamSub = `${n1} and ${n2} bring a well-rounded mix of instincts that cover a wide range of tasks.`;
+
+            const p1HighQS = p1[2] >= 7;
+            const p2HighQS = p2[2] >= 7;
+            const p1HighFT = p1[1] >= 7;
+            const p2HighFT = p2[1] >= 7;
+            const p1HighFF = p1[0] >= 7;
+            const p2HighFF = p2[0] >= 7;
+            const p1HighIMP = p1[3] >= 7;
+            const p2HighIMP = p2[3] >= 7;
+
+            if ((p1HighQS && p2HighIMP) || (p2HighQS && p1HighIMP)) {
+                teamTitle = "The Visionary & Builder Duo 🚀🔨";
+                teamSub = `One of you generates bold new ideas, while the other loves turning those ideas into real physical results!`;
+            } else if (p1HighQS && p2HighQS) {
+                teamTitle = "Double Innovation Powerhouse 🔥";
+                teamSub = `Both of you are bursting with fast, creative energy and love taking risks!`;
+            } else if ((p1HighFF || p1HighFT) && (p2HighFF || p2HighFT)) {
+                teamTitle = "The Detail & Precision Squad 📋🔍";
+                teamSub = `You two are super organized, thorough, and rarely miss a single deadline or key fact.`;
+            } else if ((p1HighQS && (p2HighFF || p2HighFT)) || (p2HighQS && (p1HighFF || p1HighFT))) {
+                teamTitle = "The Idea & Execution Engine 💡⚙️";
+                teamSub = `A classic synergy! One person sparks original ideas, and the other makes sure there is a solid plan to complete them safely.`;
+            }
+
+            document.getElementById('team-power-title').innerText = teamTitle;
+            document.getElementById('team-power-sub').innerText = teamSub;
+
+            // 2. Strengths Analysis (Complementary or High Scores)
+            if (p1HighFF || p2HighFF) {
+                const who = p1HighFF && p2HighFF ? "Both of you" : (p1HighFF ? n1 : n2);
+                strengths.push(`<li><strong>Deep Research Capability:</strong> ${who} will make sure your project is backed up with accurate facts and great info.</li>`);
+            }
+            if (p1HighFT || p2HighFT) {
+                const who = p1HighFT && p2HighFT ? "Both of you" : (p1HighFT ? n1 : n2);
+                strengths.push(`<li><strong>Organized Execution:</strong> ${who} brings clear plans and checklists so the team stays on schedule.</li>`);
+            }
+            if (p1HighQS || p2HighQS) {
+                const who = p1HighQS && p2HighQS ? "Both of you" : (p1HighQS ? n1 : n2);
+                strengths.push(`<li><strong>Creative Problem Solving:</strong> ${who} brings quick, out-of-the-box ideas whenever your team gets stuck.</li>`);
+            }
+            if (p1HighIMP || p2HighIMP) {
+                const who = p1HighIMP && p2HighIMP ? "Both of you" : (p1HighIMP ? n1 : n2);
+                strengths.push(`<li><strong>Hands-On Crafting:</strong> ${who} excels at building 3D models, posters, or physical prototypes.</li>`);
+            }
+
+            // 3. Blind Spots Analysis (Where both are Low or both are High)
+            // Both Low Data & Details
+            if (p1[0] <= 3 && p2[0] <= 3) {
+                blindspots.push(`<li>⚠️ <strong>Low Fact Checking:</strong> Neither of you naturally likes searching through long documents. Make sure to double-check project instructions so you don't miss key rules!</li>`);
+            }
+            // Both Low Structure
+            if (p1[1] <= 3 && p2[1] <= 3) {
+                blindspots.push(`<li>⚠️ <strong>Lack of Schedules:</strong> Both of you prefer flexibility over checklists. You might leave work until the last night unless you set a timer!</li>`);
+            }
+            // Both High Quick Start
+            if (p1[2] >= 7 && p2[2] >= 7) {
+                blindspots.push(`<li>⚠️ <strong>Idea Overload:</strong> You both love starting new ideas! Watch out for changing your project topic mid-way through and never finishing the first draft.</li>`);
+            }
+            // Both Low Implementer
+            if (p1[3] <= 3 && p2[3] <= 3) {
+                blindspots.push(`<li>⚠️ <strong>Abstract Focus:</strong> Both of you prefer thinking or digital work over physical building. Keep poster boards or models simple so you don't get frustrated with tools.</li>`);
+            }
+            if (blindspots.length === 0) {
+                blindspots.push(`<li>✅ <strong>Great Balance:</strong> You don't have any major double-low blind spots! Your score combination naturally covers most bases well.</li>`);
+            }
+
+            // 4. Friction Points (Big Score Gaps)
+            const gapFF = Math.abs(p1[0] - p2[0]);
+            const gapFT = Math.abs(p1[1] - p2[1]);
+            const gapQS = Math.abs(p1[2] - p2[2]);
+            const gapIMP = Math.abs(p1[3] - p2[3]);
+
+            if (gapFF >= 4) {
+                const high = p1[0] > p2[0] ? n1 : n2;
+                const low = p1[0] > p2[0] ? n2 : n1;
+                friction.push(`<li>⚡ <strong>Detail Gap:</strong> ${high} will want to research more facts, while ${low} will want to summarize quickly and move on.</li>`);
+            }
+            if (gapFT >= 4) {
+                const high = p1[1] > p2[1] ? n1 : n2;
+                const low = p1[1] > p2[1] ? n2 : n1;
+                friction.push(`<li>⚡ <strong>Structure Gap:</strong> ${high} wants a step-by-step plan, while ${low} prefers to improvise and multitask. ${high} might feel ${low} is chaotic!</li>`);
+            }
+            if (gapQS >= 4) {
+                const high = p1[2] > p2[2] ? n1 : n2;
+                const low = p1[2] > p2[2] ? n2 : n1;
+                friction.push(`<li>⚡ <strong>Risk Gap:</strong> ${high} wants to try a wild new approach at the last minute, while ${low} wants to keep things safe and steady.</li>`);
+            }
+            if (gapIMP >= 4) {
+                const high = p1[3] > p2[3] ? n1 : n2;
+                const low = p1[3] > p2[3] ? n2 : n1;
+                friction.push(`<li>⚡ <strong>Tangibles Gap:</strong> ${high} wants to physically build something, while ${low} would rather work on a laptop presentation.</li>`);
+            }
+            if (friction.length === 0) {
+                friction.push(`<li>🤝 <strong>Low Friction:</strong> Your scores are fairly similar across all 4 modes! You should understand each other's pacing easily.</li>`);
+            }
+
+            // 5. Actionable Teamwork Tips
+            tips.push(`<li><strong>1. Divide Tasks By Natural Instincts:</strong> Let the person higher in <em>Structure & Systems</em> manage the timeline, and let the person higher in <em>Innovation & Risk</em> lead the brainstorming!</li>`);
+            tips.push(`<li><strong>2. Respect Each Other's Needs:</strong> If one person needs to read the instructions carefully (<em>Data & Details</em>), give them 10 minutes before rushing into action.</li>`);
+            tips.push(`<li><strong>3. Set Clear Ground Rules Early:</strong> Agree on deadlines up front so nobody feels surprised or stressed near the final due date.</li>`);
+
+            // Inject Lists
+            document.getElementById('list-strengths').innerHTML = strengths.join('');
+            document.getElementById('list-blindspots').innerHTML = blindspots.join('');
+            document.getElementById('list-friction').innerHTML = friction.join('');
+            document.getElementById('list-tips').innerHTML = tips.join('');
+        }
+
+        function sharePairResults() {
+            const data = getInputs();
+            const text = `Conative Pair Synergy: ${data.p1Name} (${data.p1.join('-')}) & ${data.p2Name} (${data.p2.join('-')}). Team Dynamic: ${document.getElementById('team-power-title').innerText}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Pair analysis summary copied to clipboard!');
+                }).catch(() => {
+                    document.execCommand('copy');
+                });
+            } else {
+                document.execCommand('copy');
+            }
+        }
+
+        // Initialize on Load
+        window.onload = function() {
+            updatePairAnalysis();
+        };
+    </script>
+</body>
+</html>
