@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Marriage & Conative Relationship Assessment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover {
+            transform: translateY(-2px);
+        }
+        .option-card.selected {
+            border-color: #e11d48;
+            background-color: #fff1f2;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetAssessment()">
+                <div class="bg-rose-600 p-2 rounded-lg">
+                    <i data-lucide="heart-handshake" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-tight">Marriage & Conation Assessment</span>
+                    <span class="text-xs text-rose-300 font-medium">Understanding Marital Communication & Friction</span>
+                </div>
+            </div>
+            <button onclick="resetAssessment()" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5 rounded-md hover:bg-slate-800 transition">
+                Restart Assessment
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- INTRO SCREEN -->
+        <section id="intro-screen" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="p-8 sm:p-12 text-center gradient-header text-white relative">
+                <div class="inline-flex p-3 bg-white/10 backdrop-blur-md rounded-2xl mb-4 text-rose-400">
+                    <i data-lucide="users" class="w-10 h-10"></i>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">Why Do We Clash Over Everyday Things?</h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Many marital complaints (like <em>"Why do you need so many details before deciding?"</em> or <em>"Why are you so rigid with schedules?"</em>) stem from natural differences in **conation**—how we instinctively take action and solve problems.
+                </p>
+            </div>
+            
+            <div class="p-8 sm:p-10 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="search" class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Data & Details</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you gather research, facts, and historical background.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="git-branch" class="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Structure & Systems</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you organize schedules, budgets, and home systems.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="zap" class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Innovation & Risk</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you deal with financial risk, changes, and sudden pivots.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex space-x-3">
+                        <i data-lucide="hammer" class="w-6 h-6 text-rose-600 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Hands-On & Tangibles</h3>
+                            <p class="text-xs text-slate-600 mt-0.5">How you interact with physical space, repairs, and home physical tasks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="font-semibold text-slate-900 mb-2 flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
+                        <span>How to Take This Assessment</span>
+                    </h4>
+                    <ul class="text-xs text-slate-600 space-y-2 list-disc pl-5">
+                        <li>Answer based on your **natural instincts** in marriage and household management, not how you think you *should* act.</li>
+                        <li>This helps uncover where marital complaints originate and how to stop taking differences personally.</li>
+                        <li>12 realistic relationship scenarios (takes about 3–5 minutes).</li>
+                    </ul>
+                </div>
+
+                <button id="start-btn" onclick="startAssessment()" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/20 hover:shadow-rose-500/40 transition flex items-center justify-center space-x-2 text-base cursor-pointer">
+                    <span>Begin Marriage Assessment</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ASSESSMENT FORM SCREEN -->
+        <section id="quiz-screen" class="hidden max-w-3xl mx-auto">
+            <div class="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
+                    <span id="progress-text">Scenario 1 of 12</span>
+                    <span id="progress-percent">8% Complete</span>
+                </div>
+                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-rose-600 h-full transition-all duration-300 ease-out" style="width: 8.33%;"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-10">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full mb-3" id="question-category">
+                    Scenario 1
+                </span>
+                <h2 id="question-title" class="text-xl sm:text-2xl font-bold text-slate-900 mb-6 leading-snug">
+                    Loading question...
+                </h2>
+
+                <div id="options-container" class="space-y-3 mb-8">
+                    <!-- Dynamic choices -->
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        <span>Previous</span>
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed transition text-sm flex items-center space-x-2 shadow-md">
+                        <span id="next-btn-text">Next Scenario</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS DASHBOARD SCREEN -->
+        <section id="results-screen" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-slate-100 pb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-rose-600 bg-rose-50 px-3 py-1 rounded-full">
+                            Assessment Complete
+                        </span>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Your Conative Marital Profile</h1>
+                        <p class="text-slate-500 text-sm mt-1">Here is your 4-digit Conative M.O. and how it shapes your marriage communication.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-4 bg-slate-900 text-white p-4 sm:p-6 rounded-2xl w-full md:w-auto justify-center shadow-lg">
+                        <div class="text-center">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase tracking-wider">Your Marital M.O. Score</span>
+                            <span id="mo-digit-display" class="text-3xl sm:text-4xl font-black text-rose-400 tracking-widest font-mono">0-0-0-0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-wrap justify-between items-center gap-4 no-print">
+                    <div class="flex items-center space-x-2 text-xs text-slate-500">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Understand your triggers & marital complaints</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Report</span>
+                        </button>
+                        <button onclick="shareResults()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs rounded-lg transition flex items-center space-x-2">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            <span>Copy Summary</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scores Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-rose-600"></i>
+                        <span>Action Modes Scale (1 - 10)</span>
+                    </h3>
+
+                    <!-- Data & Details -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+                                <span>Data & Details</span>
+                            </span>
+                            <span id="score-ff" class="font-mono font-bold text-blue-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                            <div id="bar-ff" class="bg-blue-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ff" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Structure & Systems -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span>
+                                <span>Structure & Systems</span>
+                            </span>
+                            <span id="score-ft" class="font-mono font-bold text-emerald-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                            <div id="bar-ft" class="bg-emerald-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-ft" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Innovation & Risk -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span>
+                                <span>Innovation & Risk</span>
+                            </span>
+                            <span id="score-qs" class="font-mono font-bold text-amber-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                            <div id="bar-qs" class="bg-amber-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-qs" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+
+                    <!-- Hands-On & Tangibles -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-bold text-slate-800 flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-600 inline-block"></span>
+                                <span>Hands-On & Tangibles</span>
+                            </span>
+                            <span id="score-imp" class="font-mono font-bold text-rose-600 text-base">0 / 10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                            <div id="bar-imp" class="bg-rose-600 h-full transition-all duration-700 rounded-full" style="width: 0%;"></div>
+                        </div>
+                        <p id="label-imp" class="text-xs text-slate-500 font-medium">Zone: Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Radar Chart -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center justify-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Marital Action Distribution</span>
+                    <div class="w-full max-w-[280px] h-[260px] relative">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Marital Complaints Analysis -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-8">
+                <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-4 flex items-center space-x-2">
+                    <i data-lucide="message-square-quote" class="w-6 h-6 text-rose-500"></i>
+                    <span>Decoding Your Marital Complaints & Friction</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="analysis-cards">
+                    <!-- Data Analysis -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-blue-700 text-base">Data & Details Dynamic</span>
+                            <span id="zone-tag-ff" class="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ff" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Structure Analysis -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-emerald-700 text-base">Structure & Systems Dynamic</span>
+                            <span id="zone-tag-ft" class="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-ft" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Innovation Analysis -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-amber-700 text-base">Innovation & Risk Dynamic</span>
+                            <span id="zone-tag-qs" class="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-qs" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+
+                    <!-- Implementer Analysis -->
+                    <div class="p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-rose-700 text-base">Hands-On & Tangibles Dynamic</span>
+                            <span id="zone-tag-imp" class="text-xs px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-semibold">--</span>
+                        </div>
+                        <p id="desc-imp" class="text-slate-600 text-xs sm:text-sm leading-relaxed">...</p>
+                    </div>
+                </div>
+
+                <!-- Complaints & Partner Communication Guide -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <div class="bg-rose-50/60 rounded-xl p-6 border border-rose-100 space-y-3">
+                        <h4 class="font-bold text-rose-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="alert-circle" class="w-5 h-5 text-rose-600"></i>
+                            <span>Common Complaints You Might Make (Or Hear)</span>
+                        </h4>
+                        <ul id="marital-complaints-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+
+                    <div class="bg-blue-50/60 rounded-xl p-6 border border-blue-100 space-y-3">
+                        <h4 class="font-bold text-blue-950 flex items-center space-x-2 text-sm uppercase tracking-wide">
+                            <i data-lucide="heart" class="w-5 h-5 text-blue-600"></i>
+                            <span>Spouse Communication Guidelines</span>
+                        </h4>
+                        <ul id="spouse-tips-list" class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>Marriage & Conative Relationship Assessment • Designed for Marital Harmony and Communication</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const questions = [
+            {
+                id: 1,
+                title: "You and your spouse need to book a major family vacation or home renovation project. What is your instinct on how to start?",
+                options: [
+                    { text: "Research every review, airline safety record, hotel policy, and past receipt before making a move.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "Create an itinerary, a rigid budget spreadsheet, and a timeline for every single day.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Book an impromptu getaway on a whim and figure out the details later!", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Focus immediately on the physical layout, camping gear, workshop tools, or room dimensions.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 2,
+                title: "When your spouse comes to you with a sudden new idea or unexpected financial purchase, your first internal reaction is usually:",
+                options: [
+                    { text: "\"Where is the data? Let me check the history and background before we agree.\"", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "\"How does this fit into our monthly budget and current household schedule?\"", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "\"Awesome! Let's jump in and try it out right now!\"", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "\"Let's see how this works in practice / let me touch or test it physically.\"", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 3,
+                title: "How do you naturally handle household chores, organizing, and daily home maintenance?",
+                options: [
+                    { text: "You keep detailed records, instruction manuals, warranties, and files neatly stored.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "You love strict routines, checklists, and regular chore schedules for the family.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "You prefer flexibility and multitasking; rigid routines feel like handcuffs.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "You are the one who physically fixes things around the house, rearranges furniture, and works with your hands.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 4,
+                title: "During an argument about family finances or spending, what complaint do you most often make (or feel)?",
+                options: [
+                    { text: "\"You didn't look at the facts or do your research before spending our money!\"", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "\"You never follow the budget or stick to our agreed-upon financial plan!\"", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "\"You are too cautious and afraid to take any risks or try anything new!\"", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "\"You always buy abstract or digital things instead of investing in tangible home upgrades!\"", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 5,
+                title: "When an unexpected emergency or schedule change happens on a weekend, you naturally:",
+                options: [
+                    { text: "Pause to gather all the information and verify what actually occurred.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Immediately try to reschedule and restore order to the family calendar.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Pivot instantly with a grin—you love improvising when plans blow up!", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Roll up your sleeves and physically tackle whatever broke or needs manual labor.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 6,
+                title: "How do you prefer to communicate important household decisions with your spouse?",
+                    options: [
+                    { text: "Via detailed emails, printed articles, or bulleted lists with background reasoning.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "In a scheduled sit-down family meeting with clear agendas and timelines.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Casually over dinner while brainstorming wild future possibilities.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "While working together side-by-side on a physical project around the house.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 7,
+                title: "When buying a major appliance or vehicle, what is your non-negotiable requirement?",
+                options: [
+                    { text: "Consumer reports, safety ratings, and historical reliability data.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Warranties, delivery schedules, and structured payment plans.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "The latest high-tech features and newest innovative model on the market.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Being able to test-drive it, touch the interior, and inspect the build quality.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 8,
+                title: "What frustrates you most about how household tasks get done?",
+                options: [
+                    { text: "When decisions are made without checking if the facts are true.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "When people leave things disorganized, messy, and lack a consistent system.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "When everything is so rigid and predictable that life feels boring.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "When we talk about doing home repairs forever but never physically touch tools.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 9,
+                title: "When planning for retirement or long-term family security, your instinct is to:",
+                options: [
+                    { text: "Analyze historical market data, tax laws, and deep financial research.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Set up automatic monthly contributions into a strict structured savings plan.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Look for high-growth, high-reward ventures that could change our lifestyle fast.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Invest in tangible assets like real estate, land, and physical property.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 10,
+                title: "When your spouse asks you to help them solve a personal problem, you naturally tend to:",
+                options: [
+                    { text: "Ask questions and research solutions to give them accurate information.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Help them lay out a structured step-by-step action plan to fix it.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Brainstorm exciting alternative paths and reframe the situation boldly.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Jump in and physically do the heavy lifting or fix the tangible issue for them.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 11,
+                title: "How do you feel about spontaneity versus planning in your marriage?",
+                options: [
+                    { text: "You like knowing the details beforehand so you can mentally prepare.", scores: { ff: 3, ft: 1, qs: 0, imp: 0 } },
+                    { text: "You feel secure when plans are locked in and predictable.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "You thrive on last-minute surprises and spontaneous adventures.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "You prefer hands-on weekend projects over traveling or lounging.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            },
+            {
+                id: 12,
+                title: "In summary, what is your greatest strength as a partner in managing life together?",
+                options: [
+                    { text: "Protecting us from mistakes through deep research and fact-checking.", scores: { ff: 3, ft: 0, qs: 0, imp: 0 } },
+                    { text: "Keeping our household organized, stable, and running like clockwork.", scores: { ff: 0, ft: 3, qs: 0, imp: 0 } },
+                    { text: "Bringing energy, optimism, and innovative solutions when we get stuck.", scores: { ff: 0, ft: 0, qs: 3, imp: 0 } },
+                    { text: "Building, repairing, and physically sustaining our physical home environment.", scores: { ff: 0, ft: 0, qs: 0, imp: 3 } }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAnswers = new Array(questions.length).fill(null);
+        let radarChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+
+        function startAssessment() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            currentQuestionIndex = 0;
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            const percent = Math.round(((currentQuestionIndex + 1) / questions.length) * 100);
+            
+            document.getElementById('progress-text').innerText = `Scenario ${currentQuestionIndex + 1} of ${questions.length}`;
+            document.getElementById('progress-percent').innerText = `${percent}% Complete`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            document.getElementById('question-category').innerText = `Scenario ${currentQuestionIndex + 1}`;
+            document.getElementById('question-title').innerText = q.title;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = selectedAnswers[currentQuestionIndex] === idx;
+                const card = document.createElement('div');
+                card.className = `option-card p-4 sm:p-5 rounded-xl border-2 cursor-pointer flex items-center space-x-4 ${isSelected ? 'selected border-rose-600 bg-rose-50/70' : 'border-slate-200 hover:border-slate-300 bg-white'}`;
+                card.onclick = () => selectOption(idx);
+
+                card.innerHTML = `
+                    <div class="w-6 h-6 rounded-full border-2 ${isSelected ? 'border-rose-600 bg-rose-600' : 'border-slate-300'} flex items-center justify-center flex-shrink-0 transition">
+                        ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                    </div>
+                    <span class="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">${opt.text}</span>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = selectedAnswers[currentQuestionIndex] === null;
+
+            document.getElementById('next-btn-text').innerText = currentQuestionIndex === questions.length - 1 ? "View Marital Report" : "Next Scenario";
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function selectOption(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (selectedAnswers[currentQuestionIndex] === null) return;
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                calculateAndShowResults();
+            }
+        }
+
+        function calculateAndShowResults() {
+            let total = { ff: 0, ft: 0, qs: 0, imp: 0 };
+
+            selectedAnswers.forEach((ansIdx, qIdx) => {
+                if (ansIdx !== null) {
+                    const optionScores = questions[qIdx].options[ansIdx].scores;
+                    total.ff += optionScores.ff;
+                    total.ft += optionScores.ft;
+                    total.qs += optionScores.qs;
+                    total.imp += optionScores.imp;
+                }
+            });
+
+            const scaleScore = (raw) => Math.min(10, Math.max(1, Math.round((raw / 9) * 9) + 1));
+
+            const finalScores = {
+                ff: scaleScore(total.ff),
+                ft: scaleScore(total.ft),
+                qs: scaleScore(total.qs),
+                imp: scaleScore(total.imp)
+            };
+
+            const moString = `${finalScores.ff}-${finalScores.ft}-${finalScores.qs}-${finalScores.imp}`;
+            document.getElementById('mo-digit-display').innerText = moString;
+
+            document.getElementById('score-ff').innerText = `${finalScores.ff} / 10`;
+            document.getElementById('bar-ff').style.width = `${finalScores.ff * 10}%`;
+            document.getElementById('score-ft').innerText = `${finalScores.ft} / 10`;
+            document.getElementById('bar-ft').style.width = `${finalScores.ft * 10}%`;
+            document.getElementById('score-qs').innerText = `${finalScores.qs} / 10`;
+            document.getElementById('bar-qs').style.width = `${finalScores.qs * 10}%`;
+            document.getElementById('score-imp').innerText = `${finalScores.imp} / 10`;
+            document.getElementById('bar-imp').style.width = `${finalScores.imp * 10}%`;
+
+            const zoneFF = getZoneInfo(finalScores.ff);
+            const zoneFT = getZoneInfo(finalScores.ft);
+            const zoneQS = getZoneInfo(finalScores.qs);
+            const zoneIMP = getZoneInfo(finalScores.imp);
+
+            document.getElementById('label-ff').innerText = `Zone: ${zoneFF.zone}`;
+            document.getElementById('label-ft').innerText = `Zone: ${zoneFT.zone}`;
+            document.getElementById('label-qs').innerText = `Zone: ${zoneQS.zone}`;
+            document.getElementById('label-imp').innerText = `Zone: ${zoneIMP.zone}`;
+
+            document.getElementById('zone-tag-ff').innerText = zoneFF.zone;
+            document.getElementById('zone-tag-ft').innerText = zoneFT.zone;
+            document.getElementById('zone-tag-qs').innerText = zoneQS.zone;
+            document.getElementById('zone-tag-imp').innerText = zoneIMP.zone;
+
+            document.getElementById('desc-ff').innerText = getFFDescription(finalScores.ff);
+            document.getElementById('desc-ft').innerText = getFTDescription(finalScores.ft);
+            document.getElementById('desc-qs').innerText = getQSDescription(finalScores.qs);
+            document.getElementById('desc-imp').innerText = getIMPDescription(finalScores.imp);
+
+            populateMaritalComplaintsAndTips(finalScores);
+            renderChart(finalScores);
+
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function getZoneInfo(score) {
+            if (score >= 7) return { zone: "Initiate (7-10)", color: "text-emerald-700 bg-emerald-100" };
+            if (score >= 4) return { zone: "Respond (4-6)", color: "text-blue-700 bg-blue-100" };
+            return { zone: "Prevent/Modify (1-3)", color: "text-amber-700 bg-amber-100" };
+        }
+
+        function getFFDescription(score) {
+            if (score >= 7) return "High Data & Details: You need deep background, reviews, and facts before making household decisions. You feel stressed when your spouse rushes into purchases without research.";
+            if (score >= 4) return "Mid Data & Details: You gather facts when necessary, but you don't need to over-analyze every minor household choice.";
+            return "High Summary Pref.: You prefer big-picture clarity and fast answers. Detailed explanations from your spouse can feel like information overload.";
+        }
+
+        function getFTDescription(score) {
+            if (score >= 7) return "High Follow Thru: You love structured budgets, schedules, and predictable routines. Spontaneity or household disorder causes you conative stress.";
+            if (score >= 4) return "Mid Follow Thru: You appreciate organized systems, but you can roll with schedule changes when life happens.";
+            return "High Spontaneity: You prefer flexibility, multitasking, and freedom. Strict routines and rigid schedules feel like a trap to your natural workflow.";
+        }
+
+        function getQSDescription(score) {
+            if (score >= 7) return "High Quick Start: You love innovation, excitement, and trying new financial or lifestyle risks. You get restless with unchanging routines.";
+            if (score >= 4) return "Mid Quick Start: You enjoy creative ideas as long as they come with a reasonable safety net.";
+            return "Risk-Stabilizer: You protect the marriage from reckless bets and financial chaos. You value stability and tested, proven methods.";
+        }
+
+        function getIMPDescription(score) {
+            if (score >= 7) return "High Implementer: You are hands-on around the house. You love physical improvements, tool work, and tangible home projects.";
+            if (score >= 4) return "Mid Implementer: You handle physical tasks when needed, but you also enjoy digital or conceptual planning.";
+            return "Abstract Thinker: You prefer delegating physical repairs or working with digital tools and concepts rather than manual labor.";
+        }
+
+        function populateMaritalComplaintsAndTips(scores) {
+            const complaintsList = document.getElementById('marital-complaints-list');
+            const tipsList = document.getElementById('spouse-tips-list');
+            complaintsList.innerHTML = '';
+            tipsList.innerHTML = '';
+
+            const complaints = [];
+            const tips = [];
+
+            if (scores.ff >= 7) {
+                complaints.push("\"Why do you make decisions without checking the facts or reading reviews first?\"");
+                tips.push("Give your spouse time to review data and background facts before expecting a final decision.");
+            } else if (scores.ff <= 3) {
+                complaints.push("\"Why do you overwhelm me with so many unnecessary details and endless research?\"");
+                tips.push("Ask your spouse for the 'headline summary' first before diving into background data.");
+            }
+
+            if (scores.ft >= 7) {
+                complaints.push("\"Why is our schedule always chaotic and why can't we stick to the budget?\"");
+                tips.push("Establish predictable rhythms and shared calendars so your need for order is respected.");
+            } else if (scores.ft <= 3) {
+                complaints.push("\"Why are you so rigid with schedules and micro-managing how chores get done?\"");
+                tips.push("Allow flexibility in *how* tasks are completed as long as the end goal is achieved.");
+            }
+
+            if (scores.qs >= 7) {
+                complaints.push("\"Why are you always so cautious and resistant to trying new ideas?\"");
+                tips.push("Present new ideas with plenty of advance notice so your spouse can process the risk.");
+            } else if (scores.qs <= 3) {
+                complaints.push("\"Why do you keep suggesting sudden changes that disrupt our financial stability?\"");
+                tips.push("Appreciate your spouse's ability to protect the family from unnecessary financial chaos.");
+            }
+
+            if (scores.imp >= 7) {
+                complaints.push("\"Why do we always talk about fixing things around the house instead of physically doing it?\"");
+                tips.push("Involve your spouse in hands-on physical projects or hire out tasks that drain them.");
+            } else if (scores.imp <= 3) {
+                complaints.push("\"Why do you expect me to handle all the physical home maintenance and manual labor?\"");
+                tips.push("Acknowledge that abstract problem-solving is just as valuable as physical tool work.");
+            }
+
+            complaints.forEach(c => complaintsList.innerHTML += `<li>${c}</li>`);
+            tips.forEach(t => tipsList.innerHTML += `<li>${t}</li>`);
+        }
+
+        function renderChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Data & Details', 'Structure & Systems', 'Innovation & Risk', 'Hands-On & Tangibles'],
+                    datasets: [{
+                        label: 'Marital Action Mode',
+                        data: [scores.ff, scores.ft, scores.qs, scores.imp],
+                        backgroundColor: 'rgba(225, 29, 72, 0.25)',
+                        borderColor: '#e11d48',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: ['#2563eb', '#059669', '#d97706', '#e11d48'],
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { stepSize: 2, display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function resetAssessment() {
+            currentQuestionIndex = 0;
+            selectedAnswers = new Array(questions.length).fill(null);
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function shareResults() {
+            const mo = document.getElementById('mo-digit-display').innerText;
+            const text = `My Marital Conative M.O. Score is ${mo}! Take the Marriage Conation Assessment to decode relationship friction.`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => alert('Profile summary copied to clipboard!'));
+            } else {
+                document.execCommand('copy');
+            }
+        }
+    </script>
+</body>
+</html>
